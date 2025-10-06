@@ -11,9 +11,8 @@ document.addEventListener("DOMContentLoaded", function() {
         "311 (фак.тер.)": "",
         "Учебная ауд.-": "кабинет №",
         "РДЛЦ при КГМА, 3 этаж, Учебный каб.- 311 (фак.тер.)": "Медцентр КГМА (по Тыныстанова), 401 кабинет",
-"Конференц холл":"БМЗ",
-        "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
-        "клин.Ахунбаева, 2 этаж, Лекц.зал-БХЗ (проп.хир.)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
+        // "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
+        // "клин.Ахунбаева, 2 этаж, Лекц.зал-БХЗ (проп.хир.)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
         "(общ.г.)": "",
         "Кафедра: Общей гигиены": "4 корпус (вход справа), кабинет №325",
         "Гл. корпус, 4 этаж, кабинет №425 (биохим.)": "Главный корпус, кабинет №432",
@@ -26,17 +25,20 @@ document.addEventListener("DOMContentLoaded", function() {
         // TARGETED
 
         // CURRENT WEEK
-//        "Клиническая биохимия|Практика|CurrWeek": "<a href='https://jumpshare.com/share/mGKaxdNZ5G7TGIFHOpZf' target='_blank'>Клиническая биохимия</a>",
-//        "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr' target='_blank'>Общая гигиена</a>",
-//        "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90' target='_blank'>Топографическая анатомия</a>",
-//        "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj' target='_blank'>Пропедхирургия</a>",
-//		"Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb' target='_blank'>Лучевая диагностика</a>",
-//		"Пропедевтика внутренних болезней (фак.тер)|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3ZpZ5Ock4DOQglAmjQfs'target='_blank'>Пропедевтика внутренних болезней</a>",
-//		"Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ksMMPvfZbsdFOBqlK2DU' target='_blank'>Патологическая анатомия</a>",
+        // "Клиническая биохимия|Практика|CurrWeek": "<a href='https://jumpshare.com/share/mGKaxdNZ5G7TGIFHOpZf' target='_blank'>Клиническая биохимия</a>",
+        // "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr' target='_blank'>Общая гигиена</a>",
+        // "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90' target='_blank'>Топографическая анатомия</a>",
+        // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj' target='_blank'>Пропедхирургия</a>",
+		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb' target='_blank'>Лучевая диагностика</a>",
+		// "Пропедевтика внутренних болезней (фак.тер)|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3ZpZ5Ock4DOQglAmjQfs'target='_blank'>Пропедевтика внутренних болезней</a>",
+		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ksMMPvfZbsdFOBqlK2DU' target='_blank'>Патологическая анатомия</a>",
+		"Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB' target='_blank'>Клиническая биохимия</a>",
+        "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm' target='_blank'>Общая гигиена</a>",
+		"Топографическая анатомия|Практика|CurrWeek": "<a href='https://i.postimg.cc/6qfZbGQ6/image.png'>Топографическая анатомия</a><br><span style='font-size: 12px;'>Повторите прошлую тему!</span>",
+		"Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
+		"Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM' target='_blank'>Патологическая анатомия</a>"
         // NEXT WEEK
-        "Клиническая биохимия|Практика|CurrWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB' target='_blank'>Клиническая биохимия</a>",
-        "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm' target='_blank'>Общая гигиена</a>",
-		"Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM' target='_blank'>Патологическая анатомия</a>"
+        
 
     };
 
