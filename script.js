@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
 //		"Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ksMMPvfZbsdFOBqlK2DU' target='_blank'>Патологическая анатомия</a>",
         // NEXT WEEK
         "Клиническая биохимия|Практика|CurrWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB' target='_blank'>Клиническая биохимия</a>",
-        "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm' target='_blank'>Общая гигиена</a><br><a href='https://chatgpt.com/share/68e36dee-0b84-800b-b4b5-bdea8844e9d7' style='font-size:12; color:orange;'>Задвчи по теме</a>",
+        "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm' target='_blank'>Общая гигиена</a><br><a href='https://chatgpt.com/share/68e370eb-1624-800b-9f28-ee546ca5b4f0' style='font-size:12; color:orange; -webkit-text-stroke:0;'>Задвчи по теме</a>",
 		"Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM' target='_blank'>Патологическая анатомия</a>"
 
     };
