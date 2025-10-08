@@ -23,6 +23,8 @@ document.addEventListener("DOMContentLoaded", function() {
         "Морфо.корпус, 1 этаж, кабинет №114 (пат.анат.)": "Морфокорпус, кабинет №114",
         "Кафедра: Нормальной и топографической анатомии": "Морфокорпус, кабинет №409",
 		"Мед.центр при КГМА, 1 этаж, Учебная ауд.- 109 (луч.д.)": "Медцентр КГМА (вход возле флюорографии), кабинет №109",
+		"Мед.центр при КГМА, 2 этаж, секц.204, Учеб.каб.-204б (кл.ф.)":"Главный корпус, 325 кабинет",
+		"Кафедра: Патологической физиологии":"Морфокорпус, аудитория №214",
 
         // TARGETED
 
@@ -34,10 +36,12 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb' target='_blank'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней (фак.тер)|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3ZpZ5Ock4DOQglAmjQfs'target='_blank'>Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ksMMPvfZbsdFOBqlK2DU' target='_blank'>Патологическая анатомия</a>",
+		"Патофизиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/bFouq17EaDhboPQnckgz' target='_blank'>Патфиз</a>",
 		"Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB' target='_blank'>Клиническая биохимия</a>",
         "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm' target='_blank'>Общая гигиена</a>",
 		"Топографическая анатомия|Практика|CurrWeek": "<a href='https://i.postimg.cc/6qfZbGQ6/image.png'>Топографическая анатомия</a><br><span style='font-size: 12px;'>Повторите прошлую тему!</span>",
 		"Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
+		"Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/UGfIe6k9n6tZhBEm7Yye' target='_blank'>Базисная фармакология</a>",
 		"Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM' target='_blank'>Патологическая анатомия</a>"
         // NEXT WEEK
         
