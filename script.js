@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // GLOBAL
         "Большой морфологич.лекц.зал": "БМЗ",
         "311 (фак.тер.)": "",
+		"(фак.тер.)": "",
         "Учебная ауд.-": "кабинет №",
         "РДЛЦ при КГМА, 3 этаж, Учебный каб.- 311 (фак.тер.)": "Медцентр КГМА (по Тыныстанова), 401 кабинет",
         "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "Национальный госпиталь (Тоголок Молдо 1/13)",
@@ -16,6 +17,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
         // "клин.Ахунбаева, 2 этаж, Лекц.зал-БХЗ (проп.хир.)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
         "(общ.г.)": "",
+		"Пропедевтика внутренних болезней (фак.тер)":"Пропедевтика внутренних болезней",
+		"Мед.центр при КГМА, 1 этаж, кабинет № 109 (луч.д.)":"Медцентр КГМА, 1 этаж, кабинет №109",
         "Кафедра: Общей гигиены": "4 корпус (вход справа), кабинет №325",
         "Гл. корпус, 4 этаж, кабинет №425 (биохим.)": "Главный корпус, кабинет №432",
         "ЦТиРК, 5 этаж, Учеб.ауд.-516 (мни)": "Центр тестирования, цокольный этаж",
@@ -42,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		"Топографическая анатомия|Практика|CurrWeek": "<a href='https://i.postimg.cc/6qfZbGQ6/image.png'>Топографическая анатомия</a><br><span style='font-size: 12px;'>Повторите прошлую тему!</span>",
 		"Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		"Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/UGfIe6k9n6tZhBEm7Yye' target='_blank'>Базисная фармакология</a>",
+		"Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
 		"Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM' target='_blank'>Патологическая анатомия</a>"
         // NEXT WEEK
         
