@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function() {
         // TARGETED
 
         // CURRENT WEEK
-        "Клиническая биохимия|Практика|NextWeek": "<a href='biohimia.html' target='_blank'>Клиническая биохимия</a>"
-        // "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr' target='_blank'>Общая гигиена</a>",
+        "Клиническая биохимия|Практика|NextWeek": "<a href='biohimia.html' target='_blank'>Клиническая биохимия</a>",
+        "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/D6WoKVfiLKAH9Loaa0D0' target='_blank'>Общая гигиена</a>",
         // "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90' target='_blank'>Топографическая анатомия</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj' target='_blank'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb' target='_blank'>Лучевая диагностика</a>",
@@ -49,6 +49,15 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM' target='_blank'>Патологическая анатомия</a>"
         // NEXT WEEK
         
+		
+		
+		
+		
+		
+		
+		
+		// ЗАГЛУШКА
+		"ЗАГЛУШКА":""
 
     };
 
