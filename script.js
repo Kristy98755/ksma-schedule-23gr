@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // CURRENT WEEK
         "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html' target='_blank'>Клиническая биохимия</a>",
         "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/UjFJkBnEZi11mMdmuFls' target='_blank'>Общая гигиена</a>",
-		"Акушерство  и гинекология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/htKOZeERaKmApodQWhxp' target='_blank'>Акушерство и гинекология</a>",
+		"Акушерство  и гинекология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/T01DlkyXOiVMESZOlMOt' target='_blank'>Акушерство и гинекология</a>",
         // "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90' target='_blank'>Топографическая анатомия</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj' target='_blank'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb' target='_blank'>Лучевая диагностика</a>",
