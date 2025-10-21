@@ -219,6 +219,44 @@ body {
 	background-color:#27a8e7dd;
 }
 
-/* .addr { */
-	/* color:green; */
-/* } */
+.loadinganim {
+  display:flex;
+  opacity: 0;  /* скрыта по умолчанию */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #fff;
+  z-index: 15;              /* перекроет всё */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;            /* чтобы не прокручивалось внутри */
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+}
+
+.loadinganim.popup {
+	opacity: 1;
+	pointer-events: all;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: fit-content;
+  font-size: 40px;
+  font-family: system-ui,sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #0000;
+  -webkit-text-stroke: 1px #27a8e7;
+  --g:conic-gradient(#27a8e7 0 0) no-repeat text;
+  background: var(--g) 0,var(--g) 100%,var(--g) 0 0,var(--g) 0 100%;
+  animation: l5 2s linear infinite;
+}
+.loader:before {
+  content: "Loading";
+}
+@keyframes l5 {
+  0%,100%{background-size: 0   100%,0   100%,100% 0  ,100% 0  }
+  50%    {background-size: 55% 100%,55% 100%,100% 0  ,100% 0  }
+  50.01% {background-size: 0   100%,0   100%,100% 55%,100% 55%}
+}

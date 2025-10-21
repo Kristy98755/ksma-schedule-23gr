@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function() {
         "РДЛЦ при КГМА, 3 этаж, Учебный каб.- 311 (фак.тер.)": "Медцентр КГМА (по Тыныстанова), 401 кабинет",
         "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "Национальный госпиталь (Тоголок Молдо 1/13)",
         "клин.Ахунбаева, 2 этаж, Лекц.зал-БХЗ (проп.хир.)": "Национальный госпиталь (Тоголок Молдо 1/13)",
-		// "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
-        // "клин.Ахунбаева, 2 этаж, Лекц.зал-БХЗ (проп.хир.)": "<a href='https://go.2gis.com/vTyEj' target='_blank' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
+		// "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "<a href='https://go.2gis.com/vTyEj' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
+        // "клин.Ахунбаева, 2 этаж, Лекц.зал-БХЗ (проп.хир.)": "<a href='https://go.2gis.com/vTyEj' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Национальный госпиталь (Тоголок Молдо 1/13)</a>",
         "(общ.г.)": "",
 		"Пропедевтика внутренних болезней (фак.тер)":"Пропедевтика внутренних болезней",
 		"Мед.центр при КГМА, 1 этаж, кабинет № 109 (луч.д.)":"Медцентр КГМА, 1 этаж, кабинет №109",
@@ -29,28 +29,30 @@ document.addEventListener("DOMContentLoaded", function() {
 		"Мед.центр при КГМА, 2 этаж, секц.204, Учеб.каб.-204б (кл.ф.)":"Главный корпус, 325 кабинет",
 		"Кафедра: Патологической физиологии":"Морфокорпус, аудитория №214",
 		"(№1)":"",
+		"Кафедра: Пропедевтики детских болезней":"Третья детская больница",
 
         // TARGETED
 
         // CURRENT WEEK
-        "Клиническая биохимия|Практика|NextWeek": "<a href='biohimia.html' target='_blank'>Клиническая биохимия</a>",
-        "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/UjFJkBnEZi11mMdmuFls' target='_blank'>Общая гигиена</a>",
-		"Акушерство  и гинекология|Практика|NextWeek": "<a href='https://jumpshare.com/share/htKOZeERaKmApodQWhxp' target='_blank'>Акушерство и гинекология</a>",
-        // "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90' target='_blank'>Топографическая анатомия</a>",
-        // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj' target='_blank'>Пропедхирургия</a>",
-		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb' target='_blank'>Лучевая диагностика</a>",
+        // "Клиническая биохимия|Практика|NextWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
+        // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/UjFJkBnEZi11mMdmuFls'>Общая гигиена</a>",
+		"Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/6FtIknjvsrRr6WLL8LeM'>Пропедевтика детских болезней</a>",
+        // "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90'>Топографическая анатомия</a>",
+        // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
+		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/LyTADYFSUpnQHJPFSWhe'target='_blank'>Пропедевтика внутренних болезней</a>",
-		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS' target='_blank'>Патологическая анатомия</a>",
-		// "Патофизиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/bFouq17EaDhboPQnckgz' target='_blank'>Патфиз</a>",
-		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB' target='_blank'>Клиническая биохимия</a>",
-        // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm' target='_blank'>Общая гигиена</a>",
+		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
+		// "Патофизиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/bFouq17EaDhboPQnckgz'>Патфиз</a>",
+		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
+        // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
 		// "Топографическая анатомия|Практика|CurrWeek": "<a href='https://i.postimg.cc/6qfZbGQ6/image.png'>Топографическая анатомия</a><br><span style='font-size: 12px;'>Повторите прошлую тему!</span>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
-		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/UGfIe6k9n6tZhBEm7Yye' target='_blank'>Базисная фармакология</a>",
+		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/UGfIe6k9n6tZhBEm7Yye'>Базисная фармакология</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
-		// "Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM' target='_blank'>Патологическая анатомия</a>"
+		// "Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM'>Патологическая анатомия</a>"
         // NEXT WEEK
-        
+		"Акушерство  и гинекология|Практика|NextWeek": "<a href='https://jumpshare.com/share/htKOZeERaKmApodQWhxp'>Акушерство и гинекология</a>",
+
 		
 		
 		
@@ -250,4 +252,20 @@ document.addEventListener("DOMContentLoaded", function() {
         nextWeekEl.style.display = "block";
         cur.style.backgroundColor = "#bbdd";
     };
+	
+	
+	
+	
+	// Обработка открытия ссылок
+		// Анимация загрузки
+	document.addEventListener('click', e => {
+	  const link = e.target.closest('a');
+	  if (link && link.getAttribute('href') && !link.getAttribute('href').startsWith('#')) {
+		const loader = document.querySelector('.loadinganim');
+		    if (loader) {
+			  loader.classList.add('popup');
+			}
+	  }
+	});
+
 });
