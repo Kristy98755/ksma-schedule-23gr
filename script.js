@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Топографическая анатомия|Практика|CurrWeek": "<a href='https://i.postimg.cc/6qfZbGQ6/image.png'>Топографическая анатомия</a><br><span style='font-size: 12px;'>Повторите прошлую тему!</span>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/UGfIe6k9n6tZhBEm7Yye'>Базисная фармакология</a>",
-		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
+		"Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
 		// "Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM'>Патологическая анатомия</a>"
         // NEXT WEEK
 		"Акушерство  и гинекология|Практика|NextWeek": "<a href='https://jumpshare.com/share/htKOZeERaKmApodQWhxp'>Акушерство и гинекология</a>",
