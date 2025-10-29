@@ -158,62 +158,70 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- Загрузка недели ---
     function loadWeek(monday, container, weekId) {
     const url = `https://ksma-schedule.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
-    const cookieKey = `schedule_${groupId}_${formatDate(monday)}`;
+    const key = `schedule_${groupId}_${formatDate(monday)}`;
 
-    // Универсальная функция для безопасной записи cookie на текущий (github.io) домен
-    function setCookie(name, value, maxAgeSeconds) {
+    // --- Хранилище ---
+    function saveCache(name, data, maxAgeSeconds) {
+        const json = JSON.stringify(data);
         try {
-            // 1. Проверяем длину — браузеры ограничивают cookie ~4KB
-            const json = JSON.stringify(value);
-            if (json.length > 3800) {
-                console.warn(`[cache] ${name} too large for cookie (${(json.length / 1024).toFixed(1)} KB)`);
-                return;
+            if (json.length <= 3800) {
+                document.cookie = `${name}=${encodeURIComponent(json)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
+                console.info(`[cache] saved ${name} in cookie (${(json.length / 1024).toFixed(1)} KB)`);
+            } else {
+                localStorage.setItem(name, json);
+                console.info(`[cache] saved ${name} in localStorage (${(json.length / 1024).toFixed(1)} KB)`);
             }
-            document.cookie = `${name}=${encodeURIComponent(json)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
-            console.info(`[cache] saved ${name} (${(json.length / 1024).toFixed(1)} KB)`);
         } catch (e) {
             console.error(`[cache] failed to save ${name}:`, e);
         }
     }
 
-    function getCookie(name) {
+    function loadCache(name) {
+        // cookie приоритетнее, если есть
         const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-        if (!match) return null;
-        try {
-            return JSON.parse(decodeURIComponent(match[1]));
-        } catch {
-            console.error(`[cache] failed to parse cookie ${name}`);
-            return null;
+        if (match) {
+            try {
+                return JSON.parse(decodeURIComponent(match[1]));
+            } catch {
+                console.warn(`[cache] cookie parse error for ${name}`);
+            }
         }
+        const ls = localStorage.getItem(name);
+        if (ls) {
+            try {
+                return JSON.parse(ls);
+            } catch {
+                console.warn(`[cache] localStorage parse error for ${name}`);
+            }
+        }
+        return null;
     }
 
-    async function fetchWithCookieCache(url, cookieKey, maxAgeSeconds = 60 * 60 * 24) {
+    async function fetchWithHybridCache(url, cacheKey, maxAgeSeconds = 60 * 60 * 24) {
         try {
             const response = await fetch(url, { cache: 'no-store' });
             const contentType = response.headers.get('content-type') || '';
-
-            // Проверяем — это действительно JSON
             if (!response.ok || !contentType.includes('application/json')) {
                 throw new Error(`Bad response: ${response.status}`);
             }
 
             const data = await response.json();
-            setCookie(cookieKey, data, maxAgeSeconds);
+            saveCache(cacheKey, data, maxAgeSeconds);
             return data;
         } catch (error) {
-            console.warn(`[cache] ${cookieKey}: loading from cookies due to error: ${error.message}`);
-            const cached = getCookie(cookieKey);
+            console.warn(`[cache] ${cacheKey}: loading from cache due to error: ${error.message}`);
+            const cached = loadCache(cacheKey);
             if (cached) {
-                console.info(`[cache] restored ${cookieKey} (offline mode)`);
+                console.info(`[cache] restored ${cacheKey} (offline mode)`);
                 return cached;
             }
-            console.error(`[cache] no cached data available for ${cookieKey}`);
+            console.error(`[cache] no cached data available for ${cacheKey}`);
             return null;
         }
     }
 
-    // Загружаем данные (с сервера или из cookie)
-    fetchWithCookieCache(url, cookieKey).then(data => {
+    // --- Основная логика отрисовки ---
+    fetchWithHybridCache(url, key).then(data => {
         if (!data) {
             container.innerHTML = "<p style='color:red; text-align:center;'>Не удалось загрузить расписание</p>";
             return;
@@ -284,6 +292,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 300);
     });
 }
+
 
 
     const monday = getMonday(new Date());
