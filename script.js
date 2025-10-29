@@ -289,11 +289,6 @@ function loadWeek(monday, container, weekId) {
         container.appendChild(scheduleTable);
 
         // --- Статус сервера ---
-        const statusP = document.createElement("p");
-        statusP.style.textAlign = "center";
-        statusP.innerHTML =
-            `<b>kgma.kg is <span style="color:${data._source === 'online' ? 'limegreen' : 'red'}">${data._source}</span></b>`;
-        // --- Статус сервера ---
 const statusP = document.createElement("p");
 statusP.style.textAlign = "center";
 statusP.innerHTML =
