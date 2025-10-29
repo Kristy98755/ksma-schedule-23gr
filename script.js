@@ -160,32 +160,52 @@ document.addEventListener("DOMContentLoaded", function() {
     const url = `https://ksma-schedule.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
     const cookieKey = `schedule_${groupId}_${formatDate(monday)}`;
 
+    // Универсальная функция для безопасной записи cookie на текущий (github.io) домен
+    function setCookie(name, value, maxAgeSeconds) {
+        try {
+            // 1. Проверяем длину — браузеры ограничивают cookie ~4KB
+            const json = JSON.stringify(value);
+            if (json.length > 3800) {
+                console.warn(`[cache] ${name} too large for cookie (${(json.length / 1024).toFixed(1)} KB)`);
+                return;
+            }
+            document.cookie = `${name}=${encodeURIComponent(json)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
+            console.info(`[cache] saved ${name} (${(json.length / 1024).toFixed(1)} KB)`);
+        } catch (e) {
+            console.error(`[cache] failed to save ${name}:`, e);
+        }
+    }
+
+    function getCookie(name) {
+        const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        if (!match) return null;
+        try {
+            return JSON.parse(decodeURIComponent(match[1]));
+        } catch {
+            console.error(`[cache] failed to parse cookie ${name}`);
+            return null;
+        }
+    }
+
     async function fetchWithCookieCache(url, cookieKey, maxAgeSeconds = 60 * 60 * 24) {
         try {
             const response = await fetch(url, { cache: 'no-store' });
             const contentType = response.headers.get('content-type') || '';
 
-            // Проверка: Cloudflare-ошибка или HTML-страница вместо JSON
+            // Проверяем — это действительно JSON
             if (!response.ok || !contentType.includes('application/json')) {
                 throw new Error(`Bad response: ${response.status}`);
             }
 
             const data = await response.json();
-            document.cookie = `${cookieKey}=${encodeURIComponent(JSON.stringify(data))};path=/;max-age=${maxAgeSeconds}`;
-            console.info(`[cache] saved ${cookieKey}`);
+            setCookie(cookieKey, data, maxAgeSeconds);
             return data;
-
         } catch (error) {
-            console.warn(`[cache] ${cookieKey}: loading from cookies due to error:`, error.message);
-            const match = document.cookie.match(new RegExp(`(?:^|; )${cookieKey}=([^;]*)`));
-            if (match) {
-                try {
-                    const cachedData = JSON.parse(decodeURIComponent(match[1]));
-                    console.info(`[cache] using cached data for ${cookieKey}`);
-                    return cachedData;
-                } catch (parseError) {
-                    console.error(`[cache] failed to parse cookie for ${cookieKey}:`, parseError);
-                }
+            console.warn(`[cache] ${cookieKey}: loading from cookies due to error: ${error.message}`);
+            const cached = getCookie(cookieKey);
+            if (cached) {
+                console.info(`[cache] restored ${cookieKey} (offline mode)`);
+                return cached;
             }
             console.error(`[cache] no cached data available for ${cookieKey}`);
             return null;
@@ -264,6 +284,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 300);
     });
 }
+
 
     const monday = getMonday(new Date());
     const nextMonday = new Date(monday);
