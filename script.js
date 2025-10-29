@@ -293,7 +293,15 @@ function loadWeek(monday, container, weekId) {
         statusP.style.textAlign = "center";
         statusP.innerHTML =
             `<b>kgma.kg is <span style="color:${data._source === 'online' ? 'limegreen' : 'red'}">${data._source}</span></b>`;
-        document.body.appendChild(statusP);
+        // --- Статус сервера ---
+const statusP = document.createElement("p");
+statusP.style.textAlign = "center";
+statusP.innerHTML =
+    `<b>kgma.kg is <span style="color:${data._source === 'online' ? 'limegreen' : 'red'}">${data._source}</span></b>`;
+
+// Вставляем в конец контейнера расписания
+container.appendChild(statusP);
+
 
         setTimeout(() => {
             applyGlobalOverrides(container);
