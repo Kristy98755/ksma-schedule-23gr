@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "Большой морфологич.лекц.зал": "БМЗ",
         "311 (фак.тер.)": "",
 		"(фак.тер.)": "",
-'Invalid Date':"",
+// 'Invalid Date':"",
         "Учебная ауд.-": "кабинет №",
         "РДЛЦ при КГМА, 3 этаж, Учебный каб.- 311 (фак.тер.)": "Медцентр КГМА (по Тыныстанова), 401 кабинет",
         "клин.Ахунбаева, 3 этаж, Каб.зав.каф.-301 (проп.хир)": "Национальный госпиталь (Тоголок Молдо 1/13)",
@@ -41,14 +41,14 @@ document.addEventListener("DOMContentLoaded", function() {
         // "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90'>Топографическая анатомия</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb'>Лучевая диагностика</a>",
-		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ayqIVZ1CivFZARyipbfa' target='_blank'>Пропедевтика внутренних болезней</a>",
+		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ayqIVZ1CivFZARyipbfa' >Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
 		// "Патофизиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/bFouq17EaDhboPQnckgz'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
         // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
 		"Топографическая анатомия|Практика|CurrWeek": "<a href='topan.html'>Топографическая анатомия</a><br><span style='font-size: 12px;'>Повторите прошлую тему!</span>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
-		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/UGfIe6k9n6tZhBEm7Yye'>Базисная фармакология</a>",
+		"Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
 		// "Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM'>Патологическая анатомия</a>"
         // NEXT WEEK
@@ -106,6 +106,14 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
         console.log(`[NO MATCH] "${text}"`);
+		
+		
+		document.querySelectorAll('.schedule__date').forEach(el => {
+			if (el.textContent.trim() === 'Invalid Date') {
+				el.closest('.schedule__day')?.remove();
+			}
+		});
+
     }
 
     function applyOverrideToPlace(span) {
