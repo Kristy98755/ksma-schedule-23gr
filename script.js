@@ -156,8 +156,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- Загрузка недели ---
-    function loadWeek(monday, container, weekId) {
-    const url = `https://ksma-schedule.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
+
+function loadWeek(monday, container, weekId) {
+    const url = `https://ksma-schedules.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
     const key = `schedule_${groupId}_${formatDate(monday)}`;
 
     // --- Хранилище ---
@@ -177,7 +178,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function loadCache(name) {
-        // cookie приоритетнее, если есть
         const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
         if (match) {
             try {
@@ -207,11 +207,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const data = await response.json();
             saveCache(cacheKey, data, maxAgeSeconds);
+            data._source = 'online'; // <--- отметим источник
             return data;
         } catch (error) {
             console.warn(`[cache] ${cacheKey}: loading from cache due to error: ${error.message}`);
             const cached = loadCache(cacheKey);
             if (cached) {
+                cached._source = 'offline'; // <--- отметим источник
                 console.info(`[cache] restored ${cacheKey} (offline mode)`);
                 return cached;
             }
@@ -286,13 +288,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
         container.appendChild(scheduleTable);
 
+        // --- Статус сервера ---
+        const statusP = document.createElement("p");
+        statusP.style.textAlign = "center";
+        statusP.innerHTML =
+            `<b>kgma.kg is <span style="color:${data._source === 'online' ? 'limegreen' : 'red'}">${data._source}</span></b>`;
+        document.body.appendChild(statusP);
+
         setTimeout(() => {
             applyGlobalOverrides(container);
             applyOverridesToWeek(container, weekId);
         }, 300);
     });
 }
-
 
 
     const monday = getMonday(new Date());
