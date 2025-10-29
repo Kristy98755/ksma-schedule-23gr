@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- Загрузка недели ---
 
 function loadWeek(monday, container, weekId) {
-    const url = `https://ksma-schedules.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
+    const url = `https://ksma-schedule.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
     const key = `schedule_${groupId}_${formatDate(monday)}`;
 
     // --- Хранилище ---
