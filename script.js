@@ -157,80 +157,113 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- Загрузка недели ---
     function loadWeek(monday, container, weekId) {
-        const url = `https://ksma-schedule.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
+    const url = `https://ksma-schedule.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
+    const cookieKey = `schedule_${groupId}_${formatDate(monday)}`;
 
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                container.innerHTML = "";
-                const scheduleTable = document.createElement("ul");
-                scheduleTable.className = "schedule__table";
+    async function fetchWithCookieCache(url, cookieKey, maxAgeSeconds = 60 * 60 * 24) {
+        try {
+            const response = await fetch(url, { cache: 'no-store' });
+            const contentType = response.headers.get('content-type') || '';
 
-                for(const dayKey in data){
-                    const day = data[dayKey];
-                    const liDay = document.createElement("li");
-                    liDay.className = "schedule__day";
+            // Проверка: Cloudflare-ошибка или HTML-страница вместо JSON
+            if (!response.ok || !contentType.includes('application/json')) {
+                throw new Error(`Bad response: ${response.status}`);
+            }
 
-                    const dateSpan = document.createElement("span");
-                    dateSpan.className = "schedule__date";
-                    const dateObj = new Date(day.d);
-                    const options = { weekday: "long", day: "numeric", month: "long" };
-                    dateSpan.textContent = capitalizeFirst(dateObj.toLocaleDateString("ru-RU", options));
-                    liDay.appendChild(dateSpan);
+            const data = await response.json();
+            document.cookie = `${cookieKey}=${encodeURIComponent(JSON.stringify(data))};path=/;max-age=${maxAgeSeconds}`;
+            console.info(`[cache] saved ${cookieKey}`);
+            return data;
 
-                    const lessonsUl = document.createElement("ul");
-                    lessonsUl.className = "schedule__lessons";
+        } catch (error) {
+            console.warn(`[cache] ${cookieKey}: loading from cookies due to error:`, error.message);
+            const match = document.cookie.match(new RegExp(`(?:^|; )${cookieKey}=([^;]*)`));
+            if (match) {
+                try {
+                    const cachedData = JSON.parse(decodeURIComponent(match[1]));
+                    console.info(`[cache] using cached data for ${cookieKey}`);
+                    return cachedData;
+                } catch (parseError) {
+                    console.error(`[cache] failed to parse cookie for ${cookieKey}:`, parseError);
+                }
+            }
+            console.error(`[cache] no cached data available for ${cookieKey}`);
+            return null;
+        }
+    }
 
-                    for(const lessonKey in day.l){
-                        const lesson = day.l[lessonKey];
-                        const lessonLi = document.createElement("li");
-                        lessonLi.className = "lesson";
+    // Загружаем данные (с сервера или из cookie)
+    fetchWithCookieCache(url, cookieKey).then(data => {
+        if (!data) {
+            container.innerHTML = "<p style='color:red; text-align:center;'>Не удалось загрузить расписание</p>";
+            return;
+        }
 
-                        const timeDiv = document.createElement("div");
-                        timeDiv.className = "lesson__time";
-                        timeDiv.textContent = lesson.tm;
-                        lessonLi.appendChild(timeDiv);
+        container.innerHTML = "";
+        const scheduleTable = document.createElement("ul");
+        scheduleTable.className = "schedule__table";
 
-                        const paramsDiv = document.createElement("div");
-                        paramsDiv.className = "lesson__params";
+        for (const dayKey in data) {
+            const day = data[dayKey];
+            const liDay = document.createElement("li");
+            liDay.className = "schedule__day";
 
-                        const nameSpan = document.createElement("span");
-                        nameSpan.className = "lesson__name";
-                        nameSpan.textContent = lesson.d;
-                        paramsDiv.appendChild(nameSpan);
+            const dateSpan = document.createElement("span");
+            dateSpan.className = "schedule__date";
+            const dateObj = new Date(day.d);
+            const options = { weekday: "long", day: "numeric", month: "long" };
+            dateSpan.textContent = capitalizeFirst(dateObj.toLocaleDateString("ru-RU", options));
+            liDay.appendChild(dateSpan);
 
-                        const typeSpan = document.createElement("span");
-                        typeSpan.className = "lesson__type";
-                        typeSpan.textContent = lesson.t;
-                        paramsDiv.appendChild(typeSpan);
+            const lessonsUl = document.createElement("ul");
+            lessonsUl.className = "schedule__lessons";
 
-                        if(lesson.r){
-                            const placeSpan = document.createElement("span");
-                            placeSpan.className = "lesson__place";
-                            placeSpan.innerHTML = `<i class="icon-marker"></i>${lesson.r}`;
-                            paramsDiv.appendChild(placeSpan);
-                        }
+            for (const lessonKey in day.l) {
+                const lesson = day.l[lessonKey];
+                const lessonLi = document.createElement("li");
+                lessonLi.className = "lesson";
 
-                        lessonLi.appendChild(paramsDiv);
-                        lessonsUl.appendChild(lessonLi);
-                    }
+                const timeDiv = document.createElement("div");
+                timeDiv.className = "lesson__time";
+                timeDiv.textContent = lesson.tm;
+                lessonLi.appendChild(timeDiv);
 
-                    liDay.appendChild(lessonsUl);
-                    scheduleTable.appendChild(liDay);
+                const paramsDiv = document.createElement("div");
+                paramsDiv.className = "lesson__params";
+
+                const nameSpan = document.createElement("span");
+                nameSpan.className = "lesson__name";
+                nameSpan.textContent = lesson.d;
+                paramsDiv.appendChild(nameSpan);
+
+                const typeSpan = document.createElement("span");
+                typeSpan.className = "lesson__type";
+                typeSpan.textContent = lesson.t;
+                paramsDiv.appendChild(typeSpan);
+
+                if (lesson.r) {
+                    const placeSpan = document.createElement("span");
+                    placeSpan.className = "lesson__place";
+                    placeSpan.innerHTML = `<i class="icon-marker"></i>${lesson.r}`;
+                    paramsDiv.appendChild(placeSpan);
                 }
 
-                container.appendChild(scheduleTable);
+                lessonLi.appendChild(paramsDiv);
+                lessonsUl.appendChild(lessonLi);
+            }
 
-                setTimeout(() => {
-                    applyGlobalOverrides(container);
-                    applyOverridesToWeek(container, weekId);
-                }, 300);
-            })
-            .catch(err => {
-                container.innerHTML = "<p style='color:red; text-align:center;'>Не удалось загрузить расписание</p>";
-                console.error(err);
-            });
-    }
+            liDay.appendChild(lessonsUl);
+            scheduleTable.appendChild(liDay);
+        }
+
+        container.appendChild(scheduleTable);
+
+        setTimeout(() => {
+            applyGlobalOverrides(container);
+            applyOverridesToWeek(container, weekId);
+        }, 300);
+    });
+}
 
     const monday = getMonday(new Date());
     const nextMonday = new Date(monday);
