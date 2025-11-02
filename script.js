@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // TARGETED
 
         // CURRENT WEEK
-        "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
+        "Клиническая биохимия|Практика|NextWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
         "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/GTXxYzRwRTJXCXdYdSCO'>Общая гигиена</a>",
 		"Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/2XQAo3Z7vOH7BqQ2oZGL'>Пропедевтика детских болезней</a>",
         // "Топографическая анатомия|Практика|CurrWeek": "<a href='https://chatgpt.com/share/68da1b47-05b8-800b-a282-c820fbc39c90'>Топографическая анатомия</a>",
