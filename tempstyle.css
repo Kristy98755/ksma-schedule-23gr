@@ -260,3 +260,8 @@ body {
   50%    {background-size: 55% 100%,55% 100%,100% 0  ,100% 0  }
   50.01% {background-size: 0   100%,0   100%,100% 55%,100% 55%}
 }
+
+
+.lesson__weather {
+	font-style:normal;
+}

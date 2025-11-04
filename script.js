@@ -303,14 +303,102 @@ statusP.innerHTML =
     `<b>kgma.kg is <span style="color:${data._source === 'online' ? 'limegreen' : 'red'}">${data._source}</span></b>`;
 
 // Вставляем в конец контейнера расписания
-container.appendChild(statusP);
+	container.appendChild(statusP);
 
 
-        setTimeout(() => {
-            applyGlobalOverrides(container);
-            applyOverridesToWeek(container, weekId);
-        }, 300);
-    });
+
+
+			setTimeout(() => {
+    // Сначала применяем твои overrides
+			applyGlobalOverrides(container);
+			applyOverridesToWeek(container, weekId);
+
+			// --- Вставка погоды под каждой парой ---
+			(async function() {
+				try {
+					console.log("[WEATHER] Загружаем данные погоды...");
+					const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=42.875&longitude=74.5&hourly=temperature_2m,precipitation,snowfall&timezone=Asia/Bishkek`);
+					const weatherData = await response.json();
+					console.log("[WEATHER] Данные получены");
+
+					const lessonsTimeDivs = container.querySelectorAll(".lesson__time");
+					console.log("[WEATHER] Найдено уроков:", lessonsTimeDivs.length);
+
+					lessonsTimeDivs.forEach(div => {
+						const times = div.textContent.trim().split("-");
+						if (times.length !== 2) {
+							console.warn("[WEATHER] Не удалось распознать время пары:", div.textContent);
+							return;
+						}
+						const startTime = times[0];
+
+						const dateLi = div.closest(".schedule__day").querySelector(".schedule__date")?.textContent.trim();
+						if (!dateLi) {
+							console.warn("[WEATHER] Не удалось найти дату для пары:", div.textContent);
+							return;
+						}
+
+						// Преобразуем дату в YYYY-MM-DD
+						const dateParts = dateLi.match(/(\d+)\s+([а-я]+)/i);
+						if (!dateParts) {
+							console.warn("[WEATHER] Не удалось распознать дату:", dateLi);
+							return;
+						}
+						const day = dateParts[1].padStart(2, "0");
+						const monthNames = {
+							"января":"01","февраля":"02","марта":"03","апреля":"04","мая":"05","июня":"06",
+							"июля":"07","августа":"08","сентября":"09","октября":"10","ноября":"11","декабря":"12"
+						};
+						const month = monthNames[dateParts[2].toLowerCase()];
+						if (!month) {
+							console.warn("[WEATHER] Не удалось найти номер месяца для:", dateParts[2]);
+							return;
+						}
+
+						// Берём только час начала пары
+						const [h, m] = startTime.split(":").map(Number);
+						const hour = h; // игнорируем минуты
+
+						const isoDate = `${new Date().getFullYear()}-${month}-${day}`;
+
+						// Находим индекс ближайшего часа в API
+						const index = weatherData.hourly.time.findIndex(t => t.startsWith(isoDate + `T${hour.toString().padStart(2,'0')}:`));
+						if (index === -1) {
+							console.warn("[WEATHER] Не найден индекс времени для", isoDate, hour);
+							return;
+						}
+
+						const temp = weatherData.hourly.temperature_2m[index];
+						const precip = weatherData.hourly.precipitation[index];
+						const snow = weatherData.hourly.snowfall[index];
+
+						console.log(`[WEATHER] Для ${isoDate} ${startTime}: temp=${temp}, precip=${precip}, snow=${snow}`);
+
+						// Выбираем иконку
+						let icon = "☀️";      // солнце
+						if (snow > 0.1) icon = "❄️";     // снег
+						else if (precip > 1) icon = "🌧️"; // сильный дождь
+						else if (precip > 0) icon = "🌦️"; // дождик / морось
+						else icon = "⛅";       // облачно
+
+						const weatherSpan = document.createElement("span");
+						weatherSpan.className = "lesson__weather";
+						weatherSpan.style.marginLeft = "6px";
+						weatherSpan.textContent = `${icon} ${temp}°C`;
+
+						const br = document.createElement("br"); // перенос строки
+						div.appendChild(br);
+						div.appendChild(weatherSpan);
+
+					});
+
+				} catch(e) {
+					console.error("[WEATHER] Ошибка загрузки погоды:", e);
+				}
+			})();
+
+		}, 300);
+	});
 }
 
 
