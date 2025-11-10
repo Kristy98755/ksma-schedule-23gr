@@ -35,9 +35,9 @@ document.addEventListener("DOMContentLoaded", function() {
         // TARGETED
 
         // CURRENT WEEK
-        "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
-        "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GTXxYzRwRTJXCXdYdSCO'>Общая гигиена</a>",
-		     "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/S0b7Z4cIQB0NkGLFMGgy'>Пропедевтика детских болезней</a>",
+        // "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
+        // "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GTXxYzRwRTJXCXdYdSCO'>Общая гигиена</a>",
+		     // "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/S0b7Z4cIQB0NkGLFMGgy'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ayqIVZ1CivFZARyipbfa' >Пропедевтика внутренних болезней</a>",
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Патофизиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/bFouq17EaDhboPQnckgz'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
         // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
-		"Топографическая анатомия|Практика|CurrWeek": "<a href='topan.html'>Топографическая анатомия</a>",
+		// "Топографическая анатомия|Практика|CurrWeek": "<a href='topan.html'>Топографическая анатомия</a>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
