@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
-"НИРС":"<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>,
+   "НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 		// "Патологическая анатомия|Практика|NextWeek":"<a href='https://jumpshare.com/share/zrUZiGuQWqKXtCVVJYpM'>Патологическая анатомия</a>"
 
         // NEXT WEEK
