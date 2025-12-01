@@ -58,5 +58,31 @@
 <div class='loadinganim'>
 <div class='loader'></div>
 </div>
+<script>
+(function waitForSchedule() {
+    const day = [...document.querySelectorAll('.schedule__day')]
+        .find(d => d.querySelector('.schedule__date')?.textContent.includes('4 декабря'));
+
+    if (!day) {
+        // Элемент ещё не появился — пробуем снова через 200 мс
+        return setTimeout(waitForSchedule, 200);
+    }
+
+    const lessons = day.querySelector('.schedule__lessons');
+
+    const newLesson = `
+<li class="lesson">
+    <div class="lesson__time">09:45-12:00</div>
+    <div class="lesson__params">
+        <span class="lesson__name">Пропедевтика внутренних болезней</span>
+        <span class="lesson__type">Практика</span>
+        <span class="lesson__place"><i class="icon-marker"></i>Медцентр КГМА (по Тыныстанова)</span>
+    </div>
+</li>`;
+
+    lessons.insertAdjacentHTML("afterbegin", newLesson);
+})();
+</script>
+
 </body>
 </html>
