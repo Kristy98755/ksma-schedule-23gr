@@ -265,3 +265,9 @@ body {
 .lesson__weather {
 	font-style:normal;
 }
+
+.loc-icon {
+    width: 13px;
+    height: 13px;
+    margin-right: 2px;    /* расстояние до текста */
+}

@@ -284,7 +284,8 @@ function loadWeek(monday, container, weekId) {
                 if (lesson.r) {
                     const placeSpan = document.createElement("span");
                     placeSpan.className = "lesson__place";
-                    placeSpan.innerHTML = `<i class="icon-marker"></i>${lesson.r}`;
+					placeSpan.innerHTML = `<img src="pin.png" class="loc-icon">${lesson.r}`;
+
                     paramsDiv.appendChild(placeSpan);
                 }
 
@@ -319,7 +320,7 @@ statusP.innerHTML =
 			(async function() {
 				try {
 					console.log("[WEATHER] Загружаем данные погоды...");
-					const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=42.875&longitude=74.5&hourly=temperature_2m,precipitation,snowfall&timezone=Asia/Bishkek`);
+					const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=42.875&longitude=74.5&hourly=temperature_2m,precipitation,snowfall,cloudcover&timezone=Asia/Bishkek`);
 					const weatherData = await response.json();
 					console.log("[WEATHER] Данные получены");
 
@@ -373,15 +374,22 @@ statusP.innerHTML =
 						const temp = weatherData.hourly.temperature_2m[index];
 						const precip = weatherData.hourly.precipitation[index];
 						const snow = weatherData.hourly.snowfall[index];
+						const cloud = weatherData.hourly.cloudcover[index];
 
-						console.log(`[WEATHER] Для ${isoDate} ${startTime}: temp=${temp}, precip=${precip}, snow=${snow}`);
+						console.log(`[WEATHER] Для ${isoDate} ${startTime}: temp=${temp}, precip=${precip}, snow=${snow}, cloud=${cloud}`);
+
 
 						// Выбираем иконку
-						let icon = "☀️";      // солнце
-						if (snow > 0.1) icon = "❄️";     // снег
-						else if (precip > 1) icon = "🌧️"; // сильный дождь
-						else if (precip > 0) icon = "🌦️"; // дождик / морось
-						else icon = "⛅";       // облачно
+						let icon = "☀️";
+
+						if (snow > 0.1) icon = "❄️";                // снег
+						else if (precip > 0.1) icon = "🌧️";         // дождь
+						else if (cloud >= 85) icon = "☁️";          // пасмурно
+						else if (cloud >= 40) icon = "⛅️";          // облачно
+						else if (cloud >= 20) icon = "🌤️";          // переменная облачность
+						else icon = "☀️";                            // ясно
+                       // ясно
+
 
 						const weatherSpan = document.createElement("span");
 						weatherSpan.className = "lesson__weather";

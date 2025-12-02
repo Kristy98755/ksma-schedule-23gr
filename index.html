@@ -76,13 +76,79 @@
     <div class="lesson__params">
         <span class="lesson__name">Пропедевтика внутренних болезней</span>
         <span class="lesson__type">Практика</span>
-        <span class="lesson__place"><i class="icon-marker"></i>Медцентр КГМА (по Тыныстанова)</span>
+        <span class="lesson__place">Медцентр КГМА (по Тыныстанова)</span>
     </div>
 </li>`;
 
     lessons.insertAdjacentHTML("afterbegin", newLesson);
 })();
 </script>
+<script>
+(function addMissingWednesday() {
+    // Ждём, пока дни появятся внутри schedule__table
+    const list = document.querySelector('.schedule__table');
+
+    // Если контейнер ещё не создан или он пустой — ждём
+    if (!list || list.children.length === 0) {
+        return setTimeout(addMissingWednesday, 200);
+    }
+
+    // Проверяем, что "Среда" уже не существует
+    const exists = [...list.querySelectorAll('.schedule__date')]
+        .some(d => d.textContent.includes('Среда'));
+
+    if (exists) return; // Ничего делать не надо
+
+    // HTML для новой среды
+    const wednesdayHTML = `
+<li class="schedule__day">
+    <span class="schedule__date">Среда, 3 декабря</span>
+    <ul class="schedule__lessons">
+
+        <li class="lesson">
+            <div class="lesson__time">09:45-11:00</div>
+            <div class="lesson__params">
+                <span class="lesson__name">НИРС</span>
+                <span class="lesson__type">Практика</span>
+                <span class="lesson__place">Центр тестирования КГМА</span>
+            </div>
+        </li>
+
+        <li class="lesson">
+            <div class="lesson__time">12:00-15:00</div>
+            <div class="lesson__params">
+                <span class="lesson__name">КПВ</span>
+                <span class="lesson__type">Практика</span>
+                <span class="lesson__place"></span>
+            </div>
+        </li>
+
+        <li class="lesson">
+            <div class="lesson__time">15:30-16:30</div>
+            <div class="lesson__params">
+                <span class="lesson__name">Лучевая диагностика</span>
+                <span class="lesson__type">Отработка</span>
+                <span class="lesson__place">Медцентр КГМА</span>
+            </div>
+        </li>
+
+    </ul>
+</li>`;
+
+    // Ищем четверг, чтобы поставить среду перед ним
+    const thursday = [...list.children].find(li =>
+        li.querySelector('.schedule__date')?.textContent.includes('Четверг')
+    );
+
+    if (thursday) {
+        thursday.insertAdjacentHTML('beforebegin', wednesdayHTML);
+    } else {
+        list.insertAdjacentHTML('beforeend', wednesdayHTML);
+    }
+
+})();
+</script>
+
 
 </body>
 </html>
