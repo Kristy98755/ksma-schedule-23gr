@@ -21,7 +21,7 @@ body {
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
     /* background-image: url('https://s8d8.turboimg.net/sp/263d058ee395bf531e5be6e8f14bda13/0e7c67fa07a71a920d992cf27a4177761.jpg?62547'); */
-    background-image: url('https://s8d8.turboimg.net/sp/dc4aa9aa993b2e9b9d3b63b312a2b9dd/MIKU_USPosterMain-2025-02-101.jpg?99520');
+    background-image: url('https://thumbsnap.com/s/Xh9Xxhxa.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -30,7 +30,7 @@ body {
 
 @media (orientation: landscape) {
     body {
-        background-image: url('https://s8d8.turboimg.net/sp/5bf0fe3192c8b91b45f3e834f4bbf4cc/Bezymannyj.png?40448');
+        background-image: url('https://thumbsnap.com/s/HLstrQpd.jpg');
     }
 }
 
