@@ -1,154 +1,32 @@
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <title>Расписание</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="tempstyle.css" type="text/css">
-	<link rel="icon" href="favicon.ico">
-    <script src="script.js" defer></script>
-
-    <style>
-       <style>
-		/* По умолчанию — вертикальный фон */
-		body {
-			background-image: url('https://i.postimg.cc/sXHYB2M0/0e7c67fa07a71a920d992cf27a417776.jpg');
-			background-size: cover;
-			background-position: center;
-			background-repeat: no-repeat;
-			background-attachment: fixed;
-		}
-
-		/* Горизонтальная ориентация (landscape) */
-		@media (orientation: landscape) {
-			body {
-				background-image: url('https://i.postimg.cc/BZMqW02w/image.png');
-			}
-		}
-		</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Техническое обслуживание</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#60a5fa;--text:#e6eef8}
+    html,body{height:100%;margin:0;font-family:Inter, Roboto, Arial, sans-serif;background:linear-gradient(180deg,var(--bg),#071022);color:var(--text)}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{max-width:720px;width:100%;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.7);border-radius:12px;padding:36px;border:1px solid rgba(255,255,255,0.03)}
+    h1{margin:0 0 8px;font-size:24px;letter-spacing:0.2px}
+    p{margin:0 0 18px;line-height:1.5;color:rgba(230,238,248,0.9)}
+    .meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    a.cta{background:linear-gradient(90deg,var(--accent),#3b82f6);padding:10px 14px;border-radius:8px;color:#02203b;text-decoration:none;font-weight:600}
+    .hint{font-size:13px;color:rgba(230,238,248,0.7)}
+    @media (max-width:480px){.card{padding:20px}h1{font-size:20px}}
+  </style>
 </head>
 <body>
-<section class="content container">
-    <span class="page-item__title">Расписание занятий</span>
-    <section class="schedule full">
-        <div class="schedule__data" style="display: block;">
-            <div class="row center week-tb">
-                <div class="week-btn active" id="cur">Текущая неделя</div>
-                <div class="week-btn active" id="next">Следующая неделя</div>
-            </div>
-
-            <!-- Текущая неделя -->
-            <div id="CurrWeek">
-                <span id="week"></span>
-                <ul class="schedule__table"></ul>
-            </div>
-
-            <!-- Следующая неделя -->
-            <div id="NextWeek" style="display: none;">
-                <span id="week-next"></span>
-                <!-- <p align="center" style="font-size:24px; color:red;"> -->
-                    <!-- Не готово. Для ускорения разработки требуется дополнительное финансирование -->
-                <!-- </p> -->
-            </div>
-        </div>
-    </section>
-</section>
-<div style="height: 50px;"></div>
-<div class='loadinganim'>
-<div class='loader'></div>
-</div>
-<!-- <script> -->
-<!-- (function waitForSchedule() { -->
-    <!-- const day = [...document.querySelectorAll('.schedule__day')] -->
-        <!-- .find(d => d.querySelector('.schedule__date')?.textContent.includes('4 декабря')); -->
-
-    <!-- if (!day) { -->
-        <!-- // Элемент ещё не появился — пробуем снова через 200 мс -->
-        <!-- return setTimeout(waitForSchedule, 200); -->
-    <!-- } -->
-
-    <!-- const lessons = day.querySelector('.schedule__lessons'); -->
-
-    <!-- const newLesson = ` -->
-<!-- <li class="lesson"> -->
-    <!-- <div class="lesson__time">09:45-12:00</div> -->
-    <!-- <div class="lesson__params"> -->
-        <!-- <span class="lesson__name">Пропедевтика внутренних болезней</span> -->
-        <!-- <span class="lesson__type">Практика</span> -->
-        <!-- <span class="lesson__place">Медцентр КГМА (по Тыныстанова)</span> -->
-    <!-- </div> -->
-<!-- </li>`; -->
-
-    <!-- lessons.insertAdjacentHTML("afterbegin", newLesson); -->
-<!-- })(); -->
-<!-- </script> -->
-<script>
-(function addMissingWednesday() {
-    // Ждём, пока дни появятся внутри schedule__table
-    const list = document.querySelector('.schedule__table');
-
-    // Если контейнер ещё не создан или он пустой — ждём
-    if (!list || list.children.length === 0) {
-        return setTimeout(addMissingWednesday, 200);
-    }
-
-    // Проверяем, что "Среда" уже не существует
-    const exists = [...list.querySelectorAll('.schedule__date')]
-        .some(d => d.textContent.includes('Среда'));
-
-    if (exists) return; // Ничего делать не надо
-
-    // HTML для новой среды
-    const wednesdayHTML = `
-<li class="schedule__day">
-    <span class="schedule__date">Среда, 3 декабря</span>
-    <ul class="schedule__lessons">
-
-        <li class="lesson">
-            <div class="lesson__time">09:45-11:00</div>
-            <div class="lesson__params">
-                <span class="lesson__name">НИРС</span>
-                <span class="lesson__type">Практика</span>
-                <span class="lesson__place">Центр тестирования КГМА</span>
-            </div>
-        </li>
-
-        <li class="lesson">
-            <div class="lesson__time">12:00-15:00</div>
-            <div class="lesson__params">
-                <span class="lesson__name">КПВ</span>
-                <span class="lesson__type">Практика</span>
-                <span class="lesson__place"></span>
-            </div>
-        </li>
-
-        <li class="lesson">
-            <div class="lesson__time">15:30-16:30</div>
-            <div class="lesson__params">
-                <span class="lesson__name">Лучевая диагностика</span>
-                <span class="lesson__type">Отработка</span>
-                <span class="lesson__place">Медцентр КГМА</span>
-            </div>
-        </li>
-
-    </ul>
-</li>`;
-
-    // Ищем четверг, чтобы поставить среду перед ним
-    const thursday = [...list.children].find(li =>
-        li.querySelector('.schedule__date')?.textContent.includes('Четверг')
-    );
-
-    if (thursday) {
-        thursday.insertAdjacentHTML('beforebegin', wednesdayHTML);
-    } else {
-        list.insertAdjacentHTML('beforeend', wednesdayHTML);
-    }
-
-})();
-</script>
-
-
+  <div class="wrap">
+    <div class="card">
+      <h1>Сайт временно закрыт на техобслуживание</h1>
+      <p>Ведутся плановые работы. Приносим извинения за неудобства — сайт скоро вернётся в строй.</p>
+      <div class="meta">
+        <a class="cta" href="https://t.me/medik_kgz" target="_blank" rel="noopener noreferrer">Сис. админ: t.me/medik_kgz</a>
+        <div class="hint">Если у вас срочный вопрос — напишите в Telegram. Спасибо за понимание.</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
