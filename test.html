@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Обновление приложения</title>
+</head>
+<body>
+<script>
+// === Конфигурация ===
+const API_URL = '/api/latest.json'; // ожидаемый JSON: {"version":"x.y.z", "url":"https://...apk"}
+const UPDATE_PAGE = '/update.html'; // fallback страница с ссылкой на apk
+
+// Сравнение версий (простейшее семантическое)
+function compareVersions(a, b) {
+  const pa = String(a).split('.').map(n=>parseInt(n||'0',10));
+  const pb = String(b).split('.').map(n=>parseInt(n||'0',10));
+  const len = Math.max(pa.length, pb.length);
+  for(let i=0;i<len;i++){const va=pa[i]||0,vb=pb[i]||0;if(va>vb) return 1;if(va<vb) return -1;}
+  return 0;
+}
+
+(async function(){
+  let localVersion = null;
+
+  // Попытка получить версию через JS-интерфейс
+  try {
+    if(window.App && typeof window.App.getVersion === 'function'){
+      localVersion = window.App.getVersion();
+    }
+  } catch(e){
+    // Игнорируем ошибки
+  }
+
+  // Получаем актуальную версию с сервера
+  let latestVersion = null;
+  try {
+    const resp = await fetch(API_URL,{cache:'no-store'});
+    if(resp.ok){
+      const data = await resp.json();
+      latestVersion = data.version;
+    }
+  } catch(e){
+    console.warn('Не удалось получить latest.json:', e);
+  }
+
+  // Решение: если нет локальной версии или она меньше latest → редирект
+  if(!localVersion || (latestVersion && compareVersions(localVersion, latestVersion)<0)){
+    window.location.href = UPDATE_PAGE;
+  } else {
+    console.log('Приложение актуальное:', localVersion);
+  }
+})();
+</script>
+</body>
+</html>
