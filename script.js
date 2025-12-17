@@ -52,11 +52,11 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
    //"НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
-			"Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
-			"Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
+			// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
+			// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 
         // NEXT WEEK
-		"Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
+		// "Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
 
 		
 		
