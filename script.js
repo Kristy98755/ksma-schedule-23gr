@@ -1,4 +1,46 @@
 document.addEventListener("DOMContentLoaded", function() {
+        async function getLatestVersion() {
+                const res = await fetch("https://api.github.com/repos/kristy98755/ksma-schedule/releases/latest");
+                const json = await res.json();
+                console.log("Fetched latest release:", json.tag_name); // логируем прямо здесь
+                return json.tag_name.replace(/[^\d]/g, ''); 
+        }
+
+        async function checkUpdate() {
+    let build = "0"; // по умолчанию старое приложение
+    try {
+        if (window.KsmaApp && window.KsmaApp.getBuildNumber) {
+            build = window.KsmaApp.getBuildNumber();
+            // отправляем в adb logcat через Kotlin
+            if (window.KsmaApp.reportBuild) window.KsmaApp.reportBuild(build);
+        } else {
+            console.warn("KsmaApp interface not found, assuming outdated app");
+        }
+    } catch (e) {
+        console.error("Error reading build number:", e);
+    }
+
+    const latest = await getLatestVersion();
+    console.log("App build:", build, "Latest GitHub:", latest);
+
+    if (Number(build) < Number(latest)) {
+        console.log("App outdated, triggering update");
+        window.location.href = "https://kristy98755.github.io/ksma-schedule/update.html";
+
+        try {
+            if (window.KsmaApp && window.KsmaApp.triggerUpdate) {
+                window.KsmaApp.triggerUpdate();
+                console.log("triggerUpdate() called on KsmaApp");
+            }
+        } catch (e) {
+            console.error("Failed to call triggerUpdate:", e);
+        }
+    } else {
+        console.log("App is up-to-date");
+    }
+}
+
+        checkUpdate();
     const groupId = 51; // ID группы
     const currWeekEl = document.getElementById("CurrWeek");
     const nextWeekEl = document.getElementById("NextWeek");
