@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded",        async function getLatestVersion() {
+document.addEventListener("DOMContentLoaded", function() {
+async function getLatestVersion() {
                 const res = await fetch("https://api.github.com/repos/kristy98755/ksma-schedule/releases/latest");
                 const json = await res.json();
                 console.log("Fetched latest release:", json.tag_name); // логируем прямо здесь
