@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-async function getLatestVersion() {
+        async function getLatestVersion() {
                 const res = await fetch("https://api.github.com/repos/kristy98755/ksma-schedule/releases/latest");
                 const json = await res.json();
                 console.log("Fetched latest release:", json.tag_name); // логируем прямо здесь
@@ -41,7 +41,6 @@ async function getLatestVersion() {
 }
 
         checkUpdate();
-function() {
     const groupId = 51; // ID группы
     const currWeekEl = document.getElementById("CurrWeek");
     const nextWeekEl = document.getElementById("NextWeek");
