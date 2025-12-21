@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function() {
     try {
         if (window.KsmaApp && window.KsmaApp.getBuildNumber) {
             build = window.KsmaApp.getBuildNumber();
-            // отправляем в adb logcat через Kotlin
             if (window.KsmaApp.reportBuild) window.KsmaApp.reportBuild(build);
         } else {
             console.warn("KsmaApp interface not found, assuming outdated app");
@@ -283,7 +282,17 @@ function loadWeek(monday, container, weekId) {
             container.innerHTML = "<p style='color:red; text-align:center;'>Не удалось загрузить расписание</p>";
             return;
         }
-
+		if (data.message) {
+				container.innerHTML = `
+					<p style="
+						text-align:center;
+					">
+						${data.message}
+					</p>
+				`;
+				alert(`${data.message}`);
+				return;
+		};
         container.innerHTML = "";
         const scheduleTable = document.createElement("ul");
         scheduleTable.className = "schedule__table";
