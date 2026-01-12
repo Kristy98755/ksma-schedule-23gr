@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ayqIVZ1CivFZARyipbfa' >Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
-		// "Патофизиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/bFouq17EaDhboPQnckgz'>Патфиз</a>",
+		"Патологическая физиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/CgWo9buaQlBUIDp1z7dt'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
         // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
 		// "Топографическая анатомия|Практика|CurrWeek": "<a href='topan.html'>Топографическая анатомия</a>",
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
    //"НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 			// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
-			"Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
+			// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 
         // NEXT WEEK
 		// "Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
