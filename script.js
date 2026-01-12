@@ -39,7 +39,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 
-        checkUpdate();
+// checkUpdate();
+		
+		
+		
     const groupId = 51; // ID группы
     const currWeekEl = document.getElementById("CurrWeek");
     const nextWeekEl = document.getElementById("NextWeek");
@@ -88,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		"Патологическая физиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/CgWo9buaQlBUIDp1z7dt'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
         // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
-		// "Топографическая анатомия|Практика|CurrWeek": "<a href='topan.html'>Топографическая анатомия</a>",
+		"Топографическая анатомия|Практика|CurrWeek": "<a href='https://jumpshare.com/share/pStjOoBpXgybf99pre2l'>Топографическая анатомия</a>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='luch.html'>Лучевая диагностика</a>",
