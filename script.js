@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 
-// checkUpdate();
+checkUpdate();
 		
 		
 		
