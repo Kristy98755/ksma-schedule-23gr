@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Гигиена питания — интерактивный конспект</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --bg:#0b0f14;
+  --card:#121923;
+  --accent:#4fc3f7;
+  --accent2:#9c7cff;
+  --text:#e6ecf1;
+  --muted:#9aa4ad;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Roboto,sans-serif;
+  background:linear-gradient(180deg,#090c11,#0b0f14);
+  color:var(--text);
+}
+header{
+  position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(10px);
+  background:rgba(11,15,20,.8);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+header h1{margin:0;padding:20px;font-size:26px}
+nav{
+  display:flex;gap:14px;overflow-x:auto;padding:0 20px 16px
+}
+nav a{
+  color:var(--muted);text-decoration:none;font-size:14px;white-space:nowrap
+}
+nav a:hover{color:var(--accent)}
+section{padding:0px 20px;max-width:1100px;margin:auto}
+.card{
+  background:linear-gradient(180deg,#121923,#0e141d);
+  border-radius:18px;padding:28px;margin-bottom:28px;
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.04)
+}
+h2{margin-top:0;font-size:28px;color:var(--accent)}
+h3{color:var(--accent2)}
+p,li{line-height:1.6;color:var(--text)}
+ul{padding-left:22px}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px
+}
+.badge{
+  display:inline-block;padding:4px 10px;border-radius:999px;
+  background:rgba(79,195,247,.15);color:var(--accent);font-size:12px
+}
+.table{
+  width:100%;border-collapse:collapse;font-size:14px;margin-top:12px
+}
+.table th,.table td{border-bottom:1px solid rgba(255,255,255,.06);padding:10px}
+.table th{text-align:left;color:var(--accent)}
+.footer{color:var(--muted);text-align:center;padding:40px 20px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Гигиена питания</h1>
+  <nav>
+    <a href="#intro">Введение</a>
+    <a href="#components">Состав пищи</a>
+    <a href="#concepts">Виды питания</a>
+    <a href="#norms">Нормы питания</a>
+    <a href="#regime">Режим</a>
+    <a href="#pathology">Патологии</a>
+    <a href="#nutrients">Пищевые вещества</a>
+    <a href="#products">Продукты</a>
+  </nav>
+</header>
+
+<section id="intro">
+  <div class="card">
+    <h2>Роль питания</h2>
+    <p>Питание является одним из наиболее активных и важных факторов внешней среды, оказывающих многообразное влияние на организм человека. Оно обеспечивает рост, развитие, сохранение здоровья, трудоспособности и оптимальной продолжительности жизни.</p>
+  </div>
+</section>
+
+<section id="components">
+  <div class="card">
+    <h2>Составные части пищевых продуктов</h2>
+    <div class="grid">
+      <div>
+        <h3>Естественные компоненты</h3>
+        <p><strong>Питательные вещества:</strong> белки, жиры, углеводы, минеральные соли, витамины, вода.</p>
+        <p><strong>Вкусовые вещества:</strong> органические кислоты, эфиры, кетоны, красители, фитонциды, дубильные и ароматические соединения.</p>
+      </div>
+      <div>
+        <h3>Антипитательные вещества</h3>
+        <ul>
+          <li>Антиаминокислоты</li>
+          <li>Антиминеральные вещества</li>
+          <li>Антивитамины (например, аскорбеназа)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Чужеродные примеси</h3>
+        <ul>
+          <li>Пестициды</li>
+          <li>Радионуклиды</li>
+          <li>Соли тяжёлых металлов</li>
+          <li>Нитраты и нитрозамины</li>
+          <li>Примеси растительного происхождения</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="concepts">
+  <div class="card">
+    <h2>Гигиена питания</h2>
+    <p>Гигиена питания — наука о рациональном, диетическом и лечебно‑профилактическом питании и основах здорового питания населения.</p>
+    <h3>Основные виды питания</h3>
+    <ul>
+      <li><strong>Здоровое питание</strong> — безвредное, с контролем качества и безопасности продуктов.</li>
+      <li><strong>Рациональное питание</strong> — научно обоснованное питание здорового человека.</li>
+      <li><strong>Сбалансированное питание</strong> — оптимальное соотношение Б/Ж/У (1,2 : 2,5 : 4,8) и 12/30/58% ЭПО.</li>
+      <li><strong>Лечебно‑профилактическое питание</strong> — защита от вредных производственных факторов.</li>
+      <li><strong>Лечебное питание</strong> — диетотерапия с учётом патогенеза и клиники заболевания.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="norms">
+  <div class="card">
+    <h2>Нормы питания</h2>
+    <p>Нормы питания — научно обоснованные показатели, покрывающие энергетические траты и потребности организма.</p>
+    <table class="table">
+      <tr><th>Группа</th><th>Ккал/сут</th><th>Характер труда</th></tr>
+      <tr><td>1</td><td>2100–2450</td><td>Умственный труд</td></tr>
+      <tr><td>2</td><td>2500–2800</td><td>Лёгкий физический труд</td></tr>
+      <tr><td>3</td><td>2950–3300</td><td>Средний физический труд</td></tr>
+      <tr><td>4</td><td>3400–3850</td><td>Тяжёлый физический труд</td></tr>
+      <tr><td>5</td><td>3750–4200</td><td>Особо тяжёлый труд</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="regime">
+  <div class="card">
+    <h2>Режим питания</h2>
+    <p>Режим питания — рациональное распределение приёмов пищи в течение суток.</p>
+    <table class="table">
+      <tr><th>Приём пищи</th><th>3‑разовое</th><th>4‑разовое</th></tr>
+      <tr><td>Завтрак</td><td>30%</td><td>20–30%</td></tr>
+      <tr><td>Второй завтрак</td><td>—</td><td>10–25%</td></tr>
+      <tr><td>Обед</td><td>45–50%</td><td>40–50%</td></tr>
+      <tr><td>Ужин</td><td>20–25%</td><td>15–20%</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="pathology">
+  <div class="card">
+    <h2>Патологии питания (ВОЗ)</h2>
+    <ul>
+      <li>Недоедание</li>
+      <li>Переедание</li>
+      <li>Специфическая недостаточность</li>
+      <li>Несбалансированность</li>
+    </ul>
+    <p>Нарушения питания приводят к алиментарной дистрофии, авитаминозам, ожирению, диабету, атеросклерозу и другим заболеваниям.</p>
+  </div>
+</section>
+
+<section id="nutrients">
+  <div class="card">
+    <h2>Значение пищевых веществ</h2>
+    <p><strong>Белки:</strong> суточная потребность 80–120 г, биологическая ценность определяется аминокислотным скором.</p>
+    <p><strong>Жиры:</strong> обеспечивают 30% ЭПО, оптимальное соотношение жирных кислот 10:30:60.</p>
+    <p><strong>Углеводы:</strong> 55% ЭПО, преимущественно крахмал.</p>
+    <p><strong>Витамины и минералы:</strong> катализаторы обменных процессов.</p>
+  </div>
+</section>
+
+<section id="products">
+  <div class="card">
+    <h2>Основные группы продуктов</h2>
+    <p>Рассматриваются: мясо и яйца, молоко и КМП, рыба и морепродукты, хлеб и крупы, сахар и кондитерские изделия, овощи и фрукты, жиры, напитки и продукты брожения.</p>
+    <p>Каждая группа имеет свои особенности пищевой и биологической ценности, усвояемости и санитарной значимости.</p>
+  </div>
+</section>
+
+<div class="footer">Гигиена питания</div>
+</body>
+</html>
