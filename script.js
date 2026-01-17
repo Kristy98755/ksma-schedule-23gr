@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
+	
+	const DEBUG_FAKE_SCHEDULE = false;
+
         async function getLatestVersion() {
                 const res = await fetch("https://api.github.com/repos/kristy98755/ksma-schedule/releases/latest");
                 const json = await res.json();
@@ -39,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 
-checkUpdate();
+// checkUpdate();
 		
 		
 		
@@ -222,27 +225,15 @@ function loadWeek(monday, container, weekId) {
     function saveCache(name, data, maxAgeSeconds) {
         const json = JSON.stringify(data);
         try {
-            if (json.length <= 3800) {
-                document.cookie = `${name}=${encodeURIComponent(json)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
-                console.info(`[cache] saved ${name} in cookie (${(json.length / 1024).toFixed(1)} KB)`);
-            } else {
-                localStorage.setItem(name, json);
+				localStorage.setItem(name, json);
                 console.info(`[cache] saved ${name} in localStorage (${(json.length / 1024).toFixed(1)} KB)`);
-            }
+            
         } catch (e) {
             console.error(`[cache] failed to save ${name}:`, e);
         }
     }
-
+	window.saveCache = saveCache;
     function loadCache(name) {
-        const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-        if (match) {
-            try {
-                return JSON.parse(decodeURIComponent(match[1]));
-            } catch {
-                console.warn(`[cache] cookie parse error for ${name}`);
-            }
-        }
         const ls = localStorage.getItem(name);
         if (ls) {
             try {
@@ -253,38 +244,95 @@ function loadWeek(monday, container, weekId) {
         }
         return null;
     }
+	window.loadCache = loadCache;
 
-    async function fetchWithHybridCache(url, cacheKey, maxAgeSeconds = 60 * 60 * 24) {
-        try {
-            const response = await fetch(url, { cache: 'no-store' });
-            const contentType = response.headers.get('content-type') || '';
-            if (!response.ok || !contentType.includes('application/json')) {
-                throw new Error(`Bad response: ${response.status}`);
-            }
+	function isScheduleStructurallyValid(data) {
+		if (!data || typeof data !== 'object') return false;
 
-            const data = await response.json();
-            saveCache(cacheKey, data, maxAgeSeconds);
-            data._source = 'online'; // <--- отметим источник
-            return data;
-        } catch (error) {
-            console.warn(`[cache] ${cacheKey}: loading from cache due to error: ${error.message}`);
-            const cached = loadCache(cacheKey);
-            if (cached) {
-                cached._source = 'offline'; // <--- отметим источник
-                console.info(`[cache] restored ${cacheKey} (offline mode)`);
-                return cached;
-            }
-            console.error(`[cache] no cached data available for ${cacheKey}`);
-            return null;
+		// проверяем, что есть хотя бы один день с валидной датой
+		for (const dayKey in data) {
+			const day = data[dayKey];
+			if (!day || !day.d) continue; // дата отсутствует
+			const dateObj = new Date(day.d);
+			if (!isNaN(dateObj.getTime())) {
+				// валидная дата найдена
+				return true;
+			}
+		}
+		// не нашли ни одной валидной даты
+		return false;
+	}
+	window.isScheduleStructurallyValid = isScheduleStructurallyValid;
+	
+	
+    async function fetchWithHybridCache(url, cacheKey, maxAgeSeconds = 60*60*168) {
+    try {
+        const resp = await fetch(url, { cache: 'no-store' });
+        const contentType = resp.headers.get('content-type') || '';
+        if (!resp.ok || !contentType.includes('application/json')) {
+            throw new Error(`Bad response: ${resp.status}`);
         }
+
+        let data;
+        try {
+            data = await resp.json();
+        } catch(e) {
+            throw new Error("Worker response is not valid JSON");
+        }
+		
+		// ---- проверка структуры ----
+        if (!isScheduleStructurallyValid(data)) {
+            throw new Error("Worker returned invalid schedule structure");
+        }
+
+        saveCache(cacheKey, data, maxAgeSeconds);
+        data._source = 'online';
+        return data;
+		} catch (workerError) {
+        console.warn(`[cache] ${cacheKey}: ${workerError.message}`);
+
+        // ---- Ловушки, которые стучатся в кеш ----
+        const cached = loadCache(cacheKey);
+        if (cached && isScheduleStructurallyValid(cached)) {
+            cached._source = 'offline';
+            console.info(`[cache] restored ${cacheKey} (offline mode)`);
+            return cached;
+        }
+
+        // ---- fallback.json ----
+		let fallbackErrorMessage = '';
+		try {
+			const fallbackResp = await fetch("/fallback.json", { cache: 'no-store' });
+			const fallbackData = await fallbackResp.json();
+			if (!isScheduleStructurallyValid(fallbackData)) throw new Error("Fallback.json invalid");
+			fallbackData._source = 'offline';
+			saveCache(cacheKey, fallbackData, maxAgeSeconds);
+			console.log("Cached fallback data");
+			return fallbackData;
+		} catch (fe) {
+			fallbackErrorMessage = fe.message;
+			console.warn(`[cache] fallback failed: ${fallbackErrorMessage}`);
+		}
+
+		// legacy 
+		const legacyMessage = `Не удалось загрузить расписание<br>Ошибка: ${workerError.message}` +
+							  (fallbackErrorMessage ? `<br>Fallback: ${fallbackErrorMessage}` : '');
+		return { message: legacyMessage };
     }
+}
+
+
 
     // --- Основная логика отрисовки ---
     fetchWithHybridCache(url, key).then(data => {
         if (!data) {
             container.innerHTML = "<p style='color:red; text-align:center;'>Не удалось загрузить расписание</p>";
             return;
-        }
+        };
+		if (data.message) {
+			container.innerHTML = `<p style="color:red; text-align:center;">${data.message}</p>`;
+        return;
+		};
 		if (data.message) {
 				container.innerHTML = `
 					<p style="
@@ -489,7 +537,6 @@ statusP.innerHTML =
         nextWeekEl.style.display = "block";
         cur.style.backgroundColor = "#bbdd";
     };
-	
 	
 	
 	
