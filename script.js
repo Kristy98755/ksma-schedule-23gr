@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 
-// checkUpdate();
+checkUpdate();
 		
 		
 		
@@ -302,7 +302,7 @@ function loadWeek(monday, container, weekId) {
         // ---- fallback.json ----
 		let fallbackErrorMessage = '';
 		try {
-			const fallbackResp = await fetch("/fallback.json", { cache: 'no-store' });
+			const fallbackResp = await fetch("fallback.json", { cache: 'no-store' });
 			const fallbackData = await fallbackResp.json();
 			if (!isScheduleStructurallyValid(fallbackData)) throw new Error("Fallback.json invalid");
 			fallbackData._source = 'offline';
