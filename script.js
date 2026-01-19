@@ -265,61 +265,70 @@ function loadWeek(monday, container, weekId) {
 	window.isScheduleStructurallyValid = isScheduleStructurallyValid;
 	
 	
-    async function fetchWithHybridCache(url, cacheKey, maxAgeSeconds = 60*60*168) {
-    try {
-        const resp = await fetch(url, { cache: 'no-store' });
-        const contentType = resp.headers.get('content-type') || '';
-        if (!resp.ok || !contentType.includes('application/json')) {
-            throw new Error(`Bad response: ${resp.status}`);
-        }
-
-        let data;
-        try {
-            data = await resp.json();
-        } catch(e) {
-            throw new Error("Worker response is not valid JSON");
-        }
-		
-		// ---- проверка структуры ----
-        if (!isScheduleStructurallyValid(data)) {
-            throw new Error("Worker returned invalid schedule structure");
-        }
-
-        saveCache(cacheKey, data, maxAgeSeconds);
-        data._source = 'online';
-        return data;
-		} catch (workerError) {
-        console.warn(`[cache] ${cacheKey}: ${workerError.message}`);
-
-        // ---- Ловушки, которые стучатся в кеш ----
-        const cached = loadCache(cacheKey);
-        if (cached && isScheduleStructurallyValid(cached)) {
-            cached._source = 'offline';
-            console.info(`[cache] restored ${cacheKey} (offline mode)`);
-            return cached;
-        }
-
-        // ---- fallback.json ----
-		let fallbackErrorMessage = '';
+	async function fetchWithHybridCache(url, cacheKey, maxAgeSeconds = 60*60*168) {
 		try {
-			const fallbackResp = await fetch("fallback.json", { cache: 'no-store' });
-			const fallbackData = await fallbackResp.json();
-			if (!isScheduleStructurallyValid(fallbackData)) throw new Error("Fallback.json invalid");
-			fallbackData._source = 'offline';
-			saveCache(cacheKey, fallbackData, maxAgeSeconds);
-			console.log("Cached fallback data");
-			return fallbackData;
-		} catch (fe) {
-			fallbackErrorMessage = fe.message;
-			console.warn(`[cache] fallback failed: ${fallbackErrorMessage}`);
-		}
+			const resp = await fetch(url, { cache: 'no-store' });
+			const contentType = resp.headers.get('content-type') || '';
+			if (!resp.ok || !contentType.includes('application/json')) {
+				throw new Error(`Bad response: ${resp.status}`);
+			}
 
-		// legacy 
-		const legacyMessage = `Не удалось загрузить расписание<br>Ошибка: ${workerError.message}` +
-							  (fallbackErrorMessage ? `<br>Fallback: ${fallbackErrorMessage}` : '');
-		return { message: legacyMessage };
-    }
-}
+			let data;
+			try { data = await resp.json(); } 
+			catch(e) { throw new Error("Worker response is not valid JSON"); }
+
+			if (!isScheduleStructurallyValid(data)) throw new Error("Worker returned invalid schedule structure");
+
+			saveCache(cacheKey, data, maxAgeSeconds);
+			data._source = 'online';
+			return data;
+		} catch (workerError) {
+			console.warn(`[cache] ${cacheKey}: ${workerError.message}`);
+
+			// fallback на vercel
+			try {
+				const vercelUrl = url.replace(
+					"https://ksma-schedule.itismynickname9.workers.dev/proxy", 
+					"https://ksma-schedule.vercel.app/api/proxy"
+				);
+				const vResp = await fetch(vercelUrl, { cache: 'no-store' });
+				if (!vResp.ok) throw new Error(`Vercel response: ${vResp.status}`);
+				const vData = await vResp.json();
+				if (!isScheduleStructurallyValid(vData)) throw new Error("Vercel returned invalid schedule");
+				vData._source = 'online';
+				console.log(`[cache] ${cacheKey} loaded from Vercel`);
+				saveCache(cacheKey, vData, maxAgeSeconds);
+				return vData;
+			} catch (vErr) {
+				console.warn(`[cache] Vercel fallback failed: ${vErr.message}`);
+			}
+
+			// проверка кэша
+			const cached = loadCache(cacheKey);
+			if (cached && isScheduleStructurallyValid(cached)) {
+				cached._source = 'offline';
+				console.info(`[cache] restored ${cacheKey} (offline mode)`);
+				return cached;
+			}
+
+			// fallback.json
+			try {
+				const fallbackResp = await fetch("fallback.json", { cache: 'no-store' });
+				const fallbackData = await fallbackResp.json();
+				if (!isScheduleStructurallyValid(fallbackData)) throw new Error("Fallback.json invalid");
+				fallbackData._source = 'offline';
+				saveCache(cacheKey, fallbackData, maxAgeSeconds);
+				console.log("[cache] fallback.json used");
+				return fallbackData;
+			} catch (fe) {
+				console.warn(`[cache] fallback.json failed: ${fe.message}`);
+			}
+
+			// если совсем ничего нет
+			return { message: `Не удалось загрузить расписание.<br>Worker: ${workerError.message}` };
+		}
+	}
+
 
 
 
