@@ -101,6 +101,7 @@ checkUpdate();
    //"НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 			// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
 			// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
+			"ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RUr4i5fAJKzhRI5qX41p'>ВМП-ОТМС</a>",
 
         // NEXT WEEK
 		// "Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
