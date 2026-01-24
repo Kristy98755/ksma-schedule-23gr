@@ -97,11 +97,11 @@ checkUpdate();
 		// "Топографическая анатомия|Практика|CurrWeek": "<a href='https://jumpshare.com/share/pStjOoBpXgybf99pre2l'>Топографическая анатомия</a>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
-		"Лучевая диагностика и терапия|Практика|CurrWeek":"<a href='https://kristy98755.github.io/debate'>Лучевая диагностика</a>",
+		// "Лучевая диагностика и терапия|Практика|CurrWeek":"<a href='https://kristy98755.github.io/debate'>Лучевая диагностика</a>",
    //"НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 			// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
 			// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
-			"ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RUr4i5fAJKzhRI5qX41p'>ВМП-ОТМС</a>",
+			// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RUr4i5fAJKzhRI5qX41p'>ВМП-ОТМС</a>",
 
         // NEXT WEEK
 		// "Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
