@@ -91,7 +91,7 @@ checkUpdate();
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ayqIVZ1CivFZARyipbfa' >Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
-		// "Патологическая физиология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/CgWo9buaQlBUIDp1z7dt'>Патфиз</a>",
+		"Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
         // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
 		// "Топографическая анатомия|Практика|CurrWeek": "<a href='https://jumpshare.com/share/pStjOoBpXgybf99pre2l'>Топографическая анатомия</a>",
