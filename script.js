@@ -42,9 +42,160 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 
-checkUpdate();
+// checkUpdate();
 		
-		
+/* ============================================================
+   Schedule Patcher Engine
+   ============================================================ */
+
+/* ---------- DOM ready helper ---------- */
+function onScheduleReady(cb) {
+    const timer = setInterval(() => {
+        const days = document.querySelectorAll('.schedule__day');
+        if (days.length > 0) {
+            clearInterval(timer);
+            cb();
+        }
+    }, 100);
+}
+
+/* ---------- Time utils ---------- */
+function parseTimeRange(str) {
+    if (!str) return null;
+    const m = str.match(/(\d{2}):(\d{2})-(\d{2}):(\d{2})/);
+    if (!m) return null;
+    return {
+        start: parseInt(m[1]) * 60 + parseInt(m[2]),
+        end:   parseInt(m[3]) * 60 + parseInt(m[4])
+    };
+}
+function shiftLessonTime({ subject, type = '0', day, oldTime = '0', newTime }) {
+    const dayEl = getDayElement(day);
+    if (!dayEl) return false;
+
+    const lesson = [...dayEl.querySelectorAll('.lesson')]
+        .find(l =>
+            lessonMatches(l, {
+                subject,
+                type,
+                time: oldTime
+            })
+        );
+
+    if (!lesson) return false;
+
+    const timeEl = lesson.querySelector('.lesson__time');
+    if (!timeEl) return false;
+
+    // сохраняем всё, что после <br>
+    const br = timeEl.querySelector('br');
+    const tail = br ? br.nextSibling?.textContent || '' : '';
+
+    timeEl.innerHTML = newTime;
+
+    if (br) {
+        timeEl.appendChild(document.createElement('br'));
+        const span = lesson.querySelector('.lesson__weather');
+        if (span) timeEl.appendChild(span);
+    }
+
+    return true;
+}
+
+
+/* ---------- Day resolver ---------- */
+function getDayElement(dayName) {
+    return [...document.querySelectorAll('.schedule__day')]
+        .find(d =>
+            d.querySelector('.schedule__date')
+             ?.textContent
+             .toLowerCase()
+             .includes(dayName.toLowerCase())
+        );
+}
+
+/* ---------- Lesson matcher ---------- */
+function lessonMatches(lesson, { subject, type, time }) {
+    const name = lesson.querySelector('.lesson__name')?.textContent.trim() || '';
+    const lType = lesson.querySelector('.lesson__type')?.textContent.trim() || '';
+    const lTime = lesson.querySelector('.lesson__time')?.textContent.trim() || '';
+
+    if (subject && !name.includes(subject)) return false;
+    if (type && type !== '0' && lType !== type) return false;
+    if (time && time !== '0' && !lTime.includes(time)) return false;
+
+    return true;
+}
+
+/* ============================================================
+   🔪 REMOVE LESSON
+   ============================================================ */
+function removeLesson({ subject, type = '0', day, time = '0' }) {
+    const dayEl = getDayElement(day);
+    if (!dayEl) return null;
+
+    const lessons = [...dayEl.querySelectorAll('.lesson')];
+
+    const target = lessons.find(lesson =>
+        lessonMatches(lesson, { subject, type, time })
+    );
+
+    if (!target) return null;
+
+    target.remove();
+    return target; // DOM-элемент
+}
+
+/* ============================================================
+   ➕ INSERT LESSON (chronologically)
+   ============================================================ */
+function insertLesson({ day, lessonHTML, time }) {
+    const dayEl = getDayElement(day);
+    if (!dayEl) return;
+
+    const lessonsUl = dayEl.querySelector('.schedule__lessons');
+    if (!lessonsUl) return;
+
+    const temp = document.createElement('div');
+    temp.innerHTML = lessonHTML.trim();
+    const newLesson = temp.firstElementChild;
+
+    const newTime = parseTimeRange(time);
+    const lessons = [...lessonsUl.querySelectorAll('.lesson')];
+
+    for (const lesson of lessons) {
+        const t = parseTimeRange(
+            lesson.querySelector('.lesson__time')?.textContent
+        );
+        if (t && newTime && newTime.start < t.start) {
+            lessonsUl.insertBefore(newLesson, lesson);
+            return;
+        }
+    }
+
+    lessonsUl.appendChild(newLesson);
+}
+
+/* ============================================================
+   🔄 MOVE LESSON (syntactic sugar)
+   ============================================================ */
+function moveLesson(removeSpec, insertSpec) {
+    const lesson = removeLesson(removeSpec);
+    if (!lesson) return;
+
+    if (insertSpec.time) {
+        const timeEl = lesson.querySelector('.lesson__time');
+        if (timeEl) timeEl.innerHTML = insertSpec.time;
+    }
+
+    insertLesson({
+        day: insertSpec.day,
+        lessonHTML: lesson.outerHTML,
+        time: insertSpec.time
+    });
+}
+
+
 		
     const groupId = 51; // ID группы
     const currWeekEl = document.getElementById("CurrWeek");
@@ -80,12 +231,13 @@ checkUpdate();
 		"Кафедра: Пропедевтики детских болезней":"Третья детская больница",
 		"НГ МЗ КР, подвал, Учебная ауд.-02 (лор)":"Национальный госпиталь (Тоголок Молдо, 1к)",
 		"РНЦУ, 2 этаж, кабинет №202 (урол.)":"Корпус урологии у нацгоспиталя (Тоголок Молдо, 1/13), 3 этаж<br>Сменка обязательна!",
+		"клин.Ахунбаева, подвал, Учеб.ауд.-04 (проп.хир.)":"Клиника «Ренато», мкр. Джал",
 
         // TARGETED
 
         // CURRENT WEEK
         //"Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
-        "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>Общая гигиена</a>",
+        // "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>Общая гигиена</a>",
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://chatgpt.com/s/t_68de359569408191b94740fafc98bcbb'>Лучевая диагностика</a>",
@@ -102,7 +254,7 @@ checkUpdate();
 			// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
 			// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 			// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RUr4i5fAJKzhRI5qX41p'>ВМП-ОТМС</a>",
-			"Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
+			// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 
         // NEXT WEEK
 		// "Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
@@ -118,6 +270,44 @@ checkUpdate();
 		"ЗАГЛУШКА":""
 
     };
+	//ПЕРЕНОС ЗАНЯТИЙ
+	onScheduleReady(() => {
+
+    moveLesson(
+        {
+            subject: 'Патологическая физиология',
+            type: 'Практика',
+            day: 'Вторник',
+            time: '0'
+        },
+        {
+            day: 'Понедельник',
+            time: '15:15-16:50'
+        }
+    );moveLesson(
+        {
+            subject: 'Общая гигиена',
+            type: 'Практика',
+            day: 'Суббота',
+            time: '0'
+        },
+        {
+            day: 'Пятница',
+            time: '15:00-16:35'
+        }
+    );shiftLessonTime({
+        subject: 'Лучевая диагностика и терапия',
+        type: 'Практика',
+        day: 'Четверг',
+        oldTime: '12:45-14:20',
+        newTime: '12:00-13:35'
+    });
+	
+	
+	removeEmptyDays();
+
+
+});
 
     // --- Утилиты ---
     function getMonday(d) {
@@ -126,6 +316,18 @@ checkUpdate();
         const diff = d.getDate() - day + (day === 0 ? -6 : 1);
         return new Date(d.setDate(diff));
     }
+	
+	function removeEmptyDays() {
+    document.querySelectorAll('.schedule__day').forEach(day => {
+        const lessons = day.querySelector('.schedule__lessons');
+        if (!lessons) return;
+
+        if (lessons.children.length === 0) {
+            day.remove();
+        }
+    });
+}
+
 
     function formatDate(d) {
         let month = d.getMonth() + 1;
