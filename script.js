@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 
-// checkUpdate();
+checkUpdate();
 		
 /* ============================================================
    Schedule Patcher Engine
