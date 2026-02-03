@@ -253,7 +253,7 @@ function moveLesson(removeSpec, insertSpec) {
    //"НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 			// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
 			// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
-			// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RUr4i5fAJKzhRI5qX41p'>ВМП-ОТМС</a>",
+			"ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 			// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 
         // NEXT WEEK
