@@ -284,17 +284,6 @@ function moveLesson(removeSpec, insertSpec) {
             day: 'Понедельник',
             time: '15:15-16:50'
         }
-    );moveLesson(
-        {
-            subject: 'Общая гигиена',
-            type: 'Практика',
-            day: 'Суббота',
-            time: '0'
-        },
-        {
-            day: 'Пятница',
-            time: '15:00-16:35'
-        }
     );shiftLessonTime({
         subject: 'Лучевая диагностика и терапия',
         type: 'Практика',
