@@ -9,52 +9,80 @@ document.addEventListener("DOMContentLoaded", function() {
                 return json.tag_name.replace(/[^\d]/g, ''); 
         }
 
-        async function checkUpdate() {
-    let build = "0"; // по умолчанию старое приложение
-    try {
-        if (window.KsmaApp && window.KsmaApp.getBuildNumber) {
-            build = window.KsmaApp.getBuildNumber();
-            if (window.KsmaApp.reportBuild) window.KsmaApp.reportBuild(build);
-        } else {
-            console.warn("KsmaApp interface not found, assuming outdated app");
-        }
-    } catch (e) {
-        console.error("Error reading build number:", e);
-    }
+		async function checkUpdate() {
+			const isAndroid = /Android/i.test(navigator.userAgent);
 
-    const latest = await getLatestVersion();
-    console.log("App build:", build, "Latest GitHub:", latest);
+			let build = null;
+			let hasInterface = false;
 
-    if (Number(build) < Number(latest)) {
-        console.log("App outdated, triggering update");
-        window.location.href = "https://kristy98755.github.io/ksma-schedule/update.html";
+			try {
+				if (window.KsmaApp && typeof window.KsmaApp.getBuildNumber === "function") {
+					hasInterface = true;
+					build = window.KsmaApp.getBuildNumber();
+					if (window.KsmaApp.reportBuild) {
+						window.KsmaApp.reportBuild(build);
+					}
+				}
+			} catch (e) {
+				console.error("Error reading build number:", e);
+			}
 
-        try {
-            if (window.KsmaApp && window.KsmaApp.triggerUpdate) {
-                window.KsmaApp.triggerUpdate();
-                console.log("triggerUpdate() called on KsmaApp");
-            }
-        } catch (e) {
-            console.error("Failed to call triggerUpdate:", e);
-        }
-    } else {
-        console.log("App is up-to-date");
-    }
-}
+			// 4️⃣ Интерфейс не найден и это не Android → просто ОК
+			if (!isAndroid && !hasInterface) {
+				console.log("Non-Android browser, skipping update logic");
+				return;
+			}
 
-//checkUpdate();
+			// 1️⃣ Интерфейс не найден, но Android → редирект на APK
+			if (isAndroid && !hasInterface) {
+				console.log("Android detected, but no KsmaApp interface → redirect to APK");
+				window.location.href = "https://kristy98755.github.io/ksma-schedule/update.html";
+				return;
+			}
+
+			// Ниже — только если интерфейс найден
+			const latest = await getLatestVersion();
+			console.log("App build:", build, "Latest GitHub:", latest);
+
+			// 2️⃣ Интерфейс найден, версия устарела → редирект + intent
+			if (Number(build) < Number(latest)) {
+				console.log("App outdated → redirect and trigger update");
+
+				window.location.href = "https://kristy98755.github.io/ksma-schedule/update.html";
+
+				try {
+					if (window.KsmaApp && typeof window.KsmaApp.triggerUpdate === "function") {
+						window.KsmaApp.triggerUpdate();
+					}
+				} catch (e) {
+					console.error("Failed to call triggerUpdate:", e);
+				}
+
+				return;
+			}
+
+			// 3️⃣ Интерфейс найден и версия актуальна → ОК
+			console.log("App is up-to-date");
+		}
+
+
+checkUpdate();
 		
 /* ============================================================
-   Schedule Patcher Engine
+   Schedule Patcher Engine (v2.0 - Multi-week support)
    ============================================================ */
 
 /* ---------- DOM ready helper ---------- */
 function onScheduleReady(cb) {
     const timer = setInterval(() => {
-        const days = document.querySelectorAll('.schedule__day');
-        if (days.length > 0) {
+        const currOk = document.querySelector('#CurrWeek .lesson');
+        const nextOk = document.querySelector('#NextWeek .lesson');
+        
+        // Ждем, пока в обоих блоках появятся уроки
+        if (currOk && nextOk) {
             clearInterval(timer);
-            cb();
+            // Даем еще 50мс на завершение внутренних отрисовок (погода и т.д.)
+            setTimeout(cb, 50);
         }
     }, 100);
 }
@@ -69,49 +97,25 @@ function parseTimeRange(str) {
         end:   parseInt(m[3]) * 60 + parseInt(m[4])
     };
 }
-function shiftLessonTime({ subject, type = '0', day, oldTime = '0', newTime }) {
-    const dayEl = getDayElement(day);
-    if (!dayEl) return false;
-
-    const lesson = [...dayEl.querySelectorAll('.lesson')]
-        .find(l =>
-            lessonMatches(l, {
-                subject,
-                type,
-                time: oldTime
-            })
-        );
-
-    if (!lesson) return false;
-
-    const timeEl = lesson.querySelector('.lesson__time');
-    if (!timeEl) return false;
-
-    // сохраняем всё, что после <br>
-    const br = timeEl.querySelector('br');
-    const tail = br ? br.nextSibling?.textContent || '' : '';
-
-    timeEl.innerHTML = newTime;
-
-    if (br) {
-        timeEl.appendChild(document.createElement('br'));
-        const span = lesson.querySelector('.lesson__weather');
-        if (span) timeEl.appendChild(span);
-    }
-
-    return true;
-}
-
 
 /* ---------- Day resolver ---------- */
-function getDayElement(dayName) {
-    return [...document.querySelectorAll('.schedule__day')]
-        .find(d =>
-            d.querySelector('.schedule__date')
-             ?.textContent
-             .toLowerCase()
-             .includes(dayName.toLowerCase())
-        );
+// week: 'cw' (current), 'nw' (next), 'bw' (both)
+function getDayElements(dayName, week = 'cw') {
+    const allDays = [...document.querySelectorAll('.schedule__day')];
+    return allDays.filter(d => {
+        const matchesDay = d.querySelector('.schedule__date')
+                            ?.textContent.toLowerCase()
+                            .includes(dayName.toLowerCase());
+        if (!matchesDay) return false;
+
+        const isCurr = d.closest('#CurrWeek');
+        const isNext = d.closest('#NextWeek');
+
+        if (week === 'cw') return isCurr;
+        if (week === 'nw') return isNext;
+        if (week === 'bw') return isCurr || isNext;
+        return true;
+    });
 }
 
 /* ---------- Lesson matcher ---------- */
@@ -127,60 +131,76 @@ function lessonMatches(lesson, { subject, type, time }) {
     return true;
 }
 
-/* ============================================================
-   🔪 REMOVE LESSON
-   ============================================================ */
-function removeLesson({ subject, type = '0', day, time = '0' }) {
-    const dayEl = getDayElement(day);
-    if (!dayEl) return null;
+/* ---------- Actions ---------- */
 
-    const lessons = [...dayEl.querySelectorAll('.lesson')];
+function shiftLessonTime({ subject, type = '0', day, oldTime = '0', newTime, week = 'cw' }) {
+    const dayEls = getDayElements(day, week);
+    dayEls.forEach(dayEl => {
+        const lesson = [...dayEl.querySelectorAll('.lesson')]
+            .find(l => lessonMatches(l, { subject, type, time: oldTime }));
 
-    const target = lessons.find(lesson =>
-        lessonMatches(lesson, { subject, type, time })
-    );
-
-    if (!target) return null;
-
-    target.remove();
-    return target; // DOM-элемент
-}
-
-/* ============================================================
-   ➕ INSERT LESSON (chronologically)
-   ============================================================ */
-function insertLesson({ day, lessonHTML, time }) {
-    const dayEl = getDayElement(day);
-    if (!dayEl) return;
-
-    const lessonsUl = dayEl.querySelector('.schedule__lessons');
-    if (!lessonsUl) return;
-
-    const temp = document.createElement('div');
-    temp.innerHTML = lessonHTML.trim();
-    const newLesson = temp.firstElementChild;
-
-    const newTime = parseTimeRange(time);
-    const lessons = [...lessonsUl.querySelectorAll('.lesson')];
-
-    for (const lesson of lessons) {
-        const t = parseTimeRange(
-            lesson.querySelector('.lesson__time')?.textContent
-        );
-        if (t && newTime && newTime.start < t.start) {
-            lessonsUl.insertBefore(newLesson, lesson);
-            return;
+        if (lesson) {
+            const timeEl = lesson.querySelector('.lesson__time');
+            if (timeEl) {
+                const br = timeEl.querySelector('br');
+                timeEl.innerHTML = newTime;
+                if (br) {
+                    timeEl.appendChild(document.createElement('br'));
+                    const span = lesson.querySelector('.lesson__weather');
+                    if (span) timeEl.appendChild(span);
+                }
+            }
         }
-    }
-
-    lessonsUl.appendChild(newLesson);
+    });
 }
 
-/* ============================================================
-   🔄 MOVE LESSON (syntactic sugar)
-   ============================================================ */
+function removeLesson({ subject, type = '0', day, time = '0', week = 'cw' }) {
+    const dayEls = getDayElements(day, week);
+    let lastRemoved = null;
+
+    dayEls.forEach(dayEl => {
+        const target = [...dayEl.querySelectorAll('.lesson')]
+            .find(l => lessonMatches(l, { subject, type, time }));
+        if (target) {
+            lastRemoved = target.cloneNode(true);
+            target.remove();
+        }
+    });
+    return lastRemoved; // Возвращает клон последнего удаленного элемента
+}
+
+function insertLesson({ day, lessonHTML, time, week = 'cw' }) {
+    const dayEls = getDayElements(day, week);
+
+    dayEls.forEach(dayEl => {
+        const lessonsUl = dayEl.querySelector('.schedule__lessons');
+        if (!lessonsUl) return;
+
+        const temp = document.createElement('div');
+        temp.innerHTML = lessonHTML.trim();
+        const newLesson = temp.firstElementChild;
+
+        const newTime = parseTimeRange(time);
+        const lessons = [...lessonsUl.querySelectorAll('.lesson')];
+
+        let inserted = false;
+        for (const lesson of lessons) {
+            const t = parseTimeRange(lesson.querySelector('.lesson__time')?.textContent);
+            if (t && newTime && newTime.start < t.start) {
+                lessonsUl.insertBefore(newLesson.cloneNode(true), lesson);
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted) lessonsUl.appendChild(newLesson.cloneNode(true));
+    });
+}
+
 function moveLesson(removeSpec, insertSpec) {
-    const lesson = removeLesson(removeSpec);
+    // Если в removeSpec не указана неделя, по умолчанию 'cw'
+    const week = removeSpec.week || 'cw';
+    const lesson = removeLesson({ ...removeSpec, week });
+
     if (!lesson) return;
 
     if (insertSpec.time) {
@@ -191,7 +211,17 @@ function moveLesson(removeSpec, insertSpec) {
     insertLesson({
         day: insertSpec.day,
         lessonHTML: lesson.outerHTML,
-        time: insertSpec.time
+        time: insertSpec.time,
+        week: insertSpec.week || week
+    });
+}
+
+function removeEmptyDays() {
+    document.querySelectorAll('.schedule__day').forEach(day => {
+        const lessons = day.querySelectorAll('.lesson');
+        if (lessons.length === 0) {
+            day.style.display = 'none'; // Скрываем, но оставляем в DOM для движка
+        }
     });
 }
 
@@ -232,6 +262,9 @@ function moveLesson(removeSpec, insertSpec) {
 		"НГ МЗ КР, подвал, Учебная ауд.-02 (лор)":"Национальный госпиталь (Тоголок Молдо, 1к)",
 		"РНЦУ, 2 этаж, кабинет №202 (урол.)":"Корпус урологии у нацгоспиталя (Тоголок Молдо, 1/13), 3 этаж<br>Сменка обязательна!",
 		"клин.Ахунбаева, подвал, Учеб.ауд.-04 (проп.хир.)":"Клиника «Ренато», мкр. Джал",
+		"НГ МЗ КР, 3эт., Каб.завуча-4 (энд.)":"Национальный госпиталь, подвал",
+		"Общежитие-1, 1 этаж, Учеб.ауд.-101а (ВМП)":"Общежитие №1",
+		"Гл.корпус, 3эт., Лекц.зал №2":"ЛЗ2",
 
         // TARGETED
 
@@ -270,33 +303,48 @@ function moveLesson(removeSpec, insertSpec) {
 		"ЗАГЛУШКА":""
 
     };
-	//ПЕРЕНОС ЗАНЯТИЙ
+	// ПЕРЕНОС ЗАНЯТИЙ
 	onScheduleReady(() => {
+		console.log("Both weeks ready, applying patches...");
 
-    moveLesson(
-        {
-            subject: 'Патологическая физиология',
-            type: 'Практика',
-            day: 'Вторник',
-            time: '0'
-        },
-        {
-            day: 'Понедельник',
-            time: '15:15-16:50'
-        }
-    );shiftLessonTime({
-        subject: 'Лучевая диагностика и терапия',
-        type: 'Практика',
-        day: 'Четверг',
-        oldTime: '12:45-14:20',
-        newTime: '12:00-13:35'
-    });
-	
-	
-	removeEmptyDays();
+		moveLesson(
+			{
+				subject: 'Патологическая физиология',
+				type: 'Практика',
+				day: 'Вторник',
+				week: 'bw' // Искать на обеих неделях
+			},
+			{
+				day: 'Понедельник',
+				time: '15:15-16:50',
+				week: 'bw' // Перенести на обеих неделях
+			}
+		);
+		moveLesson(
+			{
+				subject: 'Пропедевтика внутренних болезней',
+				type: 'Практика',
+				day: 'Суббота',
+				week: 'nw' // Искать на обеих неделях
+			},
+			{
+				day: 'Понедельник',
+				time: '09:45-12:00',
+				week: 'nw' // Перенести на обеих неделях
+			}
+		);
 
+		shiftLessonTime({
+			subject: 'Лучевая диагностика и терапия',
+			type: 'Практика',
+			day: 'Четверг',
+			oldTime: '12:45-14:20',
+			newTime: '12:00-13:35',
+			week: 'bw' // Применить к обеим неделям
+		});
 
-});
+		removeEmptyDays();
+	});
 
     // --- Утилиты ---
     function getMonday(d) {
@@ -306,18 +354,6 @@ function moveLesson(removeSpec, insertSpec) {
         return new Date(d.setDate(diff));
     }
 	
-	function removeEmptyDays() {
-    document.querySelectorAll('.schedule__day').forEach(day => {
-        const lessons = day.querySelector('.schedule__lessons');
-        if (!lessons) return;
-
-        if (lessons.children.length === 0) {
-            day.remove();
-        }
-    });
-}
-
-
     function formatDate(d) {
         let month = d.getMonth() + 1;
         let day = d.getDate();
