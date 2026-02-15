@@ -291,7 +291,7 @@ function removeEmptyDays() {
 
         // NEXT WEEK
 		// "Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
-		// "Пропедевтика внутренних болезней|Практика|NextWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
+		"Пропедевтика внутренних болезней|Практика|NextWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
 
 
 		
