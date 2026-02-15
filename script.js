@@ -274,7 +274,7 @@ function removeEmptyDays() {
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
-		// "Пропедевтика внутренних болезней|Практика|NextWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
+		"Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
 		// "Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
@@ -291,7 +291,7 @@ function removeEmptyDays() {
 
         // NEXT WEEK
 		// "Акушерство  и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
-		"Пропедевтика внутренних болезней|Практика|NextWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
+		// "Пропедевтика внутренних болезней|Практика|NextWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
 
 
 		
