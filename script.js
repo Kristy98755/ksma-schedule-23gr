@@ -337,7 +337,7 @@ function removeEmptyDays() {
 		);
 
 		shiftLessonTime({
-			subject: 'Лучевая диагностика и терапия',
+			subject: 'Лучевая диагностика',
 			type: 'Практика',
 			day: 'Четверг',
 			oldTime: '12:45-14:20',
