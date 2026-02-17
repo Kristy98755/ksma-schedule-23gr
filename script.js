@@ -163,8 +163,22 @@ function lessonMatches(lesson, { subject, type, time }) {
 function shiftLessonTime({ subject, type = '0', day, oldTime = '0', newTime, week = 'cw' }) {
     const dayEls = getDayElements(day, week);
     dayEls.forEach(dayEl => {
-        const lesson = [...dayEl.querySelectorAll('.lesson')]
-            .find(l => lessonMatches(l, { subject, type, time: oldTime }));
+        const lessons = [...dayEl.querySelectorAll('.lesson')];
+
+        let lesson = lessons.find(l => lessonMatches(l, { subject, type, time: oldTime }));
+
+        // Если точное совпадение по времени не найдено, делаем fallback по предмету/типу.
+        if (!lesson && oldTime && oldTime !== '0') {
+            lesson = lessons.find(l => lessonMatches(l, { subject, type, time: '0' }));
+            if (lesson) {
+                console.warn('[patch] shiftLessonTime: oldTime not matched, fallback used', {
+                    day,
+                    subject,
+                    oldTime,
+                    actualTime: lesson.querySelector('.lesson__time')?.textContent.trim() || ''
+                });
+            }
+        }
 
         if (lesson) {
             const timeEl = lesson.querySelector('.lesson__time');
