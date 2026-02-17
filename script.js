@@ -98,14 +98,37 @@ function parseTimeRange(str) {
     };
 }
 
+function normalizeDayName(value = '') {
+    const key = value.toLowerCase().trim().replace('.', '');
+    const aliases = {
+        'пн': 'понедельник',
+        'вт': 'вторник',
+        'ср': 'среда',
+        'чт': 'четверг',
+        'пт': 'пятница',
+        'сб': 'суббота',
+        'вс': 'воскресенье'
+    };
+    return aliases[key] || key;
+}
+
+function normalizeTimeText(value = '') {
+    return value
+        .replace(/[–—]/g, '-')
+        .replace(/\s+/g, '');
+}
+
 /* ---------- Day resolver ---------- */
 // week: 'cw' (current), 'nw' (next), 'bw' (both)
 function getDayElements(dayName, week = 'cw') {
     const allDays = [...document.querySelectorAll('.schedule__day')];
+    const normalizedRequestedDay = normalizeDayName(dayName);
+
     return allDays.filter(d => {
-        const matchesDay = d.querySelector('.schedule__date')
-                            ?.textContent.toLowerCase()
-                            .includes(dayName.toLowerCase());
+        const dateText = d.querySelector('.schedule__date')?.textContent.toLowerCase().trim() || '';
+        const dateDayPart = dateText.split(',')[0].trim();
+        const normalizedDateDay = normalizeDayName(dateDayPart);
+        const matchesDay = normalizedDateDay === normalizedRequestedDay || dateText.includes(normalizedRequestedDay);
         if (!matchesDay) return false;
 
         const isCurr = d.closest('#CurrWeek');
@@ -126,7 +149,11 @@ function lessonMatches(lesson, { subject, type, time }) {
 
     if (subject && !name.includes(subject)) return false;
     if (type && type !== '0' && lType !== type) return false;
-    if (time && time !== '0' && !lTime.includes(time)) return false;
+    if (time && time !== '0') {
+        const normalizedLessonTime = normalizeTimeText(lTime);
+        const normalizedExpectedTime = normalizeTimeText(time);
+        if (!normalizedLessonTime.includes(normalizedExpectedTime)) return false;
+    }
 
     return true;
 }
