@@ -373,6 +373,10 @@ function removeEmptyDays() {
     // --- Overrides ---
     function applyOverride(span, weekId) {
         const text = span.textContent.trim();
+        const normalizedText = text
+            .replace(/\s*\([^)]*\)\s*/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
         const typeSpan = span.parentElement.querySelector(".lesson__type");
         const type = typeSpan ? typeSpan.textContent.trim() : "";
 
@@ -381,11 +385,14 @@ function removeEmptyDays() {
         const keysToCheck = [
             `${text}|${type}|${weekId}`,
             `${text}|${type}`,
-            `${text}`
+            `${text}`,
+            `${normalizedText}|${type}|${weekId}`,
+            `${normalizedText}|${type}`,
+            `${normalizedText}`
         ];
 
         for (const key of keysToCheck) {
-            if (overrides[key]) {
+            if (Object.prototype.hasOwnProperty.call(overrides, key)) {
                 console.log(`[APPLY OVERRIDE] ${key} → ${overrides[key]}`);
                 span.innerHTML = overrides[key];
                 return;
@@ -408,7 +415,7 @@ function removeEmptyDays() {
         const keysToCheck = [text, text.replace(/\./g, '')]; // можно расширить под нужные варианты
 
         for (const key of keysToCheck) {
-            if (overrides[key]) {
+            if (Object.prototype.hasOwnProperty.call(overrides, key)) {
                 console.log(`[PLACE OVERRIDE] "${text}" → ${overrides[key]}`);
                 span.innerHTML = overrides[key];
                 return;
