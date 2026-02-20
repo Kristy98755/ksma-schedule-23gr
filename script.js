@@ -293,7 +293,7 @@ function removeEmptyDays() {
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		"Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
-		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/tQo6ald1BhrYItmHZJyW'>Госпитальная терапия</a>",
+		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://ppt-online.org/296513'>Госпитальная терапия</a>",
 		"Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 
         // NEXT WEEK
