@@ -351,6 +351,14 @@ function removeEmptyDays() {
 			newTime: '12:00-13:35',
 			week: 'bw' // Применить к обеим неделям
 		});
+  shiftLessonTime({
+   subject: 'Неврология',
+   type: 'Практика',
+   day: 'Суббота',
+   oldTime: '12:30-14:45',
+   newTime: '11:30-13:45',
+   week: 'bw'
+  });
 
 		removeEmptyDays();
 	});
