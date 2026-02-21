@@ -269,7 +269,7 @@ function removeEmptyDays() {
 		// "Лучевая диагностика":"Лучевая диагностика ❤️",
 		"ГКБ-1, 2 этаж, отд.мед.реабил., Учебная комн.-202/1 (гос.тер.)":"<a href='https://go.2gis.com/wkmx8' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Больница №1, ул. Ю. Фучика 15/1",
 		"Корпус 4, 3 этаж, Учебная ауд.-325 (общ.г.)": "<img src='pin.png' class='loc-icon'>4 корпус, кабинет №325",
-		"НГ МЗ КР, подвал, Учебная ауд.-03 (невр.)": "<img src='pin.png' class='loc-icon'>Национальный госпиталь<br><span style='color:red; font-size:12px;'>Не забудьте сменку!</span>",
+		"НГ МЗ КР, подвал, Учебная ауд.-03 (невр.)": "<img src='pin.png' class='loc-icon'>Морфокорпус<br><span style='color:red; font-size:12px;'>Не забудьте сменку!</span>",
 
         // TARGETED
 
