@@ -275,16 +275,16 @@ function removeEmptyDays() {
 
         // CURRENT WEEK
         //"Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
-        "Общая гигиена (общ.г.)|Практика|CurrWeek": "<a href='https://jumpshare.com/share/XboCaChMQJCZBgWBlNAM'>Общая гигиена</a>",
+        // "Общая гигиена (общ.г.)|Практика|CurrWeek": "<a href='https://jumpshare.com/share/XboCaChMQJCZBgWBlNAM'>Общая гигиена</a>",
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
-		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
+		"Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
 		// "Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
         // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
-		"Топографическая анатомия|Практика|CurrWeek": "<a href='https://meduniver.com/Medical/Topochka/235.html'>Топографическая анатомия</a>",
+		// "Топографическая анатомия|Практика|CurrWeek": "<a href='https://meduniver.com/Medical/Topochka/235.html'>Топографическая анатомия</a>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
 		// "Лучевая диагностика и терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
@@ -292,13 +292,13 @@ function removeEmptyDays() {
 		// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
-		"Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
-		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://ppt-online.org/296513'>Госпитальная терапия</a>",
-		"Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
+		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
+		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://ppt-online.org/296513'>Госпитальная терапия</a>",
+		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 
         // NEXT WEEK
 		// "Акушерство и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
-		// "Пропедевтика внутренних болезней|Практика|NextWeek":"<a href='https://jumpshare.com/share/ZsJ59ySgxtczj3nezMpq'>Пропедевтика внутренних болезней</a>",
+		"Пропедевтика внутренних болезней|Практика|NextWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja>Пропедевтика внутренних болезней</a>",
 
 
 		
@@ -349,6 +349,15 @@ function removeEmptyDays() {
 			day: 'Четверг',
 			oldTime: '12:45-14:20',
 			newTime: '12:00-13:35',
+			week: 'bw' // Применить к обеим неделям
+		});		
+		
+		shiftLessonTime({
+			subject: 'Госпитальная терапия',
+			type: 'Практика',
+			day: 'Четверг',
+			oldTime: '07:00-09:15',
+			newTime: '07:30-09:45',
 			week: 'bw' // Применить к обеим неделям
 		});
 
