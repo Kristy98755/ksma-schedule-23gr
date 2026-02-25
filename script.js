@@ -267,7 +267,7 @@ function removeEmptyDays() {
 		"Гл.корпус, 3эт., Лекц.зал №2":"ЛЗ2",
 		"Пропедевтика внутренних болезней (гос.тер)":"Госпитальная терапия",
 		// "Лучевая диагностика":"Лучевая диагностика ❤️",
-		"ГКБ-1, 2 этаж, отд.мед.реабил., Учебная комн.-202/1 (гос.тер.)":"<a href='https://go.2gis.com/wkmx8' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Больница №1, ул. Ю. Фучика 15/1",
+		"ГКБ-1, 2 этаж, отд.мед.реабил., Учебная комн.-202/1 (гос.тер.)":"<a href='https://go.2gis.com/uVfqd' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Больница №1, ул. Ю. Фучика 15/1а",
 		"Корпус 4, 3 этаж, Учебная ауд.-325 (общ.г.)": "<img src='pin.png' class='loc-icon'>4 корпус, кабинет №325",
 		"НГ МЗ КР, подвал, Учебная ауд.-03 (невр.)": "<img src='pin.png' class='loc-icon'>Морфокорпус, 104 кабинет<br><span style='color:red; font-size:12px;'>Не забудьте сменку!</span>",
 
@@ -293,7 +293,7 @@ function removeEmptyDays() {
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
-		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://ppt-online.org/296513'>Госпитальная терапия</a>",
+		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/IgeHhewiHhLafENebazy'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 
         // NEXT WEEK
