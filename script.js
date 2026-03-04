@@ -267,7 +267,7 @@ function removeEmptyDays() {
 		"Гл.корпус, 3эт., Лекц.зал №2":"ЛЗ2",
 		"Пропедевтика внутренних болезней (гос.тер)":"Госпитальная терапия",
 		// "Лучевая диагностика":"Лучевая диагностика ❤️",
-		"ГКБ-1, 2 этаж, отд.мед.реабил., Учебная комн.-202/1 (гос.тер.)":"<a href='https://go.2gis.com/uVfqd' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Больница №1, ул. Ю. Фучика 15/1а",
+		"ГКБ-1, 2 этаж, отд.мед.реабил., Учебная комн.-201 (госп.тер.)":"<a href='https://go.2gis.com/uVfqd' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>Больница №1, ул. Ю. Фучика 15/1а",
 		"Корпус 4, 3 этаж, Учебная ауд.-325 (общ.г.)": "<img src='pin.png' class='loc-icon'>4 корпус, кабинет №325",
 		"НГ МЗ КР, подвал, кабинет №03 (невр.)": "Морфокорпус, 104 кабинет<br><span style='color:red; font-size:12px;'>Не забудьте сменку!</span>",
 
@@ -275,11 +275,11 @@ function removeEmptyDays() {
 
         // CURRENT WEEK
         //"Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
-        "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/kxHynQP9db2zRXr8i38W'>Общая гигиена</a>",
+        // "Общая гигиена|Практика|CurrWeek": "<a href='https://jumpshare.com/share/kxHynQP9db2zRXr8i38W'>Общая гигиена</a>",
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
-		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
-		"Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
+		"Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/VbBtEPKphYjpniI9JAR4'>Лучевая диагностика</a>",
+		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
 		// "Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
@@ -293,7 +293,7 @@ function removeEmptyDays() {
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
-		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/IgeHhewiHhLafENebazy'>Госпитальная терапия</a>",
+		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 
         // NEXT WEEK
