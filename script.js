@@ -279,7 +279,7 @@ function removeEmptyDays() {
         // "Общая гигиена (общ.г.)|Практика|CurrWeek": "<a href='https://jumpshare.com/share/7dWdzrh9R1LteeuLCqTg'>Общая гигиена</a>",
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
-		"Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/folder/IimrKHH7hN6hUMSHVsjg'>Лучевая диагностика</a>",
+	//	"Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/folder/IimrKHH7hN6hUMSHVsjg'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
 		// "Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
@@ -294,7 +294,7 @@ function removeEmptyDays() {
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
-		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
+		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 
         // NEXT WEEK
