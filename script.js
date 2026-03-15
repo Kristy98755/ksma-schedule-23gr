@@ -279,8 +279,13 @@ function removeEmptyDays() {
         // "Общая гигиена (общ.г.)|Практика|CurrWeek": "<a href='https://jumpshare.com/share/7dWdzrh9R1LteeuLCqTg'>Общая гигиена</a>",
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
+<<<<<<< HEAD
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/VbBtEPKphYjpniI9JAR4'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
+=======
+	//	"Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/folder/IimrKHH7hN6hUMSHVsjg'>Лучевая диагностика</a>",
+		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
+>>>>>>> 3034eb112bcc49b0383ba17fead780b965d8364f
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
 		// "Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
@@ -291,11 +296,19 @@ function removeEmptyDays() {
 		// "Лучевая диагностика и терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
 		//"НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 		// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
+<<<<<<< HEAD
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
+=======
+		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
+		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
+		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
+		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
+		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
+>>>>>>> 3034eb112bcc49b0383ba17fead780b965d8364f
 
         // NEXT WEEK
 		// "Акушерство и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
@@ -312,6 +325,7 @@ function removeEmptyDays() {
 		// ЗАГЛУШКА
 		"ЗАГЛУШКА":""
 
+<<<<<<< HEAD
     };
 	// ПЕРЕНОС ЗАНЯТИЙ
 	onScheduleReady(() => {
@@ -371,6 +385,60 @@ function removeEmptyDays() {
   // });
 
 		removeEmptyDays();
+=======
+    };
+	// ПЕРЕНОС ЗАНЯТИЙ
+	onScheduleReady(() => {
+		console.log("Both weeks ready, applying patches...");
+
+		moveLesson(
+			{
+				subject: 'Патологическая физиология',
+				type: 'Практика',
+				day: 'Вторник',
+				week: 'bw' // Искать на обеих неделях
+			},
+			{
+				day: 'Понедельник',
+				time: '15:15-16:50',
+				week: 'bw' // Перенести на обеих неделях
+			}
+		);
+		moveLesson(
+			{
+				subject: 'Пропедевтика внутренних болезней',
+				type: 'Практика',
+				day: 'Суббота',
+				week: 'bw' // Искать на обеих неделях
+			},
+			{
+				day: 'Понедельник',
+				time: '09:45-12:00',
+				week: 'bw' // Перенести на обеих неделях
+			}
+		);
+
+		shiftLessonTime({
+			subject: 'Лучевая диагностика',
+			type: 'Практика',
+			day: 'Четверг',
+			oldTime: '12:45-14:20',
+			newTime: '12:00-13:35',
+			week: 'bw' // Применить к обеим неделям
+		});		
+		
+		shiftLessonTime({
+			subject: 'Госпитальная терапия',
+			type: 'Практика',
+			day: 'Четверг',
+			oldTime: '07:00-09:15',
+			newTime: '07:30-09:45',
+			week: 'bw' // Применить к обеим неделям
+		});
+  
+
+		removeEmptyDays();
+>>>>>>> 3034eb112bcc49b0383ba17fead780b965d8364f
 	});
 
     // --- Утилиты ---
@@ -818,5 +886,6 @@ statusP.innerHTML =
 	});
 
 });
+
 
 
