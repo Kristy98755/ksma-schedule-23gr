@@ -276,10 +276,10 @@ function removeEmptyDays() {
 
         // CURRENT WEEK
         //"Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
-        "Общая гигиена (общ.г.)|Практика|CurrWeek": "<a href='https://jumpshare.com/share/7dWdzrh9R1LteeuLCqTg'>Общая гигиена</a>",
+        // "Общая гигиена (общ.г.)|Практика|CurrWeek": "<a href='https://jumpshare.com/share/7dWdzrh9R1LteeuLCqTg'>Общая гигиена</a>",
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
-		"Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/VbBtEPKphYjpniI9JAR4'>Лучевая диагностика</a>",
+		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/VbBtEPKphYjpniI9JAR4'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
 		// "Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
@@ -294,7 +294,7 @@ function removeEmptyDays() {
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
-		"Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
+		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 
         // NEXT WEEK
@@ -330,45 +330,45 @@ function removeEmptyDays() {
 				week: 'bw' // Перенести на обеих неделях
 			}
 		);
-		moveLesson(
-			{
-				subject: 'Пропедевтика внутренних болезней',
-				type: 'Практика',
-				day: 'Суббота',
-				week: 'bw' // Искать на обеих неделях
-			},
-			{
-				day: 'Понедельник',
-				time: '09:45-12:00',
-				week: 'bw' // Перенести на обеих неделях
-			}
-		);
+		// moveLesson(
+			// {
+				// subject: 'Пропедевтика внутренних болезней',
+				// type: 'Практика',
+				// day: 'Суббота',
+				// week: 'bw' // Искать на обеих неделях
+			// },
+			// {
+				// day: 'Понедельник',
+				// time: '09:45-12:00',
+				// week: 'bw' // Перенести на обеих неделях
+			// }
+		// );
 
-		shiftLessonTime({
-			subject: 'Лучевая диагностика',
-			type: 'Практика',
-			day: 'Четверг',
-			oldTime: '12:45-14:20',
-			newTime: '12:00-13:35',
-			week: 'bw' // Применить к обеим неделям
-		});		
+		// shiftLessonTime({
+			// subject: 'Лучевая диагностика',
+			// type: 'Практика',
+			// day: 'Четверг',
+			// oldTime: '12:45-14:20',
+			// newTime: '12:00-13:35',
+			// week: 'bw' // Применить к обеим неделям
+		// });		
 		
-		shiftLessonTime({
-			subject: 'Госпитальная терапия',
-			type: 'Практика',
-			day: 'Четверг',
-			oldTime: '07:00-09:15',
-			newTime: '07:30-09:45',
-			week: 'bw' // Применить к обеим неделям
-		});
-  shiftLessonTime({
-   subject: 'Неврология',
-   type: 'Практика',
-   day: 'Суббота',
-   oldTime: '12:30-14:45',
-   newTime: '11:30-13:45',
-   week: 'bw'
-  });
+		// shiftLessonTime({
+			// subject: 'Госпитальная терапия',
+			// type: 'Практика',
+			// day: 'Четверг',
+			// oldTime: '07:00-09:15',
+			// newTime: '07:30-09:45',
+			// week: 'bw' // Применить к обеим неделям
+		// });
+  // shiftLessonTime({
+   // subject: 'Неврология',
+   // type: 'Практика',
+   // day: 'Суббота',
+   // oldTime: '12:30-14:45',
+   // newTime: '11:30-13:45',
+   // week: 'bw'
+  // });
 
 		removeEmptyDays();
 	});
