@@ -1,122 +1,484 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аденотонзиллярный и глоточно-гортанный синдром</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Клиническая анатомия и физиология внутреннего уха | Методы исследования слуха</title>
+    <!-- Google Fonts: мягкий, округлый шрифт -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (бесплатные иконки) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; color: #333; }
-        h1, h2, h3 { color: #2c3e50; }
-        h1 { text-align: center; margin-bottom: 30px; }
-        h2 { margin-top: 30px; }
-        h3 { margin-top: 20px; }
-        ul { margin: 10px 0 20px 20px; }
-        a { color: #2980b9; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .source { font-size: 0.9em; color: #555; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #F5F7FA;
+            color: #1E2A32;
+            line-height: 1.55;
+            scroll-behavior: smooth;
+        }
+
+        /* пастельная бирюзовая акцентная палитра */
+        :root {
+            --teal-light: #b7e0db;
+            --teal: #2A9D8F;
+            --teal-dark: #217a6e;
+            --sand: #F9F7F3;
+            --gray-bg: #F0F2F5;
+            --card-white: #FFFFFF;
+            --shadow-sm: 0 12px 28px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 20px 32px -12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* контейнер */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* header */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1E3B3A 0%, #2A9D8F 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #4A5B66;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* навигация (горизонтальная, адаптивная) */
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 2rem 0 2rem 0;
+            padding: 0.75rem 0;
+            border-top: 1px solid #E2E8F0;
+            border-bottom: 1px solid #E2E8F0;
+            background: #FFFFFFD9;
+            backdrop-filter: blur(2px);
+            border-radius: 60px;
+            position: sticky;
+            top: 10px;
+            z-index: 10;
+            background: rgba(255,255,255,0.92);
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 600;
+            color: #2C3E44;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            background: transparent;
+        }
+
+        .nav-links a i {
+            margin-right: 6px;
+            color: var(--teal);
+        }
+
+        .nav-links a:hover {
+            background: var(--teal);
+            color: white;
+        }
+
+        .nav-links a:hover i {
+            color: white;
+        }
+
+        /* карточки секций */
+        .section-card {
+            background: var(--card-white);
+            border-radius: 2rem;
+            padding: 2rem 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s;
+            scroll-margin-top: 90px;
+        }
+
+        .section-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid var(--teal);
+            padding-left: 1.2rem;
+            color: #1E2A32;
+        }
+
+        .subsection-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 1.2rem 0 0.8rem 0;
+            color: #1E3B3A;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subsection-title i {
+            color: var(--teal);
+            font-size: 1.3rem;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.2rem 0;
+        }
+
+        .info-badge {
+            background: var(--teal-light);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--teal-dark);
+            display: inline-block;
+            margin-bottom: 0.6rem;
+        }
+
+        .term {
+            font-weight: 700;
+            color: var(--teal-dark);
+        }
+
+        ul, .styled-list {
+            padding-left: 1.4rem;
+            margin: 0.8rem 0;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .audiogram-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .badge-type {
+            background: #EDF2F7;
+            border-radius: 60px;
+            padding: 0.3rem 1rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .teal-quote {
+            background: #E9F7F4;
+            border-left: 4px solid var(--teal);
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            margin: 1rem 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-top: 1px solid #E2E8F0;
+            font-size: 0.85rem;
+            color: #4F6F7A;
+        }
+
+        /* декоративный элемент "01" в стиле Мику (наискосок) */
+        .miku-deco {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 90px;
+            font-weight: 900;
+            color: rgba(200, 3, 9, 0.1);
+            pointer-events: none;
+            z-index: 1;
+            font-family: monospace;
+            transform: rotate(-8deg);
+            user-select: none;
+        }
+
+        /* кнопка наверх */
+        .go-top {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: var(--teal);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: 0.2s;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 20;
+            text-decoration: none;
+        }
+        .go-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .go-top:hover {
+            background: var(--teal-dark);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 1rem;
+            }
+            .section-card {
+                padding: 1.4rem;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .nav-links {
+                gap: 0.4rem;
+                border-radius: 40px;
+                top: 5px;
+            }
+            .nav-links a {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.7rem;
+            }
+            .section-title {
+                font-size: 1.6rem;
+            }
+            .subsection-title {
+                font-size: 1.25rem;
+            }
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, #E2E8F0, #B7E0DB, #E2E8F0);
+        }
     </style>
 </head>
 <body>
+<div class="miku-deco">01</div>
+<a href="#" class="go-top" id="goTopBtn"><i class="fas fa-chevron-up"></i></a>
 
-<h1>Особенности аденотонзиллярного и глоточно-гортанного синдромов</h1>
+<div class="container">
+    <div class="hero">
+        <h1><i class="fas fa-ear-listen" style="color: #2A9D8F;"></i> Клиническая анатомия, физиология внутреннего уха<br>и методы исследования слуха</h1>
+    </div>
 
-<h2>1. Введение</h2>
-<p>В оториноларингологии (ЛОР-медицине) часто используются понятия <strong>аденоиды</strong>, <strong>тонзиллы (миндалины)</strong> и связанные с ними <strong>синдромы</strong>, влияющие на дыхание, иммунитет и качество жизни, особенно у детей. Понимание этих синдромов важно для диагностики, лечения и профилактики осложнений хронических воспалительных заболеваний. </p>
+    <!-- навигация по разделам -->
+    <div class="nav-links">
+        <a href="#anatomy"><i class="fas fa-microscope"></i> Анатомия</a>
+        <a href="#physiology"><i class="fas fa-waveform"></i> Физиология</a>
+        <a href="#theories"><i class="fas fa-chalkboard-user"></i> Теории слуха</a>
+        <a href="#exam"><i class="fas fa-stethoscope"></i> Методы исслед.</a>
+        <a href="#objective"><i class="fas fa-microchip"></i> Объективные</a>
+s
+    </div>
 
-<h2>2. Аденотонзиллярный синдром</h2>
+    <!-- ================= АНАТОМИЯ ================= -->
+    <section id="anatomy" class="section-card">
+        <h2 class="section-title"><i class="fas fa-brain"></i> Анатомия внутреннего уха (лабиринт)</h2>
+        <p>Внутреннее ухо расположено в толще каменистой части височной кости. Функционально подразделяется на <span class="term">костный лабиринт</span> и <span class="term">перепончатый лабиринт</span>. Оно объединяет орган слуха (улитка) и орган равновесия (вестибулярный аппарат).</p>
+        
+        <div class="grid-2col">
+            <div>
+                <div class="info-badge">Костный лабиринт</div>
+                <ul>
+                    <li><strong>Преддверие</strong> – сообщается спереди с улиткой (лестница преддверия), сзади – с полукружными каналами. На наружной стенке: <em>окно преддверия</em> и <em>окно улитки</em>.</li>
+                    <li><strong>Улитка</strong> – костный канал (2,5 завитка) вокруг стержня (modiolus). Костная пластинка занимает ⅓, остальное – базилярная мембрана.</li>
+                    <li><strong>Полукружные каналы</strong> (вестибулярная функция).</li>
+                </ul>
+            </div>
+            <div>
+                <div class="info-badge">Перепончатый лабиринт</div>
+                <ul>
+                    <li>Кохлеарный проток (перепончатая улитка) – содержит эндолимфу.</li>
+                    <li>Внутри протока – <strong>Кортиев орган</strong> (сенсорный эпителий).</li>
+                    <li>Три стенки: вестибулярная (мембрана Рейсснера), наружная (сосудистая полоска), тимпанальная (базилярная мембрана).</li>
+                </ul>
+            </div>
+        </div>
 
-<h3>Что это?</h3>
-<p><strong>Аденотонзиллярный синдром</strong> — комплекс симптомов, развивающихся на фоне выраженной гипертрофии глоточной и нёбных миндалин, часто сопровождающийся хроническими воспалительными процессами верхних дыхательных путей. Он объединяет признаки аденоидов и тонзиллитов (в том числе хронического тонзиллита).</p>
+        <div class="subsection-title"><i class="fas fa-water"></i> Жидкости внутреннего уха</div>
+        <ul>
+            <li><span class="term">Перилимфа</span> – заполняет пространства костного лабиринта (лестница преддверия и барабанная лестница). Состав близок к цереброспинальной жидкости.</li>
+            <li><span class="term">Эндолимфа</span> – находится внутри перепончатого лабиринта, богата ионами K⁺, создает эндокохлеарный потенциал.</li>
+            <li>Функции: питание, удаление метаболитов, среда для распространения волны и трансформации вибрации в нервный сигнал.</li>
+        </ul>
+        <p><i class="fas fa-hand-holding-heart"></i> <strong>Кровоснабжение:</strong> внутренняя слуховая артерия (ветвь базилярной артерии).</p>
+        <div class="teal-quote">
+            <i class="fas fa-arrow-right"></i> <strong>Улитка:</strong> два этажа — лестница преддверия (вестибулярная) и барабанная лестница, они сообщаются через <strong>геликотрему</strong> на верхушке. Базилярная мембрана разделяет их и несет кортиев орган.
+        </div>
+    </section>
 
-<h3>Аденоиды и гипертрофия глоточной миндалины</h3>
-<ul>
-    <li><strong>Аденоиды</strong> — патологическое разрастание глоточной миндалины, чаще у детей 3–10 лет.
-    </li>
-    <li>Могут вызывать: затруднение носового дыхания, храп, ухудшение слуха, нарушения речи и сна.
-    </li>
-    <li>Признаки: дыхание через рот, хронические выделения из носа, снижение слуха, характерное «аденоидное лицо».</li>
-</ul>
+    <!-- ================= ФИЗИОЛОГИЯ ================= -->
+    <section id="physiology" class="section-card">
+        <h2 class="section-title"><i class="fas fa-volume-up"></i> Физиология слухового анализатора</h2>
+        <p><strong>Адекватный раздражитель</strong> – звук (механические колебания воздуха). Звуковая волна вызывает фазы сгущения и разряжения, достигая наружного уха. Для оптимального слуха важно, чтобы колебания к окну преддверия и окну улитки приходили в разных фазах (обеспечивает движение перилимфы).</p>
+        <div class="grid-2col">
+            <div>
+                <div class="info-badge">Звукопроведение</div>
+                <ul>
+                    <li>Наружное ухо → барабанная перепонка → цепь слуховых косточек (молоточек, наковальня, стремечко) → окно преддверия.</li>
+                    <li><strong>Усиление звука:</strong> система среднего уха повышает давление в 17×1,3×2 = 44,2 раза (~33 дБ) плюс резонанс ушной раковины и наружного прохода (+10–12 дБ).</li>
+                    <li>Костная проводимость (инерционный и компрессионный механизмы).</li>
+                </ul>
+            </div>
+            <div>
+                <div class="info-badge">Восприятие частот</div>
+                <ul>
+                    <li>Высокочастотные звуки (короткая волна) → колебания перилимфы в <strong>основании улитки</strong>.</li>
+                    <li>Низкочастотные звуки (длинная волна) → распространяются до <strong>верхушки улитки</strong>.</li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div class="info-badge">Субъективные характеристики</div>
+            <ul>
+                <li><strong>Громкость</strong> (интенсивность, дБ) – порог слухового ощущения: минимальная энергия, вызывающая слышимость. Диапазон от 0 дБ до 120–130 дБ (болевой порог).</li>
+                <li><strong>Высота звука</strong> (частота, Гц) – у человека от 16 до 20 000 Гц.</li>
+                <li><strong>Тембр</strong> (окраска звука) и <strong>ототопика</strong> (локализация источника) – возможны при бинауральном слухе.</li>
+            </ul>
+        </div>
+    </section>
 
-<h3>Тонзиллит и тонзиллярный синдром</h3>
-<ul>
-    <li><strong>Тонзиллы</strong> — лимфоидная ткань, участвующая в защите организма от инфекций.
-    </li>
-    <li>Воспаление миндалин (ангина, тонзиллит) проявляется сильными болями в горле, гиперемией, увеличением миндалин и гнойными налётами при бактериальной инфекции.</li>
-</ul>
+    <!-- ================= ТЕОРИИ СЛУХА ================= -->
+    <section id="theories" class="section-card">
+        <h2 class="section-title"><i class="fas fa-microscope"></i> Теории слуха и трансдукция звука</h2>
+        <div class="subsection-title"><i class="fas fa-wave-square"></i> Теория Бекеши (бегущей волны)</div>
+        <p>Движение стремени → смещение перилимфы вестибулярной лестницы → давление на базилярную мембрану → волна, бегущая от основания к верхушке. Максимальный изгиб мембраны зависит от частоты: высокие звуки дают максимум у основания улитки, низкие – у верхушки. Так происходит <strong>первичный частотный анализ</strong>.</p>
+        <div class="subsection-title"><i class="fas fa-guitar"></i> Теория Гельмгольца (резонансная)</div>
+        <p>Базилярная мембрана содержит волокна разной длины (настроенные как струны). Каждый звук вызывает резонанс строго определённого участка: высокие тона – у окна преддверия, низкие – у геликотремы.</p>
+        <div class="subsection-title"><i class="fas fa-bolt"></i> Молекулярные теории трансформации энергии</div>
+        <ul>
+            <li><strong>Лазарев</strong>: звук → разложение слухового пурпура → освобождение ионов → возбуждение.</li>
+            <li><strong>Девис (механо-электрическая)</strong>: нарушение ионного равновесия между эндо- и перилимфой, деформация стереоцилий → генерация рецепторного потенциала.</li>
+            <li><strong>Винников – Титова</strong>: роль ацетилхолина перилимфы и холинорецепторов в синапсах.</li>
+        </ul>
+        <p><i class="fas fa-info-circle"></i> Современное понимание объединяет частотный анализ улитки и активные механизмы наружных волосковых клеток (усиление отоакустической эмиссии).</p>
+    </section>
 
-<h3>Хронический тонзиллит</h3>
-<ul>
-    <li>Длительное воспаление миндалин, связанное с нарушением иммунных реакций организма.
-    </li>
-    <li>Может вызывать частые ангины, гнойные пробки в миндалинах и системные осложнения.</li>
-</ul>
+    <!-- ================= МЕТОДЫ ИССЛЕДОВАНИЯ ================= -->
+    <section id="exam" class="section-card">
+        <h2 class="section-title"><i class="fas fa-notes-medical"></i> Функциональные методы исследования слуха</h2>
+        <p>Комплексная диагностика включает сбор анамнеза, отоскопию, исследование слуха речью, камертонами, аудиометрию и тимпанометрию.</p>
+        
+        <div class="subsection-title"><i class="fas fa-microphone-alt"></i> Исследование шепотной и разговорной речью</div>
+        <p>Базовый метод: оценивается расстояние, на котором пациент различает слова. Норма: шепот 6 м, разговорная речь >10 м.</p>
+        
+        <div class="subsection-title"><i class="fas fa-music"></i> Камертональные пробы</div>
+        <div class="grid-2col">
+            <div><span class="term">Опыт Вебера</span> – латерализация звука: при кондуктивной тугоухости звук слышен громче в хуже слышащее ухо; при нейросенсорной – в здоровое.</div>
+            <div><span class="term">Опыт Ринне</span> – сравнение воздушного и костного проведения. В норме воздушное > костного (положительный Ринне). Укорочение костной проводимости указывает на поражение звуковосприятия.</div>
+        </div>
+        
+        <div class="subsection-title"><i class="fas fa-chart-line"></i> Тимпанометрия</div>
+        <p>Регистрация акустической податливости при изменении давления в наружном слуховом проходе (+200 до -400 мм вод. ст.). Типы тимпанограмм:</p>
+        <div class="audiogram-types">
+            <span class="badge-type">Тип А — норма</span>
+            <span class="badge-type">Тип С — дисфункция слуховой трубы</span>
+            <span class="badge-type">Тип В — выпот или адгезивный процесс</span>
+            <span class="badge-type">Тип As — отосклероз (сниженная податливость)</span>
+            <span class="badge-type">Тип Ad — разрыв цепи слуховых косточек</span>
+        </div>
+        
+        <div class="subsection-title"><i class="fas fa-headphones"></i> Аудиометрия</div>
+        <ul>
+            <li><strong>Пороговая тональная аудиометрия</strong> – определение порогов воздушной и костной проводимости. Типичные аудиограммы: норма, кондуктивная (костно-воздушный разрыв), нейросенсорная (снижение костной и воздушной), смешанная.</li>
+            <li><strong>Надпороговая аудиометрия</strong> – выявление феномена ускоренного нарастания громкости (ФУНГ), характерен для поражения волосковых клеток (болезнь Меньера, интоксикации).</li>
+            <li><strong>Речевая аудиометрия</strong> – разборчивость речи в процентах. При нейросенсорной тугоухости 100% разборчивость недостижима. Важна для слухопротезирования.</li>
+            <li><strong>Игровая аудиометрия</strong> – для детей 3–5 лет.</li>
+        </ul>
+        <p><i class="fas fa-stethoscope"></i> Дополнительно: катетеризация слуховой трубы, баронагрузочные пробы (Вальсальвы, Тойнби) для оценки вентиляционной функции.</p>
+    </section>
 
-<h2>3. Клиническая картина адено- и тонзиллярной гипертрофии</h2>
-<ul>
-    <li>Нарушение носового дыхания</li>
-    <li>Храп, сонливость, апноэ во сне</li>
-    <li>Снижение слуха, ринит, частые отиты</li>
-    <li>Гнусавость голоса, усталость при разговоре</li>
-    <li>Повышенная утомляемость, головные боли</li>
-</ul>
+    <!-- ================= ОБЪЕКТИВНЫЕ МЕТОДЫ ================= -->
+    <section id="objective" class="section-card">
+        <h2 class="section-title"><i class="fas fa-microchip"></i> Объективные методы исследования слуха</h2>
+        <div class="grid-2col">
+            <div>
+                <div class="info-badge">Акустическая рефлексометрия</div>
+                <p>Регистрация рефлекса стременной мышцы в ответ на тональные или шумовые сигналы (порог 80–90 дБ). При кондуктивной тугоухости рефлекс отсутствует на стороне поражения, при нейросенсорной — порог снижается.</p>
+            </div>
+            <div>
+                <div class="info-badge">Регистрация слуховых вызванных потенциалов (СВП)</div>
+                <ul>
+                    <li>Коротколатентные (улитка, слуховой нерв, ствол мозга) – регистрируются у новорождённых.</li>
+                    <li>Среднелатентные и длинолатентные – для оценки корковых отделов.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="teal-quote">
+            <i class="fas fa-ear-deaf"></i> <strong>Отоакустическая эмиссия (ОАЭ)</strong> – звуки, генерируемые наружными волосковыми клетками улитки. <br>
+            ✔ Спонтанная ОАЭ (в тишине)<br>
+            ✔ Вызванная ОАЭ (ответ на стимул). ЗВОАЭ регистрируется даже у детей на 3–4 день после рождения – скрининг слуха.
+        </div>
+        <p>Объективные методы незаменимы при экспертизе, у детей раннего возраста и симуляции.</p>
+    </section>
 
-<h2>4. Глоточно-гортанный синдром</h2>
-<h3>Что это такое?</h3>
-<p>Термин описывает комплекс симптомов в глотке и гортани, часто обусловленных функциональными и воспалительными нарушениями слизистой, включая <strong>ларингофарингеальный рефлюкс</strong>. 
-</p>
 
-<h3>Ларингофарингеальный рефлюкс</h3>
-<ul>
-    <li>Заброс кислотного содержимого из желудка до уровня глотки и гортани.</li>
-    <li>Симптомы: осиплость голоса, ощущение комка в горле, хронический кашель, першение, затруднённое глотание.</li>
-</ul>
+</div>
 
-<h2>5. Этиология и факторы риска</h2>
-<h3>Аденотонзиллярный синдром</h3>
-<ul>
-    <li>Частые инфекции верхних дыхательных путей</li>
-    <li>Аллергические состояния</li>
-    <li>Наследственная предрасположенность</li>
-    <li>Гиперактивность лимфоидной ткани</li>
-</ul>
-
-<h3>Глоточно-гортанный синдром</h3>
-<ul>
-    <li>Нарушение работы сфинктеров пищевода, позволяющее кислоте подниматься выше в глотку и гортань.</li>
-</ul>
-
-<h2>6. Диагностика</h2>
-<h3>Для адено- и тонзиллярных синдромов</h3>
-<ul>
-    <li>ЛОР-осмотр, передняя и задняя риноскопия</li>
-    <li>Оценка дыхания, осмотр миндалин</li>
-    <li>Рентген / эндоскопия носоглотки</li>
-    <li>Анализы крови при подозрении на инфекцию или осложнения</li>
-</ul>
-
-<h3>Для глоточно-гортанного синдрома</h3>
-<ul>
-    <li>Ларингоскопия</li>
-    <li>Тесты на уровень pH в пищеводе</li>
-    <li>Анкеты по симптомам (например, Reflux Symptom Index)</li>
-</ul>
-
-<h2>7. Лечение</h2>
-<h3>Аденотонзиллярный синдром</h3>
-<ul>
-    <li>Консервативная терапия: антибактериальные и противовоспалительные средства, промывания, лечение аллергии</li>
-    <li>Хирургическая терапия: тонзиллэктомия, аденотомия при выраженных симптомах</li>
-</ul>
-
-<h3>Глоточно-гортанный синдром</h3>
-<ul>
-    <li>Диетические и поведенческие изменения</li>
-    <li>Медикаментозная терапия (ИПП, Н2-блокаторы)</li>
-    <li>Коррекция положения тела после еды</li>
-</ul>
-
-<h2>8. Заключение</h2>
-<p>Оба синдрома — адено- и тонзиллярный, а также глоточно-гортанный — влияют на качество дыхания, глотания и общего самочувствия пациента, особенно у детей. Правильная диагностика, понимание этиологии и раннее лечение помогают предотвратить осложнения, улучшить сон, речь и слух, а также предотвратить хронические воспалительные процессы.</p>
-
+<script>
+    // Показывать/скрывать кнопку "наверх"
+    const goTopBtn = document.getElementById('goTopBtn');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            goTopBtn.classList.add('show');
+        } else {
+            goTopBtn.classList.remove('show');
+        }
+    });
+    // плавный скролл для всех якорей (включая навигацию)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === "#" || href === "") return;
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
 </body>
 </html>
