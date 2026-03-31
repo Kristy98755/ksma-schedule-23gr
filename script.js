@@ -272,26 +272,27 @@ function removeEmptyDays() {
 		"Корпус 4, 3 этаж, Учебная ауд.-325 (общ.г.)": "<img src='pin.png' class='loc-icon'>4 корпус, кабинет №325",
 		"НГ МЗ КР, подвал, Учебная ауд.-03 (невр.)": "<img src='pin.png' class='loc-icon'>Морфокорпус, 104 кабинет",
 		"(общ.г.)":" ",
+		"РДЛЦ при КГМА, 1 этаж, Уч.ауд.-3 (травм.)":"<a href='https://go.2gis.com/QuZmo'>Городская больница №4</a>",
         // TARGETED
 
         // CURRENT WEEK
-        //"Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
+        // "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
         // "Общая гигиена (общ.г.)|Практика|CurrWeek": "<a href='https://jumpshare.com/share/7dWdzrh9R1LteeuLCqTg'>Общая гигиена</a>",
 		// "Пропедевтика детских болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/3h4W81v2OYwlIUZnUuWI'>Пропедевтика детских болезней</a>",
         // "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/syI8ek5svsVR2PXNsERj'>Пропедхирургия</a>",
 		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/share/VbBtEPKphYjpniI9JAR4'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
-	//	"Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/folder/IimrKHH7hN6hUMSHVsjg'>Лучевая диагностика</a>",
+		// "Лучевая диагностика|Практика|CurrWeek":"<a href='https://jumpshare.com/folder/IimrKHH7hN6hUMSHVsjg'>Лучевая диагностика</a>",
 		// "Пропедевтика внутренних болезней|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Ankzu2ICG1AADExhXCja'>Пропедевтика внутренних болезней</a>",
 		// "Патологическая анатомия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/RpGtVgDaPKqKDDnbaWvS'>Патологическая анатомия</a>",
-		// "Патологическая физиология|Практика|CurrWeek":"<a href='patfiz.html'>Патфиз</a>",
+		// "Патологическая физиология|Практика|CurrWeek":"Патологическая физиология",
 		// "Клиническая биохимия|Практика|NextWeek": "<a href='https://jumpshare.com/share/Vtj3G9a2IRZP3lIKZ0sB'>Клиническая биохимия</a>",
         // "Общая гигиена|Практика|NextWeek": "<a href='https://jumpshare.com/share/gdZygLaXlUUUKpbJ1pzm'>Общая гигиена</a>",
 		// "Топографическая анатомия|Практика|CurrWeek": "<a href='https://meduniver.com/Medical/Topochka/235.html'>Топографическая анатомия</a>",
 		// "Пропедевтика хирургических болезней|Практика|CurrWeek": "<a href='https://jumpshare.com/share/jxMVck4Xdbi0XTRvhkWV'>Пропедхирургия</a>",
 		// "Базисная фармакология|Практика|CurrWeek": "<a href='https://jumpshare.com/share/q0mUpyh1NGYBn2YzP9Zz'>Базисная фармакология</a>",
 		// "Лучевая диагностика и терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
-		//"НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
+		// "НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 		// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
 		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
@@ -303,6 +304,7 @@ function removeEmptyDays() {
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
+		"Травматология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/n9Q07I7nv4TVaknRBYJT'>Травматология</a><br><i><span style='font-size:14; color:red'>Не забудьте сменку!</i></span>",
 
         // NEXT WEEK
 		// "Акушерство и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
@@ -335,8 +337,8 @@ function removeEmptyDays() {
 				week: 'cw' 
 			},
 			{
-				day: 'Вторник',
-				time: '15:15-16:50',
+				day: 'Четверг',
+				time: '12:45-14:20',
 				week: 'cw' 
 			}
 		);
@@ -354,14 +356,14 @@ function removeEmptyDays() {
 			}
 		);
 
-		// shiftLessonTime({
-			// subject: 'Патологическая физиология',
-			// type: 'Практика',
-			// day: 'Вторник',
-			// oldTime: '10:10-11:45',
-			// newTime: '15:15-16:45',
-			// week: 'cw' // Применить к обеим неделям
-		// });		
+		shiftLessonTime({
+			subject: 'Травматология',
+			type: 'Практика',
+			day: 'Среда',
+			oldTime: '07:40-09:15',
+			newTime: '08:00-09:15',
+			week: 'cw' // Применить к обеим неделям
+		});		
 		
 		// shiftLessonTime({
 			// subject: 'Госпитальная терапия',
