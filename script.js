@@ -273,6 +273,7 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-03 (невр.)": "<img src='pin.png' class='loc-icon'>Морфокорпус, 104 кабинет",
 		"(общ.г.)":" ",
 		"РДЛЦ при КГМА, 1 этаж, Уч.ауд.-3 (травм.)":"<a href='https://go.2gis.com/QuZmo'>Городская больница №4</a>",
+		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
         // TARGETED
 
         // CURRENT WEEK
@@ -299,7 +300,7 @@ function removeEmptyDays() {
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
-		// "Оториноларингология|Практика|CurrWeek":"<a href='lor.html'>Оториноларингология</a>",
+		"Оториноларингология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Cj7gtnPvcTdfs3gsKpCx'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
