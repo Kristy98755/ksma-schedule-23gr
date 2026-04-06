@@ -300,12 +300,12 @@ function removeEmptyDays() {
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
-		"Оториноларингология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Cj7gtnPvcTdfs3gsKpCx'>Оториноларингология</a>",
+		// "Оториноларингология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/Cj7gtnPvcTdfs3gsKpCx'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
-		"Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
+		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
-		"Травматология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/n9Q07I7nv4TVaknRBYJT'>Травматология</a><br><i><span style='font-size:14; color:red'>Не забудьте сменку!</i></span>",
+		// "Травматология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/n9Q07I7nv4TVaknRBYJT'>Травматология</a><br><i><span style='font-size:14; color:red'>Не забудьте сменку!</i></span>",
 
         // NEXT WEEK
 		// "Акушерство и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
@@ -330,41 +330,41 @@ function removeEmptyDays() {
 	onScheduleReady(() => {
 		console.log("Both weeks ready, applying patches...");
 
-		moveLesson(
-			{
-				subject: 'Патологическая физиология',
-				type: 'Практика',
-				day: 'Вторник',
-				week: 'cw' 
-			},
-			{
-				day: 'Четверг',
-				time: '12:45-14:20',
-				week: 'cw' 
-			}
-		);
-		moveLesson(
-			{
-				subject: 'Общая гигиена ',
-				type: 'Практика',
-				day: 'Суббота',
-				week: 'cw' // Искать на обеих неделях
-			},
-			{
-				day: 'Вторник',
-				time: '10:10-11:45',
-				week: 'cw' // Перенести на обеих неделях
-			}
-		);
+		// moveLesson(
+			// {
+				// subject: 'Патологическая физиология',
+				// type: 'Практика',
+				// day: 'Вторник',
+				// week: 'cw' 
+			// },
+			// {
+				// day: 'Четверг',
+				// time: '12:45-14:20',
+				// week: 'cw' 
+			// }
+		// );
+		// moveLesson(
+			// {
+				// subject: 'Общая гигиена ',
+				// type: 'Практика',
+				// day: 'Суббота',
+				// week: 'cw' // Искать на обеих неделях
+			// },
+			// {
+				// day: 'Вторник',
+				// time: '10:10-11:45',
+				// week: 'cw' // Перенести на обеих неделях
+			// }
+		// );
 
-		shiftLessonTime({
-			subject: 'Травматология',
-			type: 'Практика',
-			day: 'Среда',
-			oldTime: '07:40-09:15',
-			newTime: '08:00-09:15',
-			week: 'cw' // Применить к обеим неделям
-		});		
+		// shiftLessonTime({
+			// subject: 'Травматология',
+			// type: 'Практика',
+			// day: 'Среда',
+			// oldTime: '07:40-09:15',
+			// newTime: '08:00-09:15',
+			// week: 'cw' // Применить к обеим неделям
+		// });		
 		
 		// shiftLessonTime({
 			// subject: 'Госпитальная терапия',
