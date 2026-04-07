@@ -305,7 +305,7 @@ function removeEmptyDays() {
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
-		// "Травматология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/n9Q07I7nv4TVaknRBYJT'>Травматология</a><br><i><span style='font-size:14; color:red'>Не забудьте сменку!</i></span>",
+		"Травматология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/v4sTWxUcvna8Ucze0Bzj'>Травматология</a><br><i><span style='font-size:14; color:red'>Не забудьте сменку!</i></span>",
 
         // NEXT WEEK
 		// "Акушерство и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
