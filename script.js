@@ -1,4 +1,4 @@
-//redeploy
+//redeploy_please
 document.addEventListener("DOMContentLoaded", function() {
 	
 	const DEBUG_FAKE_SCHEDULE = false;
