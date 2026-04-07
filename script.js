@@ -357,14 +357,14 @@ function removeEmptyDays() {
 			// }
 		// );
 
-		// shiftLessonTime({
-			// subject: 'Травматология',
-			// type: 'Практика',
-			// day: 'Среда',
-			// oldTime: '07:40-09:15',
-			// newTime: '08:00-09:15',
-			// week: 'cw' // Применить к обеим неделям
-		// });		
+		shiftLessonTime({
+			subject: 'Травматология',
+			type: 'Практика',
+			day: 'Среда',
+			oldTime: '07:40-09:15',
+			newTime: '08:00-09:15',
+			week: 'cw' // Применить к обеим неделям
+		});		
 		
 		// shiftLessonTime({
 			// subject: 'Госпитальная терапия',
@@ -374,7 +374,13 @@ function removeEmptyDays() {
 			// newTime: '07:30-09:45',
 			// week: 'bw' // Применить к обеим неделям
 		// });
-  
+		insertLesson({
+			day: 'Среда',          // день недели
+			week: 'cw',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
+			time: '10:10-11:45',         // время — для определения позиции вставки
+			lessonHTML: `<li class="lesson"><div class="lesson__time">10:10-11:45<br></div><div class="lesson__params"><span class="lesson__name">Неврология</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src="pin.png" class="loc-icon">Морфокорпус, 104 кабинет</span></div></li>`
+		});
+
 
 		removeEmptyDays();
 
