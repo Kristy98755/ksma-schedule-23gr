@@ -100,14 +100,32 @@ function parseTimeRange(str) {
 }
 
 /* ---------- Day resolver ---------- */
-// week: 'cw' (current), 'nw' (next), 'bw' (both)
+// week: 'cw' (current), 'nw' (next), 'bw' (both), or 'DD.MM'
 function getDayElements(dayName, week = 'cw') {
     const allDays = [...document.querySelectorAll('.schedule__day')];
     return allDays.filter(d => {
-        const matchesDay = d.querySelector('.schedule__date')
-                            ?.textContent.toLowerCase()
-                            .includes(dayName.toLowerCase());
-        if (!matchesDay) return false;
+        const isDatePattern = /^\d{2}\.\d{2}$/.test(week);
+        const dayDate = d.getAttribute('data-date');
+
+        if (isDatePattern) {
+            if (dayDate !== week) return false;
+            if (dayName) {
+                const matchesDay = d.querySelector('.schedule__date')
+                                    ?.textContent.toLowerCase()
+                                    .includes(dayName.toLowerCase());
+                if (!matchesDay) return false;
+            }
+            return true;
+        }
+
+        if (dayName) {
+            const matchesDay = d.querySelector('.schedule__date')
+                                ?.textContent.toLowerCase()
+                                .includes(dayName.toLowerCase());
+            if (!matchesDay) return false;
+        } else {
+            return false;
+        }
 
         const isCurr = d.closest('#CurrWeek');
         const isNext = d.closest('#NextWeek');
@@ -222,6 +240,8 @@ function removeEmptyDays() {
         const lessons = day.querySelectorAll('.lesson');
         if (lessons.length === 0) {
             day.style.display = 'none'; // Скрываем, но оставляем в DOM для движка
+        } else {
+            day.style.display = ''; // Показываем, если скрывали
         }
     });
 }
@@ -273,7 +293,7 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-03 (невр.)": "<img src='pin.png' class='loc-icon'>Морфокорпус, 104 кабинет",
 		"(общ.г.)":" ",
 		"РДЛЦ при КГМА, 1 этаж, Уч.ауд.-3 (травм.)":"<a href='https://go.2gis.com/QuZmo'>Городская больница №4</a>",
-		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
+		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
         // TARGETED
 
         // CURRENT WEEK
@@ -375,10 +395,10 @@ function removeEmptyDays() {
 			// week: 'bw' // Применить к обеим неделям
 		// });
 		insertLesson({
-			day: 'Среда',          // день недели
-			week: 'cw',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
-			time: '10:10-11:45',         // время — для определения позиции вставки
-			lessonHTML: `<li class="lesson"><div class="lesson__time">10:10-11:45<br></div><div class="lesson__params"><span class="lesson__name">Неврология</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src="pin.png" class="loc-icon">Морфокорпус, 104 кабинет</span></div></li>`
+			// day: 'Среда',          
+			week: '17.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
+			time: '14:00-15:00',         // время — для определения позиции вставки
+			lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">14:00-15:00<br></div><div class="lesson__params"><span class="lesson__name">Отработка по оториноларингологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src="pin.png" class="loc-icon"><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a></span></div></li>`
 		});
 
 
@@ -409,10 +429,13 @@ function removeEmptyDays() {
         const text = span.textContent.trim();
         const typeSpan = span.parentElement.querySelector(".lesson__type");
         const type = typeSpan ? typeSpan.textContent.trim() : "";
+        const dayEl = span.closest('.schedule__day');
+        const ddmm = dayEl ? dayEl.getAttribute('data-date') : null;
 
-        console.log(`[CHECK OVERRIDE] "${text}" | type="${type}" | week="${weekId}"`);
+        console.log(`[CHECK OVERRIDE] "${text}" | type="${type}" | week="${weekId}" | date="${ddmm}"`);
 
         const keysToCheck = [
+            `${text}|${type}|${ddmm}`,
             `${text}|${type}|${weekId}`,
             `${text}|${type}`,
             `${text}`
@@ -626,23 +649,44 @@ function loadWeek(monday, container, weekId) {
         const scheduleTable = document.createElement("ul");
         scheduleTable.className = "schedule__table";
 
-        for (const dayKey in data) {
-            const day = data[dayKey];
+        for (let i = 0; i < 7; i++) {
+            const currentDate = new Date(monday);
+            currentDate.setDate(currentDate.getDate() + i);
+
+            let dayData = null;
+            for (const dayKey in data) {
+                if (dayKey === "_source" || dayKey === "message") continue;
+                const dObj = data[dayKey];
+                if (dObj && dObj.d) {
+                    const dataDate = new Date(dObj.d);
+                    if (dataDate.getFullYear() === currentDate.getFullYear() &&
+                        dataDate.getMonth() === currentDate.getMonth() &&
+                        dataDate.getDate() === currentDate.getDate()) {
+                        dayData = dObj;
+                        break;
+                    }
+                }
+            }
+
             const liDay = document.createElement("li");
             liDay.className = "schedule__day";
 
+            const dd = String(currentDate.getDate()).padStart(2, '0');
+            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+            liDay.setAttribute("data-date", `${dd}.${mm}`);
+
             const dateSpan = document.createElement("span");
             dateSpan.className = "schedule__date";
-            const dateObj = new Date(day.d);
             const options = { weekday: "long", day: "numeric", month: "long" };
-            dateSpan.textContent = capitalizeFirst(dateObj.toLocaleDateString("ru-RU", options));
+            dateSpan.textContent = capitalizeFirst(currentDate.toLocaleDateString("ru-RU", options));
             liDay.appendChild(dateSpan);
 
             const lessonsUl = document.createElement("ul");
             lessonsUl.className = "schedule__lessons";
 
-            for (const lessonKey in day.l) {
-                const lesson = day.l[lessonKey];
+            if (dayData && dayData.l) {
+                for (const lessonKey in dayData.l) {
+                    const lesson = dayData.l[lessonKey];
                 const lessonLi = document.createElement("li");
                 lessonLi.className = "lesson";
 
@@ -674,6 +718,7 @@ function loadWeek(monday, container, weekId) {
 
                 lessonLi.appendChild(paramsDiv);
                 lessonsUl.appendChild(lessonLi);
+                }
             }
 
             liDay.appendChild(lessonsUl);
