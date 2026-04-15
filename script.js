@@ -294,6 +294,7 @@ function removeEmptyDays() {
 		"(общ.г.)":" ",
 		"РДЛЦ при КГМА, 1 этаж, Уч.ауд.-3 (травм.)":"<a href='https://go.2gis.com/QuZmo'>Городская больница №4</a>",
 		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
+		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
 
         // CURRENT WEEK
@@ -326,6 +327,7 @@ function removeEmptyDays() {
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 		// "Травматология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/v4sTWxUcvna8Ucze0Bzj'>Травматология</a><br><i><span style='font-size:14; color:red'>Не забудьте сменку!</i></span>",
+		"Пропедевтика внутренних болезней (гем)|Практика|CurrWeek":"<a href='https://jumpshare.com/share/4J7KtVN8DeLMCkQXqYEA'>Гематология</a>",
 
         // NEXT WEEK
 		// "Акушерство и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
@@ -465,9 +467,18 @@ function removeEmptyDays() {
         const keysToCheck = [text, text.replace(/\./g, '')]; // можно расширить под нужные варианты
 
         for (const key of keysToCheck) {
-            if (overrides[key]) {
+            if (overrides[key] !== undefined) {
                 console.log(`[PLACE OVERRIDE] "${text}" → ${overrides[key]}`);
-                span.innerHTML = overrides[key];
+                
+                let replacement = overrides[key];
+                const hasIcon = span.querySelector('img.loc-icon');
+                
+                // Если иконка была, замена не пустая и в замене иконки еще нет — возвращаем её
+                if (hasIcon && replacement.trim() !== "" && !replacement.includes("loc-icon")) {
+                    replacement = `<img src="pin.png" class="loc-icon">` + replacement;
+                }
+                
+                span.innerHTML = replacement;
                 return;
             }
         }
