@@ -404,6 +404,13 @@ function removeEmptyDays() {
 		});
 
 
+                insertLesson({
+                        // day: 'Среда',          
+                        week: '17.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
+                        time: '16:00-17:45',         // время — для определения позиции вставки
+                        lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">16:00-17:45<br></div><div class="lesson__params"><span class="lesson__name">Отработка по пропедхирургии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src="pin.png" class="loc-icon">Клиника «Ренато», мкр. Джал</span></div></li>`
+                });
+
 		removeEmptyDays();
 
 	});
