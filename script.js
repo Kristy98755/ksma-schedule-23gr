@@ -316,7 +316,7 @@ function removeEmptyDays() {
 		// "Лучевая диагностика и терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
 		// "НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 		// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
-		"Оториноларингология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/O9mWKAWpk1G864odbyxr'>Оториноларингология</a>",
+		// "Оториноларингология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/O9mWKAWpk1G864odbyxr'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
@@ -327,7 +327,7 @@ function removeEmptyDays() {
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/s3UZR2XCU8qzzTapHaeN'>Госпитальная терапия</a>",
 		// "Неврология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/q7ZsnqWSqCnQgL1OCCxs'>Неврология</a>",
 		// "Травматология|Практика|CurrWeek":"<a href='https://jumpshare.com/share/v4sTWxUcvna8Ucze0Bzj'>Травматология</a><br><i><span style='font-size:14; color:red'>Не забудьте сменку!</i></span>",
-		"Пропедевтика внутренних болезней (гем)|Практика|CurrWeek":"<a href='https://jumpshare.com/share/4J7KtVN8DeLMCkQXqYEA'>Гематология</a>",
+		// "Пропедевтика внутренних болезней (гем)|Практика|CurrWeek":"<a href='https://jumpshare.com/share/4J7KtVN8DeLMCkQXqYEA'>Гематология</a>",
 
         // NEXT WEEK
 		// "Акушерство и гинекология|Практика|CurrWeek": "<a href='ginecology.html'>Акушерство и гинекология</a>",
@@ -379,14 +379,14 @@ function removeEmptyDays() {
 			// }
 		// );
 
-		shiftLessonTime({
-			subject: 'Травматология',
-			type: 'Практика',
-			day: 'Среда',
-			oldTime: '07:40-09:15',
-			newTime: '08:00-09:15',
-			week: 'cw' // Применить к обеим неделям
-		});		
+		// shiftLessonTime({
+			// subject: 'Травматология',
+			// type: 'Практика',
+			// day: 'Среда',
+			// oldTime: '07:40-09:15',
+			// newTime: '08:00-09:15',
+			// week: 'cw' // Применить к обеим неделям
+		// });		
 		
 		// shiftLessonTime({
 			// subject: 'Госпитальная терапия',
@@ -398,18 +398,12 @@ function removeEmptyDays() {
 		// });
 		insertLesson({
 			// day: 'Среда',          
-			week: '17.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
-			time: '14:00-15:00',         // время — для определения позиции вставки
-			lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">14:00-15:00<br></div><div class="lesson__params"><span class="lesson__name">Отработка по оториноларингологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src="pin.png" class="loc-icon"><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a></span></div></li>`
+			week: '20.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
+			time: '10:00-15:00',         // время — для определения позиции вставки
+			lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">10:00-10:00<br></div><div class="lesson__params"><span class="lesson__name">Модуль по неврологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>Морфокорпус, 106 кабинет</span></div></li>`
 		});
 
 
-                insertLesson({
-                        // day: 'Среда',          
-                        week: '17.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
-                        time: '16:00-17:45',         // время — для определения позиции вставки
-                        lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">16:00-17:45<br></div><div class="lesson__params"><span class="lesson__name">Отработка по пропедхирургии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src="pin.png" class="loc-icon">Клиника «Ренато», мкр. Джал</span></div></li>`
-                });
 
 		removeEmptyDays();
 
