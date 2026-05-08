@@ -1,0 +1,65 @@
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Расписание</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="tempstyle.css" type="text/css">
+	<link rel="icon" href="favicon.ico">
+    <script src="script.js" defer></script>
+
+    <style>
+       <style>
+		/* По умолчанию — вертикальный фон */
+		body {
+			background-image: url('https://jumpshare.com/share/w2Ac6wHB1K7bSm2eb8ki+/619061837_17942884227099597_1093984494146392085_n.jpg');
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+		}
+
+		/* Горизонтальная ориентация (landscape) */
+		@media (orientation: landscape) {
+			body {
+				/*background-image: url('https://i.postimg.cc/BZMqW02w/image.png');*/
+				background-image: url('https://m.media-amazon.com/images/S/pv-target-images/e54a83a0b659aa66bd92003c7eb9aa550bfbacfe2ac018f5c880c848dfa14d55.jpg');
+				
+			}
+		}
+		</style>
+</head>
+<body>
+<section class="content container">
+    <span class="page-item__title">Расписание занятий</span>
+    <section class="schedule full">
+        <div class="schedule__data" style="display: block;">
+            <div class="row center week-tb">
+                <div class="week-btn active" id="cur">Текущая неделя</div>
+                <div class="week-btn active" id="next">Следующая неделя</div>
+            </div>
+
+            <!-- Текущая неделя -->
+            <div id="CurrWeek">
+                <span id="week"></span>
+                <ul class="schedule__table"></ul>
+            </div>
+
+            <!-- Следующая неделя -->
+            <div id="NextWeek" style="display: none;">
+                <span id="week-next"></span>
+                <!-- <p align="center" style="font-size:24px; color:red;"> -->
+                    <!-- Не готово. Для ускорения разработки требуется дополнительное финансирование -->
+                <!-- </p> -->
+            </div>
+        </div>
+    </section>
+	<p align="center"><a href="https://mikuexpo.com/" style="font-size:20px;">MIKUDAYOOOO!</a></p>
+</section>
+<div style="height: 50px;"></div>
+<div class='loadinganim'>
+<div class='loader'></div>
+</div>
+</body>
+</html>
