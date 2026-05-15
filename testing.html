@@ -381,6 +381,36 @@
   .results .btn-again:hover { background: rgba(10,132,255,.2); }
   .hidden { display: none !important; }
 
+  /* ──────────── modal ──────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,.6);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: #181828; border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 28px 36px; max-width: 380px; width: 90%;
+    text-align: center;
+    transform: scale(.92); transition: transform .25s;
+  }
+  .modal-overlay.open .modal-box { transform: scale(1); }
+  .modal-msg { font-size: 15px; color: #ccc; margin-bottom: 24px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 12px; justify-content: center; }
+  .modal-btn {
+    border: none; border-radius: 10px; padding: 10px 24px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all .2s;
+  }
+  .modal-btn:active { transform: scale(.94); }
+  .modal-cancel { background: rgba(255,255,255,.06); color: #999; }
+  .modal-cancel:hover { background: rgba(255,255,255,.1); }
+  .modal-ok { background: rgba(255,69,58,.12); color: #ff5a4a; border: 1px solid rgba(255,69,58,.2); }
+  .modal-ok:hover { background: rgba(255,69,58,.22); }
+
   @media (orientation: landscape) {
     .stat-restart { display: inline; margin-left: auto; }
     .restart-below { display: none; }
@@ -476,6 +506,16 @@
   </div>
   <div class="progress-label" id="progressLabel">0 / 0</div>
   <div class="restart-below" id="restartBtn2">Обновить страницу ⟳</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <p class="modal-msg">Сбросить прогресс изученных вопросов?</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-cancel" id="modalCancel">Отмена</button>
+      <button class="modal-btn modal-ok" id="modalOk">Сбросить</button>
+    </div>
+  </div>
 </div>
 
 <!-- side panels -->
@@ -1296,10 +1336,15 @@ document.getElementById('startBtn').addEventListener('click', function() {
   startQuiz();
 });
 document.getElementById('resetBtn').addEventListener('click', function() {
-  if (confirm('Сбросить прогресс изученных вопросов?')) {
-    saveKnown([]);
-    showStart();
-  }
+  document.getElementById('modalOverlay').classList.add('open');
+});
+document.getElementById('modalCancel').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+});
+document.getElementById('modalOk').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  saveKnown([]);
+  showStart();
 });
 document.getElementById('restartBtn').addEventListener('click', function() {
   location.reload();
@@ -1478,6 +1523,8 @@ document.addEventListener('keydown', function(e) {
   } else if (e.key === ' ' || e.key === 'Space') {
     e.preventDefault();
     flipCard();
+  } else if (e.key === 'Escape') {
+    document.getElementById('modalOverlay').classList.remove('open');
   }
 });
 
