@@ -3159,6 +3159,7 @@ function showQuestion() {
 }
 
 function flipCard() {
+  if (window.getSelection().toString().length > 0) return;
   if (answering || idx >= order.length) return;
   document.getElementById('card').classList.toggle('flipped');
   isFlipped = !isFlipped;
@@ -3225,9 +3226,9 @@ function updateStats() {
   document.getElementById('statLeft').textContent = left;
   var done = correct + wrong;
   var total = order.length;
-  var pct = total > 0 ? (done / total) * 100 : 0;
+  var pct = total > 0 ? ((done + 1) / total) * 100 : 0;
   document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = done + ' / ' + total;
+  document.getElementById('progressLabel').textContent = Math.min(done + 1, total) + ' / ' + total;
 }
 
 function showResults() {
