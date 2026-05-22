@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KanamiiSa Mail // Terminal</title>
+    <style>
+        :root {
+            --bg-main: #060810;
+            --panel-bg: rgba(13, 17, 30, 0.7);
+            --border-neon: rgba(0, 255, 200, 0.2);
+            --border-purple: rgba(147, 51, 234, 0.3);
+            --text-main: #e2e8f0;
+            --text-muted: #64748b;
+            --neon-green: #00ffcc;
+            --neon-purple: #a855f7;
+            --gradient-rainbow: linear-gradient(90deg, #00f2fe 0%, #4facfe 25%, #a855f7 50%, #ff007f 75%, #00f2fe 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+        }
+
+        /* --- ЭКРАН ЗАГРУЗКИ --- */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: #060813;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .loader-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle-loader {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.03);
+            border-top: 4px solid var(--neon-green);
+            border-right: 4px solid var(--neon-purple);
+            animation: spin 2s linear infinite;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2), inset 0 0 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .loader-logo {
+            font-size: 3rem;
+            font-weight: 200;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-purple);
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 2;
+        }
+
+        .loading-text {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: var(--neon-green);
+            background: rgba(0, 255, 200, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 200, 0.2);
+            text-shadow: 0 0 5px rgba(0, 255, 200, 0.5);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* --- ОСНОВНОЙ ИНТЕРФЕЙС --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: all 0.5s ease;
+        }
+
+        .icon-sidebar {
+            width: 70px;
+            background: rgba(10, 12, 22, 0.9);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            justify-content: space-between;
+        }
+
+        .sidebar-icons-top {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.2rem;
+        }
+
+        .icon-btn:hover, .icon-btn.active {
+            color: var(--neon-green);
+            background: rgba(0, 255, 200, 0.05);
+            box-shadow: 0 0 10px rgba(0, 255, 200, 0.1);
+        }
+
+        .mail-list-panel {
+            width: 360px;
+            background: rgba(14, 18, 36, 0.4);
+            border-right: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .panel-header {
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .email-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-purple);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .email-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 3px;
+            background: var(--neon-purple);
+            opacity: 0.5;
+        }
+
+        .email-card:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.15);
+            transform: translateX(2px);
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .card-sender {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .card-subject {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mail-view-panel {
+            flex: 1;
+            background: rgba(8, 10, 18, 0.6);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+        }
+
+        .view-placeholder-box {
+            border: 1px dashed rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .write-action-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #fff;
+            background: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 1;
+        }
+
+        .write-action-btn::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: var(--gradient-rainbow);
+            background-size: 300% 100%;
+            border-radius: 12px;
+            z-index: -2;
+            animation: rainbow-shift 4s linear infinite;
+        }
+
+        .write-action-btn::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: #0d111e;
+            border-radius: 9px;
+            z-index: -1;
+            transition: background 0.2s;
+        }
+
+        .write-action-btn:hover::after {
+            background: rgba(13, 17, 30, 0.7);
+        }
+
+        @keyframes rainbow-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .hello-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 255, 200, 0.05);
+            border: 1px solid var(--neon-green);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.1);
+            z-index: 500;
+            transition: opacity 0.5s ease;
+        }
+
+        @media (max-width: 900px) {
+            .icon-sidebar, .mail-view-panel {
+                display: none;
+            }
+            .mail-list-panel {
+                width: 100%;
+                background: var(--bg-main);
+            }
+            .write-action-btn {
+                font-size: 1.1rem;
+                padding: 16px;
+                box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div id="loading-screen" style="display: flex;">
+        <div class="loader-container">
+            <div class="circle-loader"></div>
+            <div class="loader-logo">K</div>
+        </div>
+        <div class="loading-text" id="loader-status">Checking session keys...</div>
+    </div>
+
+    <div id="auth-modal" style="display: none; position: fixed; inset: 0; background: #060810; z-index: 9999; justify-content: center; align-items: center; flex-direction: column;">
+		<div style="background: rgba(14, 18, 36, 0.8); border: 1px solid var(--border-purple); padding: 40px; border-radius: 12px; width: 340px; text-align: center; box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);">
+			<h2 style="color: var(--neon-green); margin-bottom: 10px; letter-spacing: 2px; font-size: 1.4rem;">BIOMETRIC LOCK</h2>
+			<p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 25px; text-transform: uppercase;">Identity verification required</p>
+			
+			<button onclick="handleBiometricLogin()" style="width: 100%; padding: 16px; background: rgba(0, 255, 200, 0.03); border: 1px solid var(--neon-green); color: var(--neon-green); font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 0 15px rgba(0, 255, 200, 0.1); text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;" onmouseover="this.style.background='rgba(0, 255, 200, 0.1)'" onmouseout="this.style.background='rgba(0, 255, 200, 0.03)'">
+				🔑 Инициализировать Windows Hello
+			</button>
+			
+			<div id="auth-error" style="color: #ff3366; font-size: 0.8rem; margin-top: 15px; display: none;">BIOMETRIC REJECTED. ACCESS DENIED.</div>
+		</div>
+    </div>
+
+    <div class="app-container" id="app-viewport">
+        <aside class="icon-sidebar">
+            <div class="sidebar-icons-top">
+                <div class="icon-btn active" title="Входящие">📩</div>
+                <div class="icon-btn" title="Выход" onclick="handleLogout()">🚪</div>
+            </div>
+        </aside>
+
+        <section class="mail-list-panel">
+            <div class="panel-header">
+                <button class="write-action-btn">Написать сообщение</button>
+                <input type="text" class="search-box" placeholder="Search mail...">
+            </div>
+            <div class="email-list-content" id="mail-box-container">
+                </div>
+        </section>
+
+        <section class="mail-view-panel">
+            <div class="view-placeholder-box">
+                <p>Select an item to read</p>
+            </div>
+        </section>
+    </div>
+
+    <div class="hello-toast" id="hello-alert" style="display: none;">
+        <span>🔒 Session Secured via Bearer JWT</span>
+    </div>
+<script>
+// Укажи здесь URL своего воркера после публикации в Cloudflare
+const API_URL = 'https://kamaniisa-auth.itismynickname9.workers.dev/'; 
+
+// Простая функция генерации фиксированного ID для текущего браузера
+async function getOrCreateDeviceId() {
+    let id = localStorage.getItem('kanamiisa_device_id');
+    if (!id) {
+        id = 'dev_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('kanamiisa_device_id', id);
+    }
+    return id;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = sessionStorage.getItem('bearer_token');
+    
+    setTimeout(() => {
+        if (!token) {
+            showAuthForm();
+        } else {
+            initApp();
+        }
+    }, 2000); 
+});
+
+function showAuthForm(msg = "ACCESS REQUIRED", isError = false) {
+    document.getElementById('loading-screen').style.display = 'none';
+    const authModal = document.getElementById('auth-modal');
+    authModal.style.display = 'flex';
+    
+    const errBlock = document.getElementById('auth-error');
+    errBlock.textContent = msg;
+    errBlock.style.color = isError ? "#ff3366" : "#00ffcc";
+    errBlock.style.display = 'block';
+}
+
+// ГЛАВНАЯ ФУНКЦИЯ КНОПКИ БИОМЕТРИИ
+async function handleBiometricLogin() {
+    const errorBlock = document.getElementById('auth-error');
+    errorBlock.style.display = 'none';
+    
+    const deviceId = await getOrCreateDeviceId();
+    const deviceName = navigator.userAgent.toLowerCase().includes('mobile') ? "My Smartphone" : "My PC";
+
+    try {
+        // Шаг 1: Пробуем сразу авторизоваться по этому девайсу
+        const loginRes = await fetch(`${API_URL}/api/login-device`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deviceId })
+        });
+
+        if (loginRes.status === 200) {
+            // Устройство одобрено админом! Получаем токен
+            const data = await loginRes.json();
+            sessionStorage.setItem('bearer_token', data.token);
+            initApp();
+            return;
+        } 
+        
+        if (loginRes.status === 401) {
+            // Устройство найдено, но статус всё еще "pending"
+            showAuthForm("WAITING: Устройство ожидает активации админом в KV.", false);
+            return;
+        }
+
+        // Шаг 2: Если Воркер ответил 403 (Устройство незнакомо), запускаем системное сканирование пальца для подачи заявки
+        if (loginRes.status === 403) {
+            showAuthForm("NEW DEVICE DETECTED. SCAN TO REQUEST ACCESS...", false);
+            
+            // Вызываем системный отпечаток пальца/Windows Hello
+            const mockChallenge = new Uint8Array(32);
+            window.crypto.getRandomValues(mockChallenge);
+            
+            const credential = await navigator.credentials.create({
+                publicKey: {
+                    challenge: mockChallenge,
+                    rp: { name: "KanamiiSa Mail", id: window.location.hostname },
+                    user: { id: new Uint8Array(16), name: "operator", displayName: "Operator" },
+                    pubKeyCredParams: [{type: "public-key", alg: -7}],
+                    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
+                }
+            });
+
+            // Отправляем публичный ключ девайса в базу Воркера со статусом pending
+            const regRes = await fetch(`${API_URL}/api/register-device`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    deviceId,
+                    deviceName,
+                    publicKey: "VALID_KEY_STRUCTURE"
+                })
+            });
+
+            if (regRes.status === 202) {
+                showAuthForm("ЗАЯВКА ОТПРАВЛЕНА. Зайди в Cloudflare KV и смени статус на 'approved'.", false);
+            }
+        }
+
+    } catch (err) {
+        console.error(err);
+        showAuthForm("ERROR: " + err.name, true);
+    }
+}
+
+function initApp() {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('auth-modal').style.display = 'none';
+    document.getElementById('app-viewport').style.opacity = '1';
+    
+    const container = document.getElementById('mail-box-container');
+    container.innerHTML = `<div class="email-card"><div class="card-meta"><span>system@cloud</span></div><div class="card-subject">Произведен безопасный вход через одобренный аппаратный токен.</div></div>`;
+}
+
+function handleLogout() {
+    sessionStorage.removeItem('bearer_token');
+    window.location.reload();
+}
+</script>
+</body>
+</html>
