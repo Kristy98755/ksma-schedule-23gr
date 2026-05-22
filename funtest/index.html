@@ -394,6 +394,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 2000); 
 });
 
+async function loadMails() {
+    const token = sessionStorage.getItem('bearer_token');
+    const container = document.getElementById('mail-box-container');
+    
+    try {
+        const res = await fetch(`${API_URL}/api/mails`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) {
+            handleLogout();
+            return;
+        }
+        
+        const mails = await res.json();
+        container.innerHTML = mails.map(m => `
+            <div class="email-card">
+                <div class="card-meta"><span class="card-sender">${m.sender}</span><span>${m.time}</span></div>
+                <div class="card-subject">${m.subject}</div>
+            </div>
+        `).join('');
+        
+    } catch(e) {
+        container.innerHTML = `<div class="email-card"><div class="card-subject">Ошибка загрузки данных.</div></div>`;
+    }
+};
+
 function showAuthForm(msg = "ACCESS REQUIRED", isError = false) {
     document.getElementById('loading-screen').style.display = 'none';
     const authModal = document.getElementById('auth-modal');
@@ -414,58 +441,59 @@ async function handleBiometricLogin() {
     const deviceName = navigator.userAgent.toLowerCase().includes('mobile') ? "My Smartphone" : "My PC";
 
     try {
-        // Шаг 1: Пробуем сразу авторизоваться по этому девайсу
         const loginRes = await fetch(`${API_URL}/api/login-device`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ deviceId })
         });
 
+        // 1. УСПЕШНЫЙ ВХОД (Устройство одобрено, получаем живой UUID токен)
         if (loginRes.status === 200) {
-            // Устройство одобрено админом! Получаем токен
             const data = await loginRes.json();
-            sessionStorage.setItem('bearer_token', data.token);
+            sessionStorage.setItem('bearer_token', data.token); // Теперь тут реальный sess_...
             initApp();
             return;
         } 
         
+        // 2. ОЖИДАНИЕ АППРУВА
         if (loginRes.status === 401) {
-            // Устройство найдено, но статус всё еще "pending"
             showAuthForm("WAITING: Устройство ожидает активации админом в KV.", false);
             return;
         }
 
-        // Шаг 2: Если Воркер ответил 403 (Устройство незнакомо), запускаем системное сканирование пальца для подачи заявки
+        // 3. ЖЕСТКИЙ БАН (declined)
         if (loginRes.status === 403) {
+            const data = await loginRes.json();
+            showAuthForm("🔥 БАН: " + data.error, true);
+            return; // Просто выходим, никакого сканирования!
+        }
+
+        // 4. УСТРОЙСТВО НЕЗНАКОМО (404) — Подаем заявку
+        if (loginRes.status === 404) {
             showAuthForm("NEW DEVICE DETECTED. SCAN TO REQUEST ACCESS...", false);
             
-            // Вызываем системный отпечаток пальца/Windows Hello
             const mockChallenge = new Uint8Array(32);
             window.crypto.getRandomValues(mockChallenge);
             
-            const credential = await navigator.credentials.create({
+            await navigator.credentials.create({
                 publicKey: {
                     challenge: mockChallenge,
                     rp: { name: "KanamiiSa Mail", id: window.location.hostname },
                     user: { id: new Uint8Array(16), name: "operator", displayName: "Operator" },
-                    pubKeyCredParams: [{type: "public-key", alg: -7}],
+                    // Исправленный варнинг тут:
+                    pubKeyCredParams: [{type: "public-key", alg: -7}, {type: "public-key", alg: -257}],
                     authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
                 }
             });
 
-            // Отправляем публичный ключ девайса в базу Воркера со статусом pending
             const regRes = await fetch(`${API_URL}/api/register-device`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    deviceId,
-                    deviceName,
-                    publicKey: "VALID_KEY_STRUCTURE"
-                })
+                body: JSON.stringify({ deviceId, deviceName, publicKey: "VALID_KEY" })
             });
 
             if (regRes.status === 202) {
-                showAuthForm("ЗАЯВКА ОТПРАВЛЕНА. Зайди в Cloudflare KV и смени статус на 'approved'.", false);
+                showAuthForm("ЗАЯВКА ОТПРАВЛЕНА. Ожидание смены статуса в KV на 'approved'.", false);
             }
         }
 
