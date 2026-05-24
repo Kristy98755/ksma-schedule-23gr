@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пропедхир — карточки</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: .4; } 50% { opacity: .8; } }
+  @keyframes glow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+  div {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+  body {
+    min-height: 100vh;
+    background: #07070d;
+    background-image:
+      radial-gradient(ellipse at 15% 30%, rgba(10, 132, 255, .15) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 70%, rgba(175, 82, 222, .15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.03) 0%, transparent 70%);
+    color: #e0e0e0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 680px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+
+  /* ──────────── start screen ──────────── */
+  .start-screen {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 70vh;
+    animation: scaleIn .6s ease;
+    text-align: center;
+  }
+  .start-screen .logo {
+    font-size: 36px; font-weight: 700;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .start-screen .logo-line {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(10,132,255,.6), transparent);
+    margin: 0 auto 32px;
+  }
+  .start-screen .stat-block {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px; padding: 28px 48px;
+    margin-bottom: 28px;
+    animation: fadeIn .8s ease;
+  }
+  .start-screen .stat-label {
+    font-size: 14px; color: #888; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .start-screen .stat-block .big-num {
+    font-size: 52px; font-weight: 700; line-height: 1.2;
+    background: linear-gradient(135deg, #30d158, #0a84ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .start-screen .stat-block .desc {
+    font-size: 14px; color: #888; margin-top: 14px;
+  }
+  .start-screen .stat-block .desc span { color: #bbb; }
+  .start-screen .start-btn {
+    border: none; border-radius: 14px;
+    padding: 18px 64px;
+    font-size: 19px; font-weight: 600;
+    cursor: pointer; transition: all .25s;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    background: linear-gradient(135deg, rgba(10,132,255,.2), rgba(175,82,222,.15));
+    color: #fff;
+    border: 1px solid rgba(10,132,255,.35);
+    position: relative; overflow: hidden;
+  }
+  .start-btn:hover {
+    background: linear-gradient(135deg, rgba(10,132,255,.35), rgba(175,82,222,.25));
+    box-shadow: 0 0 50px rgba(10,132,255,.15);
+    transform: translateY(-2px);
+  }
+  .start-btn:active { transform: scale(.96); }
+  .reset-btn {
+    margin-top: 16px;
+    background: none; border: none;
+    color: #666; font-size: 13px;
+    cursor: pointer; transition: color .2s;
+    letter-spacing: .5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(255,255,255,.08);
+  }
+  .reset-btn:hover { color: #ff453a; text-decoration-color: rgba(255,69,58,.5); }
+  .all-done {
+    font-size: 15px; color: #30d158;
+    margin-top: 14px; font-weight: 600;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* ──────────── header ──────────── */
+  .header {
+    text-align: center; animation: fadeIn .4s ease;
+  }
+  .header h1 {
+    font-size: 24px; font-weight: 600;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    position: relative; display: inline-block;
+  }
+  .header h1::after {
+    content: ''; position: absolute; bottom: -4px; left: 10%; width: 80%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(10,132,255,.5), transparent);
+  }
+  .stats-row {
+    display: flex; justify-content: center; gap: 32px;
+    margin-top: 14px; font-size: 15px; color: #777;
+  }
+  .stats-row .stat { display: flex; align-items: center; gap: 6px; }
+  .stats-row .num  { font-weight: 700; color: #ccc; min-width: 24px; text-align: center; }
+  .stat-ok .icon  { color: #30d158; }
+  .stat-ok .num   { color: #30d158; }
+  .stat-fail .icon { color: #ff453a; }
+  .stat-fail .num  { color: #ff453a; }
+  .stat-left .icon { color: #0a84ff; }
+  .stat-left .num  { color: #0a84ff; }
+  .stat-restart {
+    display: none; cursor: pointer; font-size: 13px; letter-spacing: .3px; color: #777;
+  }
+  .restart-below {
+    text-align: center; cursor: pointer; color: #666;
+    font-size: 12px; letter-spacing: .5px; padding: 4px 0;
+    transition: color .2s; user-select: none;
+  }
+
+  /* ──────────── card ──────────── */
+  .card-wrapper {
+    perspective: 1400px;
+    min-height: 300px;
+    animation: fadeIn .5s ease;
+    margin-top: 8px;
+  }
+  .card {
+    position: relative;
+    width: 100%; min-height: 300px;
+    transition: transform .55s cubic-bezier(.4,0,.2,1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+  .card.flipped { transform: rotateX(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 35px 35px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,.1);
+    box-shadow: 0 16px 56px rgba(0,0,0,.7), 0 0 100px rgba(10,132,255,.06);
+    transition: box-shadow .3s;
+  }
+  .card-face::before {
+    content: ''; position: absolute; inset: -1px;
+    border-radius: 20px; padding: 1px;
+    background: linear-gradient(135deg, rgba(10,132,255,.25), rgba(175,82,222,.18), rgba(255,255,255,.06));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .card-face .label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 24px; font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-face .label .line { display: inline-block; width: 28px; height: 1px; }
+  .card-front {
+    background: rgba(16, 16, 28, .92);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  }
+  .card-front .label { color: rgba(10,132,255,.6); }
+  .card-front .label .line { background: rgba(10,132,255,.4); }
+  .card-front .q-text {
+    font-size: 17px; line-height: 1.7; text-align: center;
+    color: #f0f0f0; max-width: 600px;
+    overflow-y: auto; max-height: 210px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .card-front .q-text::-webkit-scrollbar { width: 4px; }
+  .card-front .q-text::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .card-front .q-id {
+    position: absolute; top: 16px; right: 20px;
+    font-size: 12px; color: rgba(255,255,255,.15);
+    font-weight: 500; letter-spacing: 1px;
+  }
+  .card-front .tap-hint {
+    position: absolute; bottom: 20px;
+    font-size: 12px; color: rgba(255,255,255,.18);
+    letter-spacing: 1px;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  .card-back {
+    background: rgba(10, 10, 20, .96);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    transform: rotateX(180deg);
+  }
+  .card-back .label { color: rgba(48,209,88,.6); }
+  .card-back .label .line { background: rgba(48,209,88,.4); }
+  .card-back .a-text {
+    font-size: 18px; line-height: 1.7; text-align: center;
+    color: #40e86d; max-width: 600px; font-weight: 500;
+    overflow-y: auto; max-height: 210px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .card-back .a-text::-webkit-scrollbar { width: 4px; }
+  .card-back .a-text::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .card-back .hint-key {
+    position: absolute; bottom: 20px;
+    font-size: 11px; color: rgba(255,255,255,.15);
+    letter-spacing: 1px;
+  }
+
+  /* ──────────── actions ──────────── */
+  .actions {
+    display: flex; gap: 16px; justify-content: center;
+    opacity: 0; transition: opacity .25s, transform .25s;
+    pointer-events: none;
+    transform: translateY(6px);
+	margin-top:15px;
+  }
+  .actions.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .actions button {
+    border: none; border-radius: 14px;
+    padding: 16px 44px;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+    letter-spacing: .5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .actions button:active { transform: scale(.94); }
+  .btn-ok {
+    background: rgba(48,209,88,.12); color: #40e86d;
+    border: 1px solid rgba(48,209,88,.25);
+  }
+  .btn-ok:hover { background: rgba(48,209,88,.22); box-shadow: 0 0 32px rgba(48,209,88,.1); }
+  .btn-fail {
+    background: rgba(255,69,58,.12); color: #ff5a4a;
+    border: 1px solid rgba(255,69,58,.25);
+  }
+  .btn-fail:hover { background: rgba(255,69,58,.22); box-shadow: 0 0 32px rgba(255,69,58,.1); }
+
+  /* ──────────── side panels ──────────── */
+  .side-panel {
+    position: fixed; top: 0; bottom: 0;
+    width: 80px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s, background .3s;
+    z-index: 10; cursor: pointer;
+    user-select: none;
+  }
+  .side-panel .sp-icon { font-size: 36px; transition: transform .2s; }
+  .side-panel .sp-label {
+    position: absolute; bottom: 32px;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    opacity: .6;
+  }
+  .side-panel-left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(48,209,88,.12) 0%, transparent 100%);
+    border-right: 1px solid rgba(48,209,88,.15);
+  }
+  .side-panel-left .sp-icon { color: rgba(48,209,88,.6); }
+  .side-panel-left:hover { background: linear-gradient(90deg, rgba(48,209,88,.25) 0%, transparent 100%); }
+  .side-panel-left:hover .sp-icon { color: rgba(48,209,88,1); transform: scale(1.2); }
+  .side-panel-right {
+    right: 0;
+    background: linear-gradient(270deg, rgba(255,69,58,.12) 0%, transparent 100%);
+    border-left: 1px solid rgba(255,69,58,.15);
+  }
+  .side-panel-right .sp-icon { color: rgba(255,69,58,.6); }
+  .side-panel-right:hover { background: linear-gradient(270deg, rgba(255,69,58,.25) 0%, transparent 100%); }
+  .side-panel-right:hover .sp-icon { color: rgba(255,69,58,1); transform: scale(1.2); }
+  .side-panel.show { opacity: 1; pointer-events: auto; }
+  @media (min-width: 1100px) {
+    .side-panel { width: 110px; }
+    .side-panel .sp-icon { font-size: 42px; }
+  }
+
+  /* ──────────── progress bar ──────────── */
+  .progress-wrap {
+    position: relative; height: 4px;
+    background: rgba(255,255,255,.06);
+    border-radius: 4px; overflow: hidden;
+    animation: fadeIn .6s ease;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #0a84ff, #af52de);
+    border-radius: 4px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+    position: relative;
+  }
+  .progress-bar::after {
+    content: ''; position: absolute; right: 0; top: -3px; width: 16px; height: 10px;
+    background: radial-gradient(circle, rgba(175,82,222,.8) 0%, transparent 70%);
+    filter: blur(4px);
+  }
+  .progress-label {
+    text-align: center; font-size: 12px; color: #666;
+    margin-top: 6px; letter-spacing: .5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ──────────── results ──────────── */
+  .results { display: none; }
+  .results.visible { display: block; animation: slideUp .5s ease; }
+  .results .score { text-align: center; padding: 40px 0; }
+  .results .score .pct {
+    font-size: 72px; font-weight: 700;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .results .score .sub { font-size: 16px; color: #777; margin-top: 8px; }
+  .results .mistakes {
+    background: rgba(255,69,58,.06);
+    border: 1px solid rgba(255,69,58,.15);
+    border-radius: 14px; padding: 24px 28px;
+    max-height: 300px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .results .mistakes::-webkit-scrollbar { width: 4px; }
+  .results .mistakes::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .results .mistakes h3 {
+    font-size: 12px; letter-spacing: 2px; color: #ff5a4a;
+    margin-bottom: 14px; text-transform: uppercase; font-weight: 600;
+  }
+  .results .mistakes ul { list-style: none; }
+  .results .mistakes li {
+    font-size: 14px; line-height: 1.5; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    color: #aaa;
+  }
+  .results .mistakes li:last-child { border: none; }
+  .results .btn-again {
+    display: block; margin: 24px auto 0;
+    border: 1px solid rgba(10,132,255,.35);
+    background: rgba(10,132,255,.1);
+    color: #0a84ff; border-radius: 12px;
+    padding: 14px 32px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .results .btn-again:hover { background: rgba(10,132,255,.2); }
+  .hidden { display: none !important; }
+
+  /* ──────────── modal ──────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,.6);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: #181828; border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 28px 36px; max-width: 380px; width: 90%;
+    text-align: center;
+    transform: scale(.92); transition: transform .25s;
+  }
+  .modal-overlay.open .modal-box { transform: scale(1); }
+  .modal-msg { font-size: 15px; color: #ccc; margin-bottom: 24px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 12px; justify-content: center; }
+  .modal-btn {
+    border: none; border-radius: 10px; padding: 10px 24px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all .2s;
+  }
+  .modal-btn:active { transform: scale(.94); }
+  .modal-cancel { background: rgba(255,255,255,.06); color: #999; }
+  .modal-cancel:hover { background: rgba(255,255,255,.1); }
+  .modal-ok { background: rgba(255,69,58,.12); color: #ff5a4a; border: 1px solid rgba(255,69,58,.2); }
+  .modal-ok:hover { background: rgba(255,69,58,.22); }
+
+  @media (orientation: landscape) {
+    .stat-restart { display: inline; margin-left: auto; }
+    .restart-below { display: none; }
+  }
+
+  @media (min-width: 1200px) {
+    .app { max-width: 820px; gap: 28px; }
+    .card-wrapper { min-height: 350px; }
+    .card { min-height: 350px; }
+    .card-face { padding: 48px 52px; }
+    .card-front .q-text { font-size: 24px; max-height: 240px; }
+    .card-back .a-text { font-size: 25px; max-height: 240px; }
+    body { padding: 40px; }
+    .header h1 { font-size: 28px; }
+    .stats-row { font-size: 16px; gap: 40px; }
+    .actions button { padding: 18px 52px; font-size: 17px; }
+    .start-screen .logo { font-size: 44px; }
+    .start-screen .stat-block .big-num { font-size: 60px; }
+    .start-screen .stat-label { font-size: 16px; }
+    .start-screen .stat-block .desc { font-size: 16px; }
+    .start-screen .start-btn { padding: 20px 72px; font-size: 21px; }
+    .results .score .pct { font-size: 84px; }
+    .results .score .sub { font-size: 18px; }
+    .side-panel { width: 110px; }
+    .side-panel .sp-icon { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- ── START SCREEN ── -->
+  <div class="start-screen" id="startView">
+    <div class="logo">Пропедхирургия</div>
+    <div class="logo-line"></div>
+    <div class="stat-block" id="statBlock">
+      <div class="stat-label">осталось</div>
+      <div class="big-num" id="remainingCount">0</div>
+      <div class="stat-label">вопросов</div>
+      <div class="desc">Усвоено <span id="knownCount">0</span> из <span id="totalCount">0</span> (<span id="knownPct">0%</span>)</div>
+    </div>
+    <button class="start-btn" id="startBtn">Старт!</button>
+    <button class="reset-btn hidden" id="resetBtn">Сбросить прогресс</button>
+    <div class="all-done hidden" id="allDoneMsg">Все вопросы изучены ✓</div>
+  </div>
+
+  <!-- ── QUIZ VIEW ── -->
+  <div id="quizView" class="hidden">
+    <div class="header">
+      <h1>Пропедхирургия</h1>
+      <div class="stats-row">
+        <span class="stat stat-ok">✓&thinsp;<span class="num" id="statOk">0</span></span>
+        <span class="stat stat-fail">✗&thinsp;<span class="num" id="statFail">0</span></span>
+        <span class="stat stat-left">осталось&thinsp;<span class="num" id="statLeft">0</span></span>
+        <span class="stat-restart" id="restartBtn">Обновить страницу ⟳</span>
+      </div>
+    </div>
+    <div class="card-wrapper">
+      <div class="card" id="card">
+        <div class="card-face card-front" onclick="flipCard()">
+          <span class="q-id" id="qId"></span>
+          <div class="label"><span class="line"></span> Вопрос <span class="line"></span></div>
+          <div class="q-text" id="qText">Загрузка...</div>
+          <div class="tap-hint">нажмите, чтобы открыть ответ</div>
+        </div>
+        <div class="card-face card-back" onclick="flipCard()">
+          <div class="label"><span class="line"></span> Ответ <span class="line"></span></div>
+          <div class="a-text" id="aText"></div>
+          <div class="hint-key">&larr; знаю &nbsp;&middot;&nbsp; не знаю &rarr;</div>
+        </div>
+      </div>
+    </div>
+    <div class="actions" id="actions">
+      <button class="btn-ok" onclick="answer(true)">&#10003; Знаю</button>
+      <button class="btn-fail" onclick="answer(false)">&#10007; Не знаю</button>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div class="results" id="resultsView">
+    <div class="score">
+      <div class="pct" id="scorePct">0%</div>
+      <div class="sub" id="scoreSub">0 / 0</div>
+    </div>
+    <div class="mistakes" id="mistakesWrap">
+      <h3>Ошибки</h3>
+      <ul id="mistakesList"></ul>
+    </div>
+    <button class="btn-again" onclick="backToStart()">&#10227; На старт</button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 0</div>
+  <div class="restart-below" id="restartBtn2">Обновить страницу ⟳</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <p class="modal-msg">Сбросить прогресс изученных вопросов?</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-cancel" id="modalCancel">Отмена</button>
+      <button class="modal-btn modal-ok" id="modalOk">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<!-- side panels -->
+<div class="side-panel side-panel-left" id="panelLeft" onclick="answer(true)">
+  <span class="sp-icon">&larr;</span>
+  <span class="sp-label">Знаю</span>
+</div>
+<div class="side-panel side-panel-right" id="panelRight" onclick="answer(false)">
+  <span class="sp-icon">&rarr;</span>
+  <span class="sp-label">Не знаю</span>
+</div>
+
+<script>
+var QUESTIONS = [{"id":1,"q":"В зону общего режима входят:","a":"Кабинет заведующего, старшей сестры, помещение для грязного белья."},{"id":2,"q":"В зону ограниченного режима операционного блока входят:","a":"Кислородная, вентиляционная."},{"id":3,"q":"В зону строгого режима операционного блока входят:","a":"Наркозная, инструментальная."},{"id":4,"q":"В зону стерильного режима операционного блока входят:","a":"Операционная, стерилизационная."},{"id":5,"q":"Какой вид уборки операционной лишний?","a":"Периодическая."},{"id":6,"q":"Перед входом в какую зону операционного блока предусматривается","a":"Строгого режима."},{"id":7,"q":"Какая зона операционного блока лишняя?","a":"Свободного режима."},{"id":8,"q":"Автор, впервые предложивщий дезинфекцию руки медицинского персонала перед операцией и манипуляциями?","a":"Земмельвейс"},{"id":9,"q":"Родоначальником асептического метода работы является?","a":"Бергман"},{"id":10,"q":"Кто впервые предложил оперировать в резиновых перчатках?","a":"Цеге-Мантейфель."},{"id":11,"q":"Где в отделении должны храниться медицинские термометры?","a":"В банке, на дне которой положена вата и добавлен дезинфицирующий раствор."},{"id":12,"q":"Какой способ введения лекарственных препаратов называется парентеральным?","a":"Любой способ введения лекарственных препаратов, минуя желудочно- кишечный тракт."},{"id":13,"q":"В каких случаях лекарственные препараты назначают внутрь после приема пищи?","a":"Если он раздражает слизистую оболочку желудка."},{"id":14,"q":"Какие области тела наиболее неудобны для подкожных инъекций?","a":"Внутренняя поверхность плеча."},{"id":15,"q":"Какие области тела наиболее неудобны для проведения внутримышечных инъекций?","a":"Внутренняя поверхность бедра."},{"id":16,"q":"Какова роль воздуховодной трубки в системе для внутривенных капельных вливаний?","a":"Вытесняет жидкость из флакона с раствором."},{"id":17,"q":"Как часто следует проводить влажную уборку палат?","a":"По мере необходимости, но не реже двух раз в день."},{"id":18,"q":"В какую палату должна быть госпитализирована больная с инфильтратом, признаками флюктуации?","a":"Отдельную палату."},{"id":19,"q":"Как часто следует проводить смену нательного и постельного белья?","a":"По мере его загрязнения, но не реже 1 раза в 10 дней."},{"id":20,"q":"Что изучает медицинская деонтология?","a":"Персональные взаимоотношения между медицинскими работниками и больным."},{"id":21,"q":"Сколько часов после стерилизации может храниться закрытый бикс?","a":"72."},{"id":22,"q":"Существует ли опасность для здоровья хирурга, оперирующего больного СПИДом?","a":"Да, опасность для хирурга сохраняется"},{"id":23,"q":"Продолжительность стерилизации в автоклаве при давлении 2 атм","a":"30 мин."},{"id":24,"q":"Продолжительность стерилизации в автоклаве при давлении 1,1 атм","a":"60 мин."},{"id":25,"q":"Закрытый бикс Шимельбуша сохраняет свое содержимое стерильным в течение:","a":"72 ч."},{"id":26,"q":"Процесс стерилизации в сухожаровом шкафу осуществляют при закрытой дверце в течение:","a":"60 мин."},{"id":27,"q":"Сухожаровой шкаф обеспечивает стерилизацию инструментария при максимальной температуре:","a":"180 ｰС."},{"id":28,"q":"Продолжительность стерилизации в автоклаве при давлении 1,5 атм","a":"45 мин."},{"id":29,"q":"Предварительная сушка инструментария в сухожаровом шкафу продолжается:","a":"30 мин."},{"id":30,"q":"Предварительная сушка инструментария в сухожаровом шкафу обеспечивается при режиме температуры:","a":"80 ｰС."},{"id":31,"q":"Процесс стерилизации в сухожаровом шкафу осуществляют при закрытой дверце при температурном режиме:","a":"180 ｰС."},{"id":32,"q":"Какой из методов контроля стерильности содержимого биксов является наиболее достоверным?","a":"Бактериологический."},{"id":33,"q":"Как часто производят бактериологический контроль посевов с перевязочного материала и белья?","a":"1 раз в 10 дней."},{"id":34,"q":"Что в медицине называется стерилизацией?","a":"Полное уничтожение микроорганизмов."},{"id":35,"q":"При какой температуре (в градусах по Цельсию) стерилизуют инструменты в сухожаровом стерилизаторе?","a":"180 ｰС."},{"id":36,"q":"Какими методами можно стерилизовать металлический инструментарий?","a":"В сухожаровом шкафу."},{"id":37,"q":"Основные методы стерилизации металлического инструментария:","a":"Автоклавированием."},{"id":38,"q":"Какой из способов стерилизации хирургического инструментария наиболее надежный и быстрый в условиях больницы?","a":"В сухожаровом шкафу."},{"id":39,"q":"Назовите наиболее достоверный методов контроля за стерильностью содержимого биксов?","a":"Биологический"},{"id":40,"q":"Какой из перечисленных вариантов ответа соответствует определению - стерилизация?","a":"Полное освобождение какого-либо предмета от микроорганизмов и их спор, путем воздействия на него физическими или химическими факторами."},{"id":41,"q":"Как называется комплекс мероприятий, направленный на борьбу с эндогенной инфекцией?","a":"Антисептикой"},{"id":42,"q":"К какому виду антисептики относится использование антибиотиков?","a":"Биологической."},{"id":43,"q":"К какому из методов антисептики относится дренирование?","a":"Физический."},{"id":44,"q":"Какое определение соответствует термину антисептика?","a":"Комплекс мер направленный на уничтожение микроорганизмов в ране или организме больного в целом."},{"id":45,"q":"Укажите антисептик, относящийся к окислителям:","a":"калия перманганат."},{"id":46,"q":"Через резиновый трубчатый дренаж грудной полости самопроизвольно эвакуируется экссудат. Какой вид антисептики используется?","a":"физическая;"},{"id":47,"q":"Что относится к механической антисептике?","a":"удаление из раны нежизнеспособных тканей;"},{"id":48,"q":"Что относят к поверхностной антисептике?","a":"орошение раны раствором фурацилина;"},{"id":49,"q":"Какие лечебные мероприятия относятся к методам биологической антисептики?","a":"внутримышечное введение стрептомицина;"},{"id":50,"q":"Гипертонический раствор натрия хлорида применяется при:","a":"дренировании гнойных полостей и ран;"},{"id":51,"q":"Кто осуществляет уход за больным?","a":"Младший и средний медперсонал, родственники больного, у каждого есть свои функции."},{"id":52,"q":"Что означает понятие «специальный» уход?","a":"Уход, который предусматривает дополнительные мероприятия в связи со спецификой заболевания."},{"id":53,"q":"Во время операции санитарка периодически подбирает упавший материал,","a":"Текущая."},{"id":54,"q":"В день, когда нет операций, сотрудники операционной вымыли стены, пол с","a":"Генеральная уборка."},{"id":55,"q":"Непосредственно после операции на брюшной полости у больного было","a":"Эндогенной"},{"id":56,"q":"Непосредственно после операции на брюшной полости у больного было","a":"Гематогенный."},{"id":57,"q":"Во время операции хирурги случайно оставили в ране кусочек оторвавшейся от перчатки резины. Развитие какого осложнения наиболее вероятно?","a":"Нагноение."},{"id":58,"q":"Во время операции хирурги случайно оставили в ране кусочек оторвавшейся от перчатки резины. Какой вид инфекции возможен в данном случае?","a":"Имплантационная инфекция."},{"id":59,"q":"В помещении для подготовки изделий медицинского назначения к стерилизации находится несколько биксов, все – с закрытыми крышками. Как по внешнему виду биксов, не открывая их, определить, стерильным материалом они заполнены или нет?","a":"Закрытый поясок говорит о том, что содержимое бикса стерильно."},{"id":60,"q":"При распределении помещений операционный блок расположили неподалеку","a":"Неправильно. Операционный блок должен быть изолирован от палат и мест перемещения больных и персонала."},{"id":61,"q":"В приемное отделение поступил больной с жалобами на боли в животе. Общее состояние больного удовлетворительное. Можно ли ему принять гигиеническую ванну?","a":"Можно после исключения острого хирургического заболевания."},{"id":62,"q":"В приемное отделение доставлен больной с подозрением на желудочно-кишечное кровотечение (3 часа назад была рвота содержимым типа «кофейной гущи»). Чувствует себя субъективно удовлетворительно, может передвигаться самостоятельно. Как транспортировать больного в отделение?","a":"Только на каталке."},{"id":63,"q":"Больному с обширной гнойной раной проводилась антибиотикотерапия комбинацией антибиотиков пенициллина и гентамицина, которые были назначены сразу после поступления пациента в отделение. Через 2 дня больного стал беспокоить зуд кожных покровов, появился отек тканей лица. Какое осложнение развилось?","a":"Аллергическая реакция."},{"id":64,"q":"В клинику госпитализирован больной 45 лет с диагнозом: анаэробная газовая гангрена бедра. Какой антисептик обязательно должен быть использован при обработке инструментов после перевязки?","a":"6% раствор перекиси водорода."},{"id":65,"q":"У подростка 13 лет, незначительная ранка на предплечье правой руки. Какие препараты из группы красителей необходимо использовать в качестве антисептиков?","a":"метиленовый синий,"},{"id":66,"q":"Пациенту 16 лет, получившему травму кисти, необходимо провести первичную хирургическую обработку раны. Какое вмешательство Вы используете с целью механической антисептики?","a":"удаление из раны нежизнеспособных тканей"},{"id":67,"q":"Пациент  57 лет, находится на стационарном лечении с диагнозом «Инфицированная рана левой голени, осложненная флегмоной». Флегмона вскрыта, в настоящее время рана заживает вторично. С какой целью Вы применяете гипертонический раствор натрия хлорида в данном случае?","a":"дренировании гнойных полостей и ран;"},{"id":68,"q":"Пациент 23 года, обратился в поликлинику по месту жительства с незначительной скальпированной раной кисти. В условиях поликлиники рану обработали раствором перекиси водорода. Предположите, какой вид антисептики указан при обработке данной раны?","a":"химическая"},{"id":69,"q":"На прием к хирургу обратился 43 года, с гнойной раной левой голени. В стационаре рану обработали перекисью водорода, произвели вскрытие затеков и дренировали. Предположите,  какой вид антисептики указан при обработке данной раны?","a":"смешанная"},{"id":70,"q":"Гнойная рана промыта пульсирующей струёй раствора антисептика и дренирована. Какой метод антисептики в данном случае?","a":"смешанная."},{"id":71,"q":"Больному с обширной гнойной раной проводилась антибиотикотерапия комбинацией антибиотиков пенициллина и гентамицина, которые были назначены сразу после поступления пациента в отделение. Какая антисептика в данном случае?","a":"Биологическая"},{"id":72,"q":"У больного, направленного на госпитализацию, в приемном отделении обнаружены платяные вши. Ваши действия:","a":"Провести повторное мытье с мылом в ванне, отправить одежду и белье больного в дезинсекционную камеру."},{"id":73,"q":"По линии ургентной хирургии доставлен больной с повреждением магистральной артерии. Хирургу необходимо максимально быстро начать операцию. Укажите какой ускоренный способ обработки рук хирурга необходимо применить в данном случае?","a":"При помощи церигеля."},{"id":74,"q":"Утром 12 ноября операционная сестра приступила к оборудованию стерильного стола. Санитарка принесла бикс с перевязочным материалом и бельем. Поясок бикса закрыт. На прикрепленной к крышке бикса бирке значится, что последний раз он стерилизовался 8 ноября. Каковыми должны быть действия операционной сестры?","a":"Отказаться от использования содержимого данного бикса, так как стерильность содержимого в течение 72 часов (трое суток)."},{"id":75,"q":"Больному с обширной гнойной раной проводилась антибиотикотерапия комбинацией антибиотиков пенициллина и гентамицина, которые были назначены сразу после поступления пациента в отделение. Через 2 дня больного стал беспокоить зуд кожных покровов, появился отек тканей лица. Какие меры необходимо предпринять, чтобы избежать подобного осложнения?","a":"Физический способ (дренирование)."},{"id":76,"q":"Хирург во время пункции коленного сустава случайно использовал не стерильную иглу. В результате возник гнойный артрит. Какие виды антисептики могут быть использованы в лечении гнойного артрита?","a":"Механический - вскрытие сустава, физический - дренирование сустава."},{"id":77,"q":"Пациент 54 года, находится в стационаре с клиническим диагнозом «постинъекционный абсцесс ягодичной области слева». Какое хирургическое вмешательство может быть применено в данном случае?","a":"Вскрытие и дренирование"},{"id":78,"q":"Пострадавшему 19 лет, после ревизии края, стенки и дно раны иссечены с наложением первичного шва. Какой вид антисептики был применен в этом случае?","a":"механическая"},{"id":79,"q":"Дайте наиболее полный правильный ответ. Кровотечение – это излияние крови: измените формулировку вопроса","a":"В ткани, полости организма или во внешнюю среду."},{"id":80,"q":"Какие кровотечения различают по времени появления?","a":"Первичные, вторичные ранние, вторичные поздние."},{"id":81,"q":"Назовите основную причину кровотечения?","a":"Нарушения целостности стенки сосудов, проницаемости сосудистой стенки, реологических свойств крови."},{"id":82,"q":"Какие кровотечения различают по анатомической классификации?","a":"Артериальные, венозные, капиллярные, паренхиматозные."},{"id":83,"q":"Какие кровотечения различают по клиническим проявлениям?","a":"Внешние, внутренние, скрытые."},{"id":84,"q":"Рвота по типу “кофейной гущи” наблюдается при:","a":"Язве желудка и двенадцатиперстной кишки."},{"id":85,"q":"На какие группы делятся симптомы кровотечения?","a":"Местные, общие."},{"id":86,"q":"На какие основные группы разделяются способы остановки кровотечения?","a":"Временные, окончательные."},{"id":87,"q":"Сосудистый шов для гемостаза накладывается при повреждении:","a":"Магистральных сосудов."},{"id":88,"q":"Сосудистый шов для гемостаза накладывается при повреждении:","a":"60 мин."},{"id":89,"q":"Больной 40 лет получил резаную рану в задней части левого коленного сустава. Кровотечение интенсивное, кровь бьет фонтаном. Пальцевым прижатием артерии в паховой области кровотечение временно остановлено. Для доставки пострадавшего в хирургическое отделение решено наложить на бедро жгут. На какой максимальный срок допустимо наложение жгута летом?","a":"120 мин."},{"id":90,"q":"Больной сбит автомобилем. При осмотре: имеется значительная угловая деформация правого предплечья, в средней его трети рана 10х5 см с интенсивным кровотечением, кровь фонтанирует, ярко-алого цвета. Выберите адекватный способ временной остановки кровотечения?","a":"Наложение жгута"},{"id":91,"q":"Вы оказываете помощь женщине 56 лет, у которой возникло интенсивное кровотечение из разорванного варикозного расширенного венозного узла на голени. В чем заключается первая помощь?","a":"Наложить на рану сжимающую асептическую повязку, придать конечности приподнятое положение и госпитализировать в хирургическое отделение."},{"id":92,"q":"Укажите содержание агглютиногенов в эритроцитах у больного с группой крови 0 (I):","a":"Эритроциты не содержат агглютиногенов А и В."},{"id":93,"q":"Укажите содержание агглютиногенов в эритроцитах у больного с группой крови А (II):","a":"Эритроциты содержат агглютиноген А."},{"id":94,"q":"Укажите содержание агглютиногенов в эритроцитах у больного с группой крови В (ІІІ):","a":"Эритроциты содержат агглютиноген В."},{"id":95,"q":"Укажите содержание агглютиногенов в эритроцитах у больного с группой крови АВ (IV):","a":"Эритроциты содержат агглютиногены А и В."},{"id":96,"q":"Укажите правильное написание группы крови 0 (I) по системе агглютинин -агглютиноген:","a":"0 αβ."},{"id":97,"q":"Укажите правильное написание группы крови А (II) по системе агглютинин–агглютиноген:","a":"А β"},{"id":98,"q":"Сколько раз проводится проба на совместимость при повторных гемотрансфузиях?","a":"Перед каждой трансфузией."},{"id":99,"q":"Какие значения имеют антигены и антитела в системе АВ0 в трансфузиологической практике?","a":"Определяют совместимость крови, которую переливают."},{"id":100,"q":"Какую пробу делают при переливании плазмы?","a":"На групповую и биологическую совместимость."},{"id":101,"q":"Чем отличается плазма крови от сыворотки?","a":"В сыворотке отсутствует фибриноген."},{"id":102,"q":"Как называется реакция антиген–антитело при определении резус-фактора крови?","a":"Изоагглютинация."},{"id":103,"q":"Гемотрансфузионный и акушерский анамнез перед переливанием крови позволяет:","a":"Предотвратить возможные гемотрансфузионные осложнения."},{"id":104,"q":"Резус-фактор определяют:","a":"Цоликлоном анти-D Супер."},{"id":105,"q":"В каких компонентах крови содержится резус-фактор?","a":"Эритроциты."},{"id":106,"q":"Кто впервые открыл антиген системы Rh (D) – резус-фактор?","a":"Винер."},{"id":107,"q":"Переливание крови противопоказано при:","a":"Тяжелых нарушениях функций печени, почек, сердца."},{"id":108,"q":"Реинфузия крови – это переливание:","a":"Крови, излившейся в различные полости организма."},{"id":109,"q":"Реципиент – это:","a":"Человек, которому делается переливание донорской крови или ее препаратов."},{"id":110,"q":"Какие осложнения могут быть после гемотрансфузии в первые сутки?","a":"Пирогенные реакции."},{"id":111,"q":"Гемодез преимущественно используют для: замените вопрос","a":"Дезинтоксикации организма."},{"id":112,"q":"При переливании группа крови:","a":"Проверяется при каждой гемотрансфузии."},{"id":113,"q":"Укажите препараты и компоненты крови:","a":"Плазма, альбумин."},{"id":114,"q":"Профилактика гемотрансфузионных реакций и осложнений является:","a":"Подбор крови по группе и резус-фактору"},{"id":115,"q":"У женщины при вторых родах родился ребенок с симптомами гемолитической болезни. Группа крови у женщины А (II) Rh (-), группа крови новорожденного В (ІІІ) Rh (+), у отца новорожденного тоже В (ІІІ) Rh (+). Какая вероятная причина иммуноконфликта?","a":"Резус-конфликт."},{"id":116,"q":"Доношенному новорожденному малышу поставлен диагноз – гемолитическая болезнь новорожденных по резус-фактору. Показатель содержания билирубина критический. Группа крови малыша В (ІІІ), матери – А (II). Назначено заменное переливание крови. Какой подбор донорской крови необходим для этого?","a":"Группа крови В (ІІІ) Rh (+)"},{"id":117,"q":"Потерпевший, 42 года, находится на операции по поводу внутрибрюшного кровотечения вследствие автомобильной катастрофы. В каких случаях можно использовать кровь пациента из брюшной полости с целью реинфузии?","a":"Разрыв селезенки."},{"id":118,"q":"В хирургическое отделение поступил пациент, 22-х лет, с клиникой состоявшегося желудочно-кишечного кровотечения, с уровнем гемоглобина крови 52 г/л. Дежурный врач поставил показания для переливания крови. При определении группы крови с помощью цоликлонов на планшете была отмечена агглютинация в первой и третьей лунках. Назовите группу крови больного.","a":"II (A) группа"},{"id":119,"q":"Пациентке, 35-ти лет, страдающей циррозом печени, с клиникой кровотечения из варикозно расширенных вен пищевода, с гемоглобином крови 45 г/л, потребовалась гемотрансфузия. При определении группы крови с помощью цоликлонов на планшете была отмечена агглютинация во всех 4-х лунках. Назовите группу крови и резус принадлежность крови больной.","a":"IV (A B) группа, Rh (+)"},{"id":120,"q":"Пациенту 25-ти лет, с клиникой острого аппендицита потребовалось определение группы крови. При оценке результатов исследования, проведенного с помощью цоликлонов, на планшете была отмечена агглютинация в 4-й лунке. Назовите группу крови и резус принадлежность крови больной.","a":"I (0) группа, Rh (+)"},{"id":121,"q":"Во избежании послетрансфузионных реакций и осложнений после переливания Rh-несовместимой крови необходимо:","a":"Переливать кровь, совместимую по Rh-фактору."},{"id":122,"q":"С целью гемостаза при остром кровотечении в первую очередь необходимо перелить:","a":"Плазму."},{"id":123,"q":"Что лучше перелить при белковом дефиците?","a":"Альбумин."},{"id":124,"q":"Укажите фактор, который обусловливает разрушение эритроцитов при гемотрансфузии:","a":"В хирургическое отделение в экстренном порядке доставлен больной в тяжелом состоянии с закрытой травмой живота и признаками внутрибрюшного кровотечения. Гемоглобин 60 г/л, гематокрит 20 %, лейкоцитоз 15х109/л. Показано ли переливание препаратов крови в данном случае и с какой целью они используются? Показано с целью восполнения красной крови"},{"id":125,"q":"Больной, 42 года, поступил в хирургическое отделение с острым желудочно-кишечным кровотечением. Возникла необходимость гемотрансфузии. Группа крови В (ІІІ), резус-положительная. Проведена проба на индивидуальную совместимость по системе АВ0 и резус-совместимость. Для переливания крови необходимо сделать еще биологическую пробу. Укажите как правильно провести данную пробу?","a":"Трижды вливать кровь струйно по 15–20 мл с интервалом 3 мин."},{"id":126,"q":"Что необходимо использовать для предупреждения и лечения цитратной интоксикации?","a":"Кальция хлорид."},{"id":127,"q":"У больного 46 лет, в результате автоаварии острая кровопотеря. С момента гемостаза при остром кровотечении в первую очередь необходимо переливать?","a":"Плазму"},{"id":128,"q":"Биологическая проба на совместимость крови донора и реципиента. Добавить верный ответ:","a":"Биологическая проба проведена с начала переливания крови трехкратно струйно по 10–25 мл с интервалом 3 мин."},{"id":129,"q":"В зависимости от сроков проведения первичная хирургическая обработка называется поздней, если выполняется:","a":"В течение вторых суток 24–48 ч."},{"id":130,"q":"Какое обстоятельство является основанием для наложения первично отсроченного шва на рану?","a":"Возможность развития инфекции."},{"id":131,"q":"Укажите что относится к особенностям техники наложения","a":"Иссекаются края и дно раны до здоровых тканей."},{"id":132,"q":"Укажите что относится к особенностям техники наложения раннего вторичного шва?","a":"Освежаются края раны."},{"id":133,"q":"Укаэите чем обусловливается степень зияния раны?","a":"Направлением эластических волокон кожи."},{"id":134,"q":"В какие сроки от момента ранения выполняется ранняя первичная хирургическая обработка раны?","a":"До 24 ч."},{"id":135,"q":"Назовите правильное чередование фаз раневого процесса:","a":"Фаза воспаления, регенерации, образования и реорганизации рубца."},{"id":136,"q":"Укажите что относится к осложнению течения І фазы раневого процесса?","a":"Кровотечение, развитие инфекции."},{"id":137,"q":". I фаза течения раневого процесса в инфицированной ране – это фаза:","a":"Гидратации."},{"id":138,"q":"В какой фазе раневого процесса образуется грануляционная ткань?","a":"Во ІІ фазе."},{"id":139,"q":"Какое принципиальное отличие при заживлении раны вторичным натяжением от заживления первичным натяжением?","a":"Образование и развитие грануляционной ткани."},{"id":140,"q":"Нагноение в ране развивается в случае, если на 1 г ткани приходится микробных клеток:","a":"100000 и более."},{"id":141,"q":"Какие швы накладывают при хирургической обработке гнойной раны?","a":"Вторичные швы."},{"id":142,"q":"Рана является проникающей, если:","a":"Повреждены мягкие ткани и пограничная серозная оболочка (плевра, брюшина)."},{"id":143,"q":"Чем отличается поздняя первичная хирургическая обработка от вторичной?","a":"Сроками операции. Резанная"},{"id":144,"q":"Через 5 суток после аппендэктомии по поводу острого гангренозного аппендицита у больной повысилась температура тела до 38,5°С, появились боли в области послеоперационной раны. При осмотре в области послеоперационной раны отек, гиперемия, гипертермия, инфильтрация тканей, больше в средней трети, пальпация резко болезненна, при надавливании между швами выделяется гной. Какое осложнение послеоперационного периода развилось в данном случае?","a":"Нагноение послеоперационной раны"},{"id":145,"q":"Больная получала лечение (местное и общее) после вскрытия постинъекционного абсцесса правой ягодичной области. На настоящий момент рана до 10Х4 см, глубиной до 5 см, без отделяемого, выстлана ярко-розовыми грануляциями. Воспалительных явлений в окружающих тканях нет. Какой вид заживления раны у данной больной?","a":"Вторичное заживление"},{"id":146,"q":"Больному с обширной флегмоной правого бедра под местной анестезией было выполнено вскрытие флегмоны. После операции состояние улучшилось, однако через 2 дня состояние больного вновь ухудшилось: повысилась температура тела до 39°С, усилились боли. При осмотре: резкий отек, гиперемия кожи бедра, обширный инфильтрат по наружной поверхности бедра, на высоте его линейная резаная рана длиной 3 см, из которой под давлением поступает густое гнойное отделяемое. Какие ошибки были допущены в тактике лечения данного больного?","a":"Местная анестезия и маленький разрез"},{"id":147,"q":"У больного с множественными огнестрельными ранениями бедра через 2 часа после ранения произведена хирургическая обработка раны. Рана ушита наглухо. Наложена гипсовая лонгета. Через 1 сутки диагностирована клостридиальная инфекция. В связи с неэффективностью хирургического лечения выполнена ампутация бедра. Какая ошибка была допущена при первичной хирургической обработке раны?","a":"Рана ушита наглухо."},{"id":148,"q":"Больная получает лечение после вскрытия постинъекционного абсцесса левой ягодичной области. На настоящий момент рана до 12х4 см, глубиной до 6 см, с обильным гнойным отделяемым, выстлана участками некротических тканей. Окружающие ткани отечны, гиперемированы, инфильтрированы. Какой вид заживления раны у данной больной?","a":"Вторичное заживление"},{"id":149,"q":"Больной получил ранение ножом левой половины грудной клетки. При осмотре рана зияет, размером до 0,5 см, края ровные, в ране сгустки крови. На рентгенограмме признаков гидро- пневмоторакса нет. При ревизии раны раневой канал слепо заканчивается в мягких тканях. Какой вид ранения у больного по характеру повреждения?","a":"Резанная"},{"id":150,"q":"Больной получил ранение ножом левой половины грудной клетки. При осмотре рана зияет, размером до 0,5 см, края ровные, в ране сгустки крови. На рентгенограмме признаков гидро- пневмоторакса нет. При ревизии раны раневой канал слепо заканчивается в мягких тканях. Какой вид раны по отношению к полостям тела.","a":"Непроникающее ранение"},{"id":151,"q":"Протеолитические ферменты в лечении гнойных ран применяют с целью:","a":"Лизиса некротических тканей."},{"id":152,"q":"Пациент 49 лет, получает стационарное лечение по поводу гнойной раны передней брюшной стенки. На чем должно быть основано назначение антибиотиков при данной инфекции?","a":"На данных бактериологического посева из раны."},{"id":153,"q":"У больного после хирургической обработки в ране остались участки некроза. Что в первую очередь необходимо сделать?","a":"Дренировать рану. Первичная хирургическая обработка раны, гемостаз"},{"id":154,"q":"Через 5 суток после аппендэктомии по поводу острого гангренозного аппендицита у больной повысилась температура тела до 38,5°С, появились боли в области послеоперационной раны. При осмотре в области послеоперационной раны отек, гиперемия, гипертермия, инфильтрация тканей, больше в средней трети, пальпация резко болезненна, при надавливании между швами выделяется гной. Диагноз: нагноение послеоперационной раны. Что необходимо предпринять в данном случае?","a":"Распустить швы, дренировать рану"},{"id":155,"q":"Больная получала лечение (местное и общее) после вскрытия постинъекционного абсцесса правой ягодичной области. На настоящий момент рана до 10Х4 см, глубиной до 5 см, без отделяемого, выстлана ярко-розовыми грануляциями. Воспалительных явлений в окружающих тканях нет. Какой вид швов нужно наложить после хирургической обработки данной раны?","a":"Вторичные швы"},{"id":156,"q":"Больному с обширной флегмоной правого бедра под местной анестезией было выполнено вскрытие флегмоны. После операции состояние улучшилось, однако через 2 дня состояние больного вновь ухудшилось: повысилась температура тела до 39°С, усилились боли. При осмотре: резкий отек, гиперемия кожи бедра, обширный инфильтрат по наружной поверхности бедра, на высоте его линейная резаная рана длиной 3 см, из которой под давлением поступает густое гнойное отделяемое. Какое хирургическое вмешательство теперь необходимо применить?","a":"Широкое вскрытие, ревизия, санация и дренирование"},{"id":157,"q":"Больная получает лечение после вскрытия постинъекционного абсцесса левой ягодичной области. На настоящий момент рана до 12х4 см, глубиной до 6 см, с обильным гнойным отделяемым, выстлана участками некротических тканей. Окружающие ткани отечны, гиперемированы, инфильтрированы. Какой вид дренирования целесообразнее применить в данном случае?","a":"Осмодренирование"},{"id":158,"q":"У больного с обширной гнойной раной в процессе лечения наступила 3 фаза заживления. Какой оптимальный способ закрытия раневой поверхности позволяет достичь наиболее быстрого заживления раневого процесса?","a":"Наложение вторичных швов или кожная пластика."},{"id":159,"q":"У больного обширная гнойная рана левой нижней конечности. Какие основные принципы общего лечение гнойных ран необходимо использовать в данном случае?","a":"Антибактериальная, дезинтоксикационная терапия, иммунокорекция."},{"id":160,"q":"Определите особенности местной анестезии:","a":"Относительная безопасность и простота выполнения."},{"id":161,"q":"Где наиболее выражено действие местноанестезирующих веществ:","a":"В здоровых тканях."},{"id":162,"q":"Определите вид местной проводниковой анестезии:","a":"По Оберсту-Лукашевичу"},{"id":163,"q":"Определите медикаменты для местной анестезии:","a":"Лидокаин"},{"id":164,"q":"Что относится к проводниковой анестезии?","a":"Спинномозговая"},{"id":165,"q":"Назовите, что является верным относительно новокаиновых инфильтратов:","a":"Инфильтрация создает гидравлическое препарирование тканей."},{"id":166,"q":"Перидуральная анестезия относится к:","a":"Проводниковая анестезия."},{"id":167,"q":"Что считается показанием к спинномозговой анестезии?","a":"Операции на нижних конечностях."},{"id":168,"q":"Какая концентрация новокаина применяется при анестезии по А.В. Вишневскому:","a":"0,5%."},{"id":169,"q":"Назовите недостаток местной анестезии:","a":"Нельзя применять при возбуждении пациента."},{"id":170,"q":"Элементом какой анестезии является «лимонная корочка»?","a":"Инфильтрационный по Вишневскому"},{"id":171,"q":"Как необходимо транспортировать больного после премедикации?","a":"На каталке."},{"id":172,"q":"На каком уровне осуществляется пункция при спинномозговой анестезии?","a":"L3–4."},{"id":173,"q":"Состояние нейролепсии характеризуется:","a":"Амнезией и анальгезией."},{"id":174,"q":"Какой анестетик и его концентрация применяются для спинномозговой анестезии?","a":"1% совкаин."},{"id":175,"q":"Назовите препарат, применяемый для спинномозговой анестезии:","a":"Совкаин."},{"id":176,"q":"При внутритазовой блокаде по Школьникову–Селиванову иглу вводят:","a":"На 1 см медиальнее от spina iliaca anterior superior."},{"id":177,"q":"Больному планируется проведение ампутации нижней конечности по поводу гангрены под спинномозговой анестезией. Для анестезии планируется использовать совкаин. В каком положении должен находиться больной на операционном столе после введения анестетика в спинномозговой канал?","a":"С приподнятым головным концом."},{"id":178,"q":"Какое положение тела является правильным для выполнения спинномозговой анестезии раствором совкаина?","a":"В сидячем положении, согнувшись кпереди."},{"id":179,"q":"Определите причины осложнений при местной анестезии:","a":"Связанные с передозировкой анестетика."},{"id":180,"q":"Какие анестетики и в какой концентрации применяют для анестезии смазыванием:","a":"0,25–3% раствор дикаина."},{"id":181,"q":"У больного 48 лет развился панариций 2 пальца правой кисти. Выберите правильную технику выполнения анестезии по Лукашевичу–Оберсту:","a":"2% раствор новокаина вводят под жгутиком периневрально на уровне основной фаланги по 2 мл с каждой стороны."},{"id":182,"q":"Больному с острым аппендицитом планируется проведение аппендэктомии под местной анестезией. Какой анестетик следует использовать в данном случае?","a":"Новокаин 0,25%."},{"id":183,"q":"С какой целью перед измерением температуры рекомендуют досуха вытирать подмышечную впадину?","a":"Чтобы не получить заниженных результатов измерения."},{"id":184,"q":"По цели выполнения оперативные вмешательства делятся на:","a":"Диагностические и лечебные."},{"id":185,"q":"Аппендэктомия (удаление аппендикулярного отростка) относится","a":"Радикальной."},{"id":186,"q":"Операцию, целью которой является полное излечение больного от недуга, называют:","a":"Радикальной."},{"id":187,"q":"Операцию, целью которой является неполное излечение больного от болезни, а улучшение общего состояния пациента, называют:","a":"Паллиативной."},{"id":188,"q":"Этапы предоперационного периода:","a":"Диагностический и подготовительный этапы."},{"id":189,"q":"Уход за больными подразделяется на:","a":"Общий и специальный."},{"id":190,"q":"Укажите мероприятие, направленное на профилактику легочных осложнений после операции:","a":"Дыхательная гимнастика."},{"id":191,"q":"Подготовка кишечника в дооперационном периоде предусматривает назначение:","a":"Очистительных клизм."},{"id":192,"q":"Что включает в себя понятие «локальный статус» в истории болезни пациента?","a":"описание области поражения"},{"id":193,"q":"Что является показанием для наложения повязки Дезо?","a":"Перелом ключицы."},{"id":194,"q":"К какой категории относят по назначению повязки Вельпо и Дезо?","a":"Иммобилизационным."},{"id":195,"q":"Какую повязку Вы наложите при ранении теменной области головы?","a":"По типу чепец."},{"id":196,"q":"Что означает десмургия?","a":"Учение о повязках, их применение и методы их наложения."},{"id":197,"q":"Для сотрясение характерны следующее:","a":"функциональные расстройства"},{"id":198,"q":"Для ушиба характерны следующее:","a":"органические расстройства"},{"id":199,"q":"Закрытое повреждение тканей с их частичным разрывом при сохранении анатомической непрерывности называют:","a":"Растяжением"},{"id":200,"q":"В чем заключается основное назначение функциональной кровати?","a":"Позволяет придать больному наиболее выгодное и удобное для него положение."},{"id":201,"q":"Перевязочный материал, применяемый для изготовления повязок:","a":"Марля, вата."},{"id":202,"q":"Требования к первичной повязке:","a":"Должна быть стерильной."},{"id":203,"q":"Вторичной повязкой называют:","a":"Часть повязки, которая удерживает первичную повязку."},{"id":204,"q":"Классификация повязок по способу фиксации перевязочного материала:","a":"Бинтовые, косыночные, пращевидые, Т-образные, контурные."},{"id":205,"q":"Какая длительность раннего послеоперационного периода с момента","a":"3–5 сут."},{"id":206,"q":"Для профилактики гипостатической пневмонии применяют:","a":"Ранняя активизация больного."},{"id":207,"q":"Пассивное положение больного в постели – это:","a":"Без посторонней помощи больной не может принять какое-либо положение, не может менять его."},{"id":208,"q":"Активное вынужденное положение больного в постели – это:","a":"Вследствие болезни больной самостоятельно занимает такое положение в постели, при котором улучшается его состояние."},{"id":209,"q":"Пассивное вынужденное положение больного в постели – это:","a":"По назначению врача больной занимает такое положение в постели, при котором улучшается его состояние."},{"id":210,"q":"В хирургический стационар доставлен по ургентной хирургии пациент с синдромом длительного сдавления. Какое лечение необходимо для улучшения прогноза заболевания?","a":"Дезинтоксикационная терапия."},{"id":211,"q":"У пациента 42 лет, развился анафилактический шок. Какой из препаратов при лечении анафилактического шока целесообразнее применить для оказания неотложной помощи?","a":"Адреналин."},{"id":212,"q":"Укажите основные факторы, определяющие тяжесть токсикоза у пострадавших с синдромом длительного сдавливания:","a":"миоглобинемия и миоглобинурия;"},{"id":213,"q":"Чаще всего встречается врожденный вывих:","a":"бедра;"},{"id":214,"q":"У больного имеется открытый перелом костей голени вследствие удара передним бампером легкового автомобиля. Какого вида перелом при этом наиболее вероятен?","a":"многооскольчатый;"},{"id":215,"q":"Укажите элемент первой помощи на месте происшествия пострадавшему с переломом длинной трубчатой кости:","a":"иммобилизировать конечность транспортной шиной;"},{"id":216,"q":"Когда и где следует проводить репозицию костных отломков при открытом переломе?","a":"в операционной в ближайшее время после поступления;"},{"id":217,"q":"Укажите время проведения репозиции перелома у больного с явлениями шока:","a":"после выведения больного из состояния шока;"},{"id":218,"q":"Какую шину следует применить для транспортной иммобилизации при переломе бедра?","a":"Дитерихса;"},{"id":219,"q":"Обследование пострадавшего с жалобами на боли в области плеча следует начинать с:","a":"опроса пострадавшего пациента;"},{"id":220,"q":"Назовите симптом закрытого перелома кости:","a":"патологическая подвижность;"},{"id":221,"q":"Симптомом вывиха является:","a":"именение относительной длины конечности;"},{"id":222,"q":"Наиболее часто встречается вывих:","a":"плеча;"},{"id":223,"q":"Что характерно для наружного открытого пневмоторакса?","a":"баллотирование средостения;"},{"id":224,"q":"Что характерно для наружного клапанного /напряженного/ пневмоторакса?","a":"смещение средостения в противоположную сторону."},{"id":225,"q":"Укажите симптом ушиба мягких тканей головы:","a":"подкожная гематома."},{"id":226,"q":"Какой степени тяжести травматического шока соответствует состояние: частота дыхания – 30–32 в минуту, пульс – 110–120 ударов в минуту, артериальное давление - 90–80 /50–40 мм рт. ст.?","a":"средней;"},{"id":227,"q":"Во время гололеда женщина упала, ударилась головой об асфальт. Была однократная рвота сразу после травмы. Жалуется на головную боль, слабость, головокружение. Гемодинамические показатели в пределах нормы. Ваш диагноз.","a":"Сотрясение головного мозга"},{"id":228,"q":"После взрыва в шахте пострадавший был завален породой, извлечен через 6 часов спасателями. Доставлен в приемное отделение через час, на носилках, не санитарным транспортом. При осмотре – состояние тяжелое, заторможен, лежит спокойно, на вопросы отвечает с задержкой. Кожные покровы серо-бледные, холодные. Лицо осунувшееся. Пульс – 120 в мин. АД – 80/60 мм Hg. Нижние конечности отечны, кожа их бледная, многочисленные вмятины от породы. Движения едва возможны, пульсация на стопах и подколенных артериях не определяется. Какое повреждение можно заподозрить у больного?","a":"Синдром длительного сдавления"},{"id":229,"q":"Во время игры в баскетбол один из игроков от сильного толчка упал и ударился головой о деревянный пол. На короткое время потерял сознание, но потом пришел в себя, самочувствие было неплохим, однако беспокоила умеренная головная боль, тошнота. Через три часа появилась рвота, головная боль усилилась, наступила спутанность сознания, а затем и вовсе потеря его. Дыхание шумное, 25 в мин. Пульс 56 в мин., АД 100/70 мм рт. ст. Определяется неравномерность зрачков, резкое снижение силы в правой руке и ноге. Какую травму можно заподозрить?","a":"Ушиб головного мозга"},{"id":230,"q":"Во время игры в баскетбол один из игроков от сильного толчка упал и ударился головой о деревянный пол. На короткое время потерял сознание, но потом пришел в себя, самочувствие было неплохим, однако беспокоила умеренная головная боль, тошнота. Через три часа появилась рвота, головная боль усилилась, наступила спутанность сознания, а затем и вовсе потеря его. Дыхание шумное, 25 в мин. Пульс 56 в мин., АД 100/70 мм рт. ст. Определяется неравномерность зрачков, резкое снижение силы в правой руке и ноге. Какой инструментальный метод диагностики является методом выбора для подтверждения диагноза?","a":"Компьютерная томография"},{"id":231,"q":"Во время работы человек упал и ударился правым боком о дверной косяк. Жалуется на боль в правой половине грудной клетки, резко усиливающуюся при глубоком вздохе, кашле и физической нагрузке. При осмотре по средней подмышечной линии в области 4-7 ребер справа определяется небольшая припухлость, выраженная болезненность и костная крепитация. При аускультации дыхание здесь ослаблено, в нижних отделах не выслушивается вообще, перкуторно – тимпанический звук. Какой дополнительный метод исследования следует провести, чтобы определить характер повреждения?","a":"Обзорная рентгенография грудной клетки"},{"id":232,"q":"Во время работы человек упал и ударился правым боком о дверной косяк. Жалуется на боль в правой половине грудной клетки, резко усиливающуюся при глубоком вздохе, кашле и физической нагрузке. При осмотре по средней подмышечной линии в области 4-7 ребер справа определяется небольшая припухлость, выраженная болезненность и костная крепитация. При аускультации дыхание здесь ослаблено, в нижних отделах не выслушивается вообще, перкуторно – тимпанический звук.  Объясните, чем объясняется тимпанический звук у данного пациента?","a":"Скоплением воздуха в плевральной полости"},{"id":233,"q":"Крепитация, означает попадание воздуха в подкожную клетчатку  при повреждении легкого или воздухоносных путей","a":"В приемное отделение доставлен больной с жалобами на боли в животе, выраженную слабость. 5 дней назад на улице получил удар кулаком в левое подреберье. Все эти дни чувствовал боль и небольшую слабость. За медицинской помощью не обращался. Сегодня по пути на работу внезапно появилась резкая боль, помутилось сознание, на лице выступил пот. Объективно отмечается выраженная бледность покровов, пульс 120 в мин., слабый, АД снижено, при пальпации живота определяется болезненность преимущественно в левой половине, симптом Щеткина-Блюмберга положительный. Перкуторно притупление в боковых отделах живота. Температура тела 36,7 перистальтика кишечника вялая.  Каков ваш предварительный диагноз? Внутреннее кровотечение"},{"id":234,"q":"После операции по поводу острого аппендицита у больного, 24 лет, на следующий день состояние определялось средней тяжести. Больной испытывал умеренные боли в области операционной раны. Температура тела 37,40 С. Местно: живот не вздут, участвует в акте дыхания, мягкий при пальпации, пальпация болезненная только в месте операции. Симптом Щеткина-Блюмберга отрицателен. Определяется вялая перистальтика. Повязка умеренно промокла геморрагическим отделяемым.  Нужно ли перевязывать данного больного?","a":"Нужна перевязка."},{"id":235,"q":"После операции по поводу острого аппендицита у больного, 24 лет, на следующий день состояние определялось средней тяжести. Больной испытывал умеренные боли в области операционной раны. Температура тела 37,40 С. Местно: живот не вздут, участвует в акте дыхания, мягкий при пальпации, пальпация болезненная только в месте операции. Симптом Щеткина-Блюмберга отрицателен. Определяется вялая перистальтика. Повязка умеренно промокла геморрагическим отделяемым. Назовите показания к перевязке данного больного?","a":"Повышение температуры тела, промокание повязки."},{"id":236,"q":"Больной 67 лет только что прооперирован по поводу парапроктита. Ему наложили повязку.  Какие показания к смене повязки у данного больного через несколько часов после операции?","a":"Значительное промокание повязки экссудатом"},{"id":237,"q":"У больного после автоаварии развился открытый пневмоторакс. Какую первую помощь Вы окажете?","a":"Наложить окклюзионную повязку."},{"id":238,"q":"Больная, 22 лет, доставлена в хирургическое отделение после травмы живота и поясничной области слева. Больная отмечает боли в левой половине живота, иррадиирующие в левую ключицу и плечо, общую слабость. При ультразвуковом исследовании определяется неоднородность селезенки и свободная жидкость в брюшной полости.   Укажите наиболее вероятный диагноз.","a":"Разрыв селезенки, кровотечение"},{"id":239,"q":"У пациента  28 лет, закрытое повреждение тканей правой голени с их частичным разрывом при сохранении анатомической непрерывности.  Предположите наиболее вероятный диагноз:","a":"Растяжение."},{"id":240,"q":"У больного клинико-рентгенологическая картина вывиха левого плеча после травмы. Травматолог произвел вправление вывиха по Кохеру. Как подтвердить правильность выполнения манипуляции?","a":"Сделать контрольный рентген снимок."},{"id":241,"q":"Больной 19 лет, упал с велосипеда и получил ушиб мягких тканей бедра. Какие местные симптомы характерны для ушиба?","a":"Наличие гематомы"},{"id":242,"q":"Больному выполнена операция \"резекция желудка\".  Какие повязки целесообразнее использовать для закрепления перевязочного материала?","a":"Лейкопластырная повязка"},{"id":243,"q":"В хирургический стационар доставлен по ургентной хирургии пациент с синдромом длительного сдавления. Какое лечение необходимо применить для улучшения прогноза заболевания?","a":"Дезинтоксикационную терапию."},{"id":244,"q":"Больному с растяжением голеностопного сустава необходимо назначить следующее лечение?","a":"иммобилизация и покой"},{"id":245,"q":"Что недопустимо при оказании первой помощи пострадавшему от холодовой травмы?","a":"растирание снегом;"},{"id":246,"q":"Площадь ожога обеих нижних конечностей по \"правилу девяток\" составляет до:","a":"36 %;"},{"id":247,"q":"Для ожогового шока характерно:","a":"отсутствие торпидной фазы;"},{"id":248,"q":"Площадь ожога промежности по \"правилу девяток\" составляет до","a":"1 %;"},{"id":249,"q":"15. Укажите степени ожогов по глубине поражения:","a":"I, II, IIIa, IIIб, IV."},{"id":250,"q":"Укажите характерные изменения при ожоге I степени:","a":"Гиперемия и отек кожи."},{"id":251,"q":"Укажите характерные изменения при ожоге II степени:","a":"Гиперемия, отек и наличие пузырей."},{"id":252,"q":"Чем обусловлена II фаза ожоговой болезни?","a":"Всасыванием продуктов распада тканей."},{"id":253,"q":"Больной 58 лет, зимой был на рыбалке. Придя домой, через некоторое время почувствовал боль в ступнях. Обратился к врачу. При осмотре ступней кожа была бледна, а после согревания стала красной, теплой на ощупь. Отек ограничивается пальцами. Все виды чувствительности сохранены. Волдырей нет. Степень обморожения?","a":"I ст."},{"id":254,"q":"Какая ткань наиболее чувствительна к действию электротока?","a":"Нервная."},{"id":255,"q":"Причиной смерти при электротравме являются:","a":"Паралич сердца, дыхания, мозга."},{"id":256,"q":"II фаза замерзания – это:","a":"Ступор."},{"id":257,"q":"II фаза замерзания – это:","a":"В приемное отделение многопрофильной больницы доставлен пожилой больной, страдающий нарушением температурной чувствительности кожных покровов нижних конечностей после перенесенного острого нарушения мозгового кровообращения. Сегодня, в течение 3-х часов, принимал ножную ванну. При осмотре: признаки обширных ожогов нижних конечностей I-П степени. Какой вид некроза следует ожидать у данного больного? Колликвационный некроз"},{"id":258,"q":"Больной доставлен через час после получения ожога пламенем. На правой конечности в области запьястья сплошная гиперемия с   множественными пузырями разного размера с желтым содержимым. Больной несколько возбужден, адекватен. Пульс 86 в минуту, АД 110/80 мм Hg.  Определите степень ожога.","a":"Ожог II степени"},{"id":259,"q":"Ребенок 5 лет доставлен в стационар после ожога горячей водой. Сразу после травмы кожа была смазана растительным маслом. При осмотре имеется гиперемия всей задней поверхности туловища с редкими пузырями с содержимым желтоватого цвета. Чувствительность полностью сохранена.  Оцените степень ожога.","a":"Ожог II степени"},{"id":260,"q":"Пострадавший 10 дней назад получил отморожение стоп. Только сегодня явился на прием в поликлинику. При осмотре: на правой стопе имеются ограниченные участки некрозов на концевых фалангах пальцев примерно по 1-1.5 см в диаметре. Укажите степень отморожения.","a":"III степень"},{"id":261,"q":"Во время сбора грибов семейная пара добралась до мелкого березняка под линией высоковольтных проводов. Нижние провода во время порывов ветра касались верхушки наклоняющейся к ним высокой сосны. Внезапно мужчину подбросило, и он оказался на земле. Женщина, заподозрив неладное, позвала на помощь находящегося недалеко грибника. При осмотре они заметили, что мужчина лежит без сознания, не дышит, пульс не определяется. Какой вид травмы в данном случае?","a":"Электротравма"},{"id":262,"q":"При оказании первой помощи автоэлектрику, который получил ожог кожных покровов соляной кислотой, врач скорой помощи ввел наркотические аналгетики, промыл ожоговую поверхность проточной водой в течение 5 мин., после чего наложил асептическую повязку.   Какой вид некроза следует ожидать в данном случае?","a":"сухой некроз"},{"id":263,"q":"Пострадавший обратился в сельский здравпункт. 3 часа назад провалился под лед по колено, затем шел по снегу в мокрой обуви до ближайшего населенного пункта. При осмотре: кожа стоп и н/трети голеней очень бледная, холодная. Активные движения в пальцах стоп затруднены. Кожная чувствительность резко снижена. Пульс на артериях стоп отсутствует. АД, частота дыхания в норме. Температура тела в подмышечной впадине нормальная. Какая травма имеется у больного?","a":"Отморожение"},{"id":264,"q":"Пострадавший 10 дней назад получил отморожение стоп. Только сегодня явился на прием в поликлинику. При осмотре: на правой стопе имеются ограниченные участки некрозов на концевых фалангах пальцев примерно по 1-1.5 см в диаметре. Какова тактика хирурга в данном случае?","a":"Некрэктомия, некротомия"},{"id":265,"q":"На улице обнаружен мужчина в бессознательном состоянии, лежащий прямо на снегу. Температура воздуха –20 °С. Изо рта запах алкоголя. Объективно: кожные покровы и видимые слизистые бледные. Конечности в полусогнутом положении, прохладные на ощупь. Пульс 42 в 1 мин, слабого наполнения, АД не определяется. Дыхание редкое, по типу Чейн–Стокса. Наблюдаются периодические судороги. Какое лечебное мероприятие является патогенетически обоснованным в данной ситуации?","a":"Теплая ванна (температура воды 36 °С)."},{"id":266,"q":"Мужчина  27 лет получил электротравму. При осмотре: пострадавший без сознания, АД-65/30 мм рт. ст., мерцательная аритмия, выраженная одышка. Укажите первоочередные действия врача:","a":"Сердечно-легочная реанимация."},{"id":267,"q":"Какие места локализации наиболее часто поражаются при роже?B. лицо, голова и нижние конечностиПри распространении инфекции из сухожильных влагалищ каких пальцев развивается U-образная флегмона?","a":"1 и 5."},{"id":268,"q":"Как называется гнойное воспаление межфаланговых или пястно-фаланговых суставов?","a":"Суставной панариций."},{"id":269,"q":"Что из указанного способствует развитию сепсиса?","a":"Сахарный диабет."},{"id":270,"q":"Когда необходимо делать забор крови на бактериальный посев при сепсисе?","a":"При ознобе и на высоте температурной реакции."},{"id":271,"q":"Для какой формы сепсиса характерно метастазирование гноя?","a":"Септикопиемия."},{"id":272,"q":"В чем, особенность сепсиса, отличающий его от других инфекционных болезней?","a":"Полиэтиологичность заболевания."},{"id":273,"q":"Что является методом активной экстракорпоральной детоксикации организма?","a":"Гемодиализ."},{"id":274,"q":"Как классифицируется сепсис по клиническому течению?","a":"Молниеносный, острый, подострый, хронический, рецидивирующий."},{"id":275,"q":"Что является, одним из важнейших компонентов лечения при сепсисе?","a":"Антибиотикотерапия."},{"id":276,"q":"Назовите, какие микроорганизмы чаще всего бывают возбудителями хирургического сепсиса?","a":"Синегнойные палочки."},{"id":277,"q":"Какой тип панариция характеризуется формированием гнойника в толще кожи под эпидермисом?","a":"Кожный панариций."},{"id":278,"q":"Какой признак является патогномоничным для костного панариция?","a":"Колбообразный отек дистальной фаланги."},{"id":279,"q":"С чего начинается лечение сухожильного панариция?","a":"Инцизии."},{"id":280,"q":"На какие сроки выявляются рентгенологические признаки при костном панариции?","a":"2–3 неделе"},{"id":281,"q":"Какие симптомы развиваются при подкожном панариции?","a":"Пульсирующая боль, отек пальца."},{"id":282,"q":"Что является основным отличием эризепелоида от панариция?","a":"Выраженный зуд в области отека."},{"id":283,"q":"Когда чаще всего встречается мастит?","a":"В течение первого месяца послеродового периода."},{"id":284,"q":"Чем проявляется особенность клинического течения острого паротита?","a":"Поздним появлением гиперемии кожи и флюктуации."},{"id":285,"q":"Что относится к осложнениям при оперативном лечении гнойного паротита?","a":"Парез ветвей лицевого нерва."},{"id":286,"q":"Укажите классификацию лимфаденита по клиническому течению?","a":"острый, хронический"},{"id":287,"q":"Укажите, каким может быть по локализации лимфангит?","a":"глубоким"},{"id":288,"q":"Укажите, при какой патологии отсутствует симптом флюктуации?","a":"гемотораксе"},{"id":289,"q":"Какой вид разреза используется при вскрытии абсцесса мягких тканей?","a":"линейный разрез по ходу кожной складки"},{"id":290,"q":"Укажите, какая флегмона по локализации отсутствует?","a":"флегмона фасции"},{"id":291,"q":"Укажите, каким образом вскрывается карбункул?","a":"крестообразным разрезом"},{"id":292,"q":"Что применяется в лечении в инфильтративной стадии карбункула?","a":"электрофорез с антибиотиками Суставной панариций"},{"id":293,"q":"На 3-й день после родов у женщины 24 лет проявилось ощущение тяжести и напряжение в правой молочной железе, которое постепенно усилилось, стало определяться опухолевидное образование, достаточно подвижное, с четкими границами, бугристой поверхностью, безболезненное. При надавливании на него молоко выделяется свободно, сцеживание безболезненно, после сцеживания женщина испытывала облегчение, температура тела нормальная - 36,8о. Однако, на 4-5-е сутки повысилась температура до 37,2-37,4о. Лейкоциты крови 7,2 х 109/л. Женщина обратилась в поликлинику. Какой процесс развился у женщины?","a":"Острый застой молока"},{"id":294,"q":"Женщина, 50 лет, обратилась в приемное отделение с жалобами на боли в правой ягодичной области, повышение температуры тела до 38 – 38.5ºС, озноб. Из анамнеза: страдает гипертонической болезнью, неделю назад во время гипертонического криза врачом СМП была сделана инъекция 10% сульфата магнезии в область правой ягодицы. Объективно: В области правой ягодицы инфильтрат до 15 см, гиперемия, резкая болезненность при пальпации, гипертермия, флюктуация на высоте инфильтрата. Ваш диагноз?","a":"Постинъекционный абсцесс"},{"id":295,"q":"Больная, 42 года, переведена в хирургическое отделение из терапии, где 2 недели находилась на стационарном лечении по поводу рожистого воспаления (эритематозная форма) левой голени. Объективно: отек, гиперемия с четкими границами левой голени, на ее заднее-внутренней поверхности пузыри до 10 см со светло-желтым содержимым, температура тела до 38.5-39 ºС, тахикардия. Укажите какая формы рожистого воспаления у пациентки в данный момент?","a":"Буллезная форма"},{"id":296,"q":"Женщина 35 лет жалуется на боли в левой голени жгучего характера, повышение температуры тела до 38,8ºС, слабость, покраснение в этой области. Объективно: состояние средней степени тяжести, на левой голени участок кожи ярко-красного цвета с четкими границами, отек левой голени и стопы. Ваш диагноз?","a":"Рожа"},{"id":297,"q":"Больная, 42 года, обратилась к хирургу с жалобами на боль в правой паховой области, повышение температуры до фебрильных цифр, головную боль. Объективно: в правой паховой области определяется отек тканей, резко болезненный инфильтрат, кожа гиперемирована, в центре –размягчение, позитивный симптом флюктуации. В клиническом анализе крови – нейтрофильный лейкоцитоз. Какой Ваш диагноз?","a":"Лимфаденит."},{"id":298,"q":"Больной, 23 лет, жалуется на боль в левой подмышечной области, повышение температуры до фебрильных цифр. Объективно: в левой подмышечной области определяется резко болезненный инфильтрат, кожа гиперемирована, в центре – размягчение, позитивный симптом флюктуации. Какой Ваш диагноз?","a":"Гидраденит."},{"id":299,"q":"Больная 54 лет жалуется на интенсивную жгучую боль и ощущение жжения в области правой голени, повышение температуры тела до 39,0 °С, общее недомогание и озноб, которые возникли внезапно, ночью. Объективно: на передней поверхности голени – локальное яркое покраснение кожи в виде «географической карты» с четкими зазубренными контурами. Кожа немного распухла, болезненная по периферии, ее температура – повышенная. Симптом флюктуации – отрицательный. Какой диагноз у больной?","a":"Эритематозная форма рожи."},{"id":300,"q":"Вследствие чего болевой синдром при панариции является интенсивным?","a":"Высокого внутритканевого давления."},{"id":301,"q":"Мужчине 18 лет по поводу парапроктита сделан внутримышечный укол бензилпенициллина натриевой соли. После этого у него появились тахикардия, нитевидный пульс, артериальное давление снизилось до 80/60 мм.рт. ст. Какой вид осложнения развился?","a":"Анафилактический шок."},{"id":302,"q":"Больная 44 лет жалуется на постоянную боль, покраснение кожи и отек в области левой голени, общее недомогание, озноб, повышение температуры тела до 39 °С. Начало заболевания связывает с царапиной кожи левой голени 2 дня назад. Объективно: в средней трети левой голени – гиперемия кожи, яркая, с четкими границами, повышенные над неизмененной кожей. Определяется умеренный отек мягких тканей, их болезненность при пальпации. В центре гиперемированной кожи струп 2×0,2 см, который покрывает поверхностную ранку. Выставьте данной пациентке диагноз?","a":"Рожистое воспаление"},{"id":303,"q":"Больная 35 лет жалуется на высокую температуру тела, боль в верхненаружном квадранте правой молочной железы. Болеет 3 сут. В этом месте гиперемия кожи, болезненный инфильтрат с размягчением в центре. Установлен диагноз: мастит. Какая дальнейшая тактика хирурга?","a":"Вскрытие абсцесса, санирование и дренирование полости."},{"id":304,"q":"У больной диагностирован левосторонний лактационный мастит. В результате ухудшения состояния – госпитализирована. Объективно: левая молочная железа увеличена в объеме, напряженная, болезненная при пальпации. В нижнем внешнем квадранте пальпируется инфильтрат размером 4×5×6 см, с флуктуацией в центре. Какой из разрезов необходимо провести в данном случае?","a":"Радиальный."},{"id":305,"q":"У кого чаще встречается острый гематогенный остеомиелит?","a":"У детей и подростков мужского пола."},{"id":306,"q":"Кем была предложена сосудисто - эмболическая теория развития гематогенного остеомиелита?","a":"Лексером."},{"id":307,"q":"Какой отдел чаще всего поражается при остром гематогенном остеомиелите?","a":"Метафиз."},{"id":308,"q":"Где чаще всего локализуются гнойные очаги при септикопиемическом осложнении острого гематогенного остеомиелита?","a":"Головном мозге."},{"id":309,"q":"Какой остеомиелит развивается, когда экссудат в кости не превращается в гной и воспалительный процесс останавливается в стадии серозного процесса?","a":"Остеомиелита Гарре."},{"id":310,"q":"Какие лабораторные изменения характерны при остром гематогенном остеомиелите?","a":"Лейкоцитоз и нейтрофилия."},{"id":311,"q":"Назовите, какие микроорганизмы вызывают наиболее тяжелые формы гнойного артрита?","a":"Синегнойные палочки."},{"id":312,"q":"Какое лечебное мероприятие при лечении хронического гематогенного остеомиелита является обязательным?","a":"Оперативное лечение."},{"id":313,"q":"Какие лечебные мероприятия целесообразнее применить при остром гематогенном остеомиелите с формированием подкожной флегмоны?","a":"Вскрытие флегмоны, остеотомия, дренирования ран, внутрикостное введение антибиотиков."},{"id":314,"q":"При укусе бродячей собаки, волка и т.д., против какой инфекции специфическая профилактика необходима в экстренном порядке?","a":"бешенства"},{"id":315,"q":"Натечным абсцессом называется скопление гноя:","a":"в тканях, отдаленных от первичного очага"},{"id":316,"q":"Откуда начинается в большинстве случаев туберкулезный процесс в кости?","a":"эпифиза"},{"id":317,"q":"Где наиболее часто локализуется актиномикозный очаг?","a":"на лице и шее"},{"id":318,"q":"При сифилисе костей могут поражаться:","a":"все части кости"},{"id":319,"q":"Где преимущественно локализуется процесс при сифилитическом поражении длинных трубчатых костей?","a":"в диафизе"},{"id":320,"q":"Какие   лечебно-вспомогательные операции применяются при туберкулезе костей и суставов?","a":"артродез"},{"id":321,"q":"Укажите что относят к радикальным операциям при туберкулезе костей и суставов?","a":"резекцию сустава"},{"id":322,"q":"К первично-хроническому остеомиелиту относится:","a":"Абсцесс Броди"},{"id":323,"q":"Назовите одно из условий, необходимых для развития хирургической инфекции в организме человека:","a":"наличие \"входных ворот\" для инфекции; 11.Что препятствует развитию гноеродных микробов? стойкий иммунитет;"},{"id":324,"q":"Укажите один из компонентов общего лечения при гнойных заболеваниях:","a":"подавление жизнедеятельности гноеродных микробов;"},{"id":325,"q":"Укажите какое заболеваний чаще всего осложняется гнойной инфекцией?","a":"сахарный диабет;"},{"id":326,"q":"Какие местные признаки характеризуют нагноение раны?","a":"Отечность, болезненность, гиперемия кожи вокруг раны, появление отделяемого из раны."},{"id":327,"q":"На прием к врачу пришел больной 34 лет, по профессии мясник, с жалобами на «гнойничок» в правом предплечье. В средней трети предплечья справа определяется некротическая язва диаметром 6 мм с серозной жидкостью и вдавливанием в центре, окруженная выраженным воспалительным валиком и венцом из везикул, расположенных на плотной основе. Выраженный отек окружающих мягких тканей. Наиболее вероятный диагноз?","a":"Карбункул сибирской язвы."},{"id":328,"q":"Больной 48 лет госпитализирован в хирургическое отделение на 3-й день с рвано- раздавленной раной правой голени. Состояние больного тяжелое, температура 38,9 С, выраженный отек тканей голени, кожа фиолетово-синюшного цвета, крепитация вокруг раны, из которой выделяется серозная темная жидкость. Какая инфекция может вызвать такое состояние?","a":"Анаэробная неклостридиальная."},{"id":329,"q":"Больной 29 лет, жалуется на общую слабость, тризм, подергивания мышц со скупым серозно-гнойным выделением, кожа вокруг раны гиперемирована. Ваш диагноз?","a":"Столбняк."},{"id":330,"q":"У пациента 27лет, на пятый день после получения небольшой раны правой кисти при обработке земельного участка повысилась температура тела до 38 °С, появились боли в мышцах, затруднение глотания, невозможность открыть рот, сардоническая улыбка. Какое осложнение возникло у больного?","a":"Столбняк."},{"id":331,"q":"Больной 36 лет доставлен в хирургическое отделение машиной скорой помощи. Неделю назад проколол правую кисть гвоздем. За медицинской помощью не обращался. При осмотре больной стонет, кисть распухла, имеет место сокращение мимических мышц. Температура тела 40 °С. Наиболее вероятный диагноз?","a":"Столбняк."},{"id":332,"q":"Больная 57лет жалуется на интенсивную жгучую боль и ощущение жжения в области правой голени, повышение температуры тела до 39,0 °С, общее недомогание и озноб, которые возникли внезапно, ночью. Объективно: на передней поверхности голени – локальное яркое покраснение кожи в виде «географической карты» с четкими зазубренными контурами. Кожа немного распухла, болезненная по периферии, ее температура – повышенная. Симптом флюктуации – негативный. Какой диагноз у больной?","a":"Эритематозная форма рожи."},{"id":333,"q":"У больной 49 лет, страдающей сахарным диабетом ІІ типа, на задней поверхности шеи появился резко болезненный инфильтрат размером 6×7 см, кожа над ним сине-багрового цвета с бурыми ячейками, из которых выделяется гной. Общее состояние больного тяжелое, температура достигает до 40 °С, в крови лейкоциты – 18×10х9/л, повышенный уровень глюкозы – 17 ммоль/л, в моче появился ацетон (++). Поставьте диагноз:","a":"Карбункул."},{"id":334,"q":"У больного 17 лет, после выдавливания угря на лице появилось болезненное уплотнение тканей и покраснение кожи, температура тела поднялась до 37,5 °С. Объективно: в области носогубного треугольника незначительный отек и покраснение кожи. При пальпации определяется болезненное уплотнение тканей округлой формы, размерами 1,5×2 см, без признаков размягчения. Ваш диагноз?","a":"Инфильтрат."},{"id":335,"q":"Мужчина 42, лет во время сельскохозяйственных работ поранил ногу. Через час обратился в хирургическое отделение. На передневнутренней поверхности правой голени обнаружена рана 3×8 см с неровными краями, на дне раны видно повреждение фасции и мышц. Рана значительно загрязнена землей, умеренное кровотечение. Проявления какого осложнения следует опасаться в первую очередь?","a":"Анаэробная инфекция."},{"id":336,"q":"Больной 33 лет, жалуется на боль в левой подмышечной области, повышение температуры до фебрильных цифр. Объективно: в левой подмышечной области определяется резко болезненный инфильтрат, кожа над ней гиперемирована, в центре – размягчение, позитивный симптом флюктуации. Выставьте данному пациенту диагноз?","a":"Гидраденит."},{"id":337,"q":"Больной 56 лет, слесарь по профессии во время выполнения ремонтных работ в ДЕПО получил незначительное ранение мягких тканей на передней поверхности грудной клетки. Обратился за помощью к хирургу. Какую помощь необходимо оказать больному для профилактики столбняка:","a":"Применение столбнячного анатоксина и противостолбнячной сыворотки."},{"id":338,"q":"Больной  35 лет садовник по профессии получил рваную рану левого бедра при выполнении земляных работ. При осмотре рана имеет неровные, зазубренные, раздавленные края с кровоизлияниями в них и окружающие ткани. В глубине раны есть сгустки крови, кусочки одежды и земли. Какая неспецифическая профилактика столбняка применима в данном случае?","a":"Тщательная ПХО раны, с иссечением некротически измененных тканей."},{"id":339,"q":"Больной 33 лет, жалуется на боль в левой подмышечной области, повышение температуры до фебрильных цифр. Объективно: в левой подмышечной области определяется резко болезненный инфильтрат, кожа над ней гиперемирована, в центре – размягчение, позитивный симптом флюктуации. Выставлен диагноз гидраденит, какова Ваша тактика?","a":"Вскрытие и дренирование гнойника"},{"id":340,"q":"У больного 54 лет после осколочного ранения развилась газовая гангрена левой нижней конечности, в динамике отек и газообразование прогрессируют. Какая тактика хирурга наиболее приемлема в данном случае.","a":"Широкие лампасные разрезы"},{"id":341,"q":"Преимущественной локализацией процесса при газовой гангрене является:","a":"конечности;"},{"id":342,"q":"Больной 35 лет, на 3-и сут после травматической ампутации левого бедра жалуется, что повязка очень тугая и вызывает нестерпимую боль в культе. Объективно: возбужден, вертится в постели, стонет. Кожа бледная. Температура тела – 39 °С. Пульс – 125/мин, слабый. Культя левого бедра отекла, кожа бледная. Хорошо видны поверхностные вены. Повязка промокает серозно-кровянистим отделяемым с запахом кислой капусты. Вокруг раны крепитация. Какое осложнение возникло у больного?","a":"Газовая гангрена культи левого бедра."},{"id":343,"q":"У больного 38 лет развилась газовая гангрена левой конечности. Какой высокоэффективный метод лечения анаэробной гангрены Вам необходимо использовать?","a":"Гипербарическая оксигенация"},{"id":344,"q":"Назовите места, где чаще всего формируются пролежни?","a":"У тяжелых, истощенных больных на участках, где кожа плотно прилегает к костным образованиям."},{"id":345,"q":"Какое мероприятие ухудшает течение пролежня:","a":"Укладывание больного на твердый матрац."},{"id":346,"q":"При обследовании больного в области послеоперационного рубца","a":"фистулографией"},{"id":347,"q":"Атеросклероз сосудов конечностей приводит к:","a":"гангрене;"},{"id":348,"q":"Сухая гангрена характеризуется:","a":"Мумификацией тканей, демаркацией"},{"id":349,"q":"Влажная гангрена характеризуется:","a":"Присоединение инфекции 10.Причинами развития сухого некроза является:"},{"id":350,"q":"Больному по поводу острой непроходимости кишечника был наложен противоестественный задний проход на сигмовидную ободочную кишку.   К какому виду свищей относится данная стома?","a":"наружный губовидный"},{"id":351,"q":"Больному по поводу острой непроходимости кишечника был наложен противоестественный задний проход на сигмовидную ободочную кишку.   Может ли данный кишечный свищ закрыться самостоятельно или для его закрытия требуется оперативное лечение?","a":"самостоятельно не закроется, необходима операция"},{"id":352,"q":"Могут ли возникать пролежни при вынужденном сидячем положении больных?","a":"Пролежни могут образоваться в области седалищных бугров при вынужденном положении больного сидя."},{"id":353,"q":"Почему подкладной круг нельзя надувать слишком сильно?","a":"Он должен менять свою форму при движениях больного."},{"id":354,"q":"У хирургического пациента при обследовании в области послеоперационного рубца определяется небольшое отверстия, выполненные розовой выбухающей грануляционной тканью из которых при надавливании, выделяется сливкообразный гной. Выставлен диагноз лигатурный свищ. Чем они обусловлены?","a":"Контрастная фистулография"},{"id":355,"q":"Что следует предпринять в начальной стадии образования пролежней?","a":"Усилить все профилактические мероприятия (содержание постели, смена положения больного, тщательный туалет кожи)."},{"id":356,"q":"Для предотвращения образования пролежней у пациента с пролежнем в крестцово-копчиковой области необходимо:","a":"Использовать подкладные резиновые круги, накрытые чистой пеленкой."},{"id":357,"q":"У больного после хирургической обработки в ране остались участки некроза. Что в первую очередь необходимо сделать?","a":"Дренировать рану."},{"id":358,"q":"При обследовании больного в области послеоперационного рубца","a":"Удаление лигатуры, иссечение свища"},{"id":359,"q":"Исследование, помогающее в диагностике тромбоэмболии легочной артерии:","a":"Электрокардиография."},{"id":360,"q":"Лимфангиитом называется:","a":"воспаление лимфатических сосудов"},{"id":361,"q":"Характерное клиническое проявление лимфангиита:","a":"наличие красных полос по ходу лимфатических сосудов"},{"id":362,"q":"Тромбофлебитом называется:","a":"воспаление вены с образованием в ней тромба"},{"id":363,"q":"Что называется флеботромбозом?","a":"образование тромба без воспаления вены"},{"id":364,"q":"Одним из опасных для жизни осложнений тромбофлебита является:","a":"тромбоэмболия легочной артерии"},{"id":365,"q":"Среди осложнений со стороны сердечно-сосудистой системы в послеоперационном периоде после вмешательства на органах брюшной полости наиболее часто возникают:","a":"Тромбоэмболические осложнения (ТЭЛА)."},{"id":366,"q":"Какие группы препаратов применяют для профилактики ТЭЛА в послеоперационном периоде после вмешательства на органах брюшной полости?","a":"Антикоагулянты и антиагреганты."},{"id":367,"q":"Истинная аневризма – это:","a":"патологическое выпячивание стенки сердца или сосуда;"},{"id":368,"q":"Сосудистый шов в целях гемостаза накладывается при повреждении:","a":"магистральных сосудов. Каковы могут быть последствия ишемии?"},{"id":369,"q":"Больная 62 г, оперирована по поводу опухолевого поражения прямой кишки –произведена брюшно-промежностная экстирпация прямой кишки. На 3 сутки после операции отмечалось улучшение самочувствия – больной расширен двигательный режим (назначен палатный режим). При подъеме с кровати у больной внезапно появилось головокружение, затруднения дыхания и боли в грудной клетке; через несколько минут отмечалась потеря сознания. Постовая медицинская сестра вызвала в палату дежурного хирурга. Предположите, какое осложнение могло развиться у данной пациентки?","a":"Тромбоэмболия легочной артерии"},{"id":370,"q":"На прием к врачу обратился пациент 74 лет с жалобами на умеренные боли в левой ноге, болит кожа по ходу подкожных вен. Кожа над венами краснеет, теплее обычной на ощупь. Наблюдается небольшое повышение температуры тела — до 37,50 С. Предположите вероятный диагноз заболевания?","a":"острый тромбофлебит"},{"id":371,"q":"Больной 40 лет, получил травму средней трети правого бедра, которая сопровождалась интенсивным кровотечением. Через 20 мин после наложения жгута поступил в хирургическое отделение. Очередной хирург при ревизии раны обнаружил разрыв бедренной артерии с дефектом 4 см. Какова тактика лечения в стационаре?","a":"Первичная хирургическая обработка раны, пластика бедренной артерии аутовеной."},{"id":372,"q":"Больному 54 лет проведена пластика поврежденной подколенной артерии. На 6-й день у больного повысилась температура до 38,8 °С, появились боли в ноге и гнойные выделения из раны. После снятия швов из раны возникло интенсивное артериальное кровотечение, которое было временно остановлено наложением эластичного жгута. Ваша дальнейшая тактика.","a":"Перевязать сосуд в ране, дренирование."},{"id":373,"q":"Больной 30 лет получил травму в средней трети правого бедра, которая сопровождалась интенсивным кровотечением. Через 20 мин после наложения жгута поступил в хирургическое отделение. Очередной хирург при ревизии раны обнаружил разрыв бедренной артерии с дефектом 4 см.  Какова тактика лечения в стационаре?","a":"Первичная хирургическая обработка раны, пластика бедренной артерии аутовеной."},{"id":374,"q":"В стационаре на обследовании находится пациентка 67 лет с подозрением на сосудистую патологию нижней конечности. Какой неинвазивный метод диагностики целесообразнее использовать для уточнения диагноза?","a":"допплерографию"},{"id":375,"q":"Ткани трупа для консервации заготавливают после смерти не позже:","a":"6 ч; 9.Реплантация – это пересадка органа или ткани: собственной Брефопластика – это пересадка: это пересадка кожи мертворождённого плода"},{"id":376,"q":"Укажите время после травмы, в пределах которого в условиях холодовой консервации возможна реплантация отдельных пальцев:","a":"А) сутки"},{"id":377,"q":"Расщепленный кожный лоскут для трансплантации представляет собой:","a":"эпидермис и часть собственно кожи;"},{"id":378,"q":"Больному 28 лет необходима трансплантация костного мозга. Укажите какой метод консервирования тканей и органов неприемлемый для трансплантации в этом случае:","a":"в гипертоническом растворе натрия хлорида;"},{"id":379,"q":"На прием хирургу обратился мужчина 37 лет, который во время автомобильной катастрофы получил травму правой нижней конечности. При осмотре больного в области нижней трети правой голени по задней поверхности имеется рана размером 12,0х7,0 см. Ваша тактика:","a":"показана кожная пластика."}];
+
+var LS_KEY = 'propedhir_known_ids';
+
+var order = [];
+var idx = 0;
+var correct = 0;
+var wrong = 0;
+var wrongItems = [];
+var isFlipped = false;
+var answering = false;
+
+// ─── localStorage helpers ───
+function loadKnown() {
+  try {
+    var data = localStorage.getItem(LS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch(e) { return []; }
+}
+function saveKnown(ids) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(ids)); } catch(e) {}
+}
+function addKnown(id) {
+  var known = loadKnown();
+  if (known.indexOf(id) === -1) {
+    known.push(id);
+    saveKnown(known);
+  }
+}
+
+// ─── start screen ───
+function showStart() {
+  document.getElementById('startView').style.display = '';
+  document.getElementById('quizView').classList.add('hidden');
+  document.getElementById('resultsView').classList.remove('visible');
+  document.getElementById('resultsView').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('progressLabel').style.display = 'none';
+
+  var known = loadKnown();
+  var total = QUESTIONS.length;
+  var remaining = total - known.length;
+  var pct = total > 0 ? ((known.length / total) * 100).toFixed(2) : '0.00';
+  document.getElementById('remainingCount').textContent = remaining;
+  document.getElementById('knownCount').textContent = known.length;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('knownPct').textContent = pct + '%';
+
+  var resetBtn = document.getElementById('resetBtn');
+  var allDone = document.getElementById('allDoneMsg');
+
+  if (known.length === 0) {
+    resetBtn.classList.add('hidden');
+    allDone.classList.add('hidden');
+  } else if (known.length >= total) {
+    resetBtn.classList.remove('hidden');
+    allDone.classList.remove('hidden');
+    launchConfetti();
+  } else {
+    resetBtn.classList.remove('hidden');
+    allDone.classList.add('hidden');
+  }
+}
+
+document.getElementById('startBtn').addEventListener('click', function() {
+  startQuiz();
+});
+document.getElementById('resetBtn').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.add('open');
+});
+document.getElementById('modalCancel').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+});
+document.getElementById('modalOk').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  saveKnown([]);
+  showStart();
+});
+document.getElementById('restartBtn').addEventListener('click', function() {
+  location.reload();
+});
+document.getElementById('restartBtn2').addEventListener('click', function() {
+  location.reload();
+});
+
+// ─── start quiz ───
+function startQuiz() {
+  var known = loadKnown();
+  // build pool: indices of questions NOT in known list
+  var pool = [];
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    if (known.indexOf(QUESTIONS[i].id) === -1) {
+      pool.push(i);
+    }
+  }
+  if (pool.length === 0) {
+    backToStart();
+    return;
+  }
+  order = pool;
+  shuffle(order);
+  idx = 0; correct = 0; wrong = 0; wrongItems = [];
+  isFlipped = false; answering = false;
+
+  document.getElementById('startView').style.display = 'none';
+  document.getElementById('quizView').classList.remove('hidden');
+  document.getElementById('resultsView').classList.remove('visible');
+  document.getElementById('resultsView').style.display = 'none';
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('progressLabel').style.display = '';
+
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  hidePanels();
+  updateStats();
+  showQuestion();
+}
+
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+}
+
+function showQuestion() {
+  if (idx >= order.length) { showResults(); return; }
+  var q = QUESTIONS[order[idx]];
+  document.getElementById('qId').textContent = '#' + q.id;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('aText').textContent = q.a;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  isFlipped = false; answering = false;
+  hidePanels();
+  updateStats();
+}
+
+function flipCard() {
+  if (window.getSelection().toString().length > 0) return;
+  if (answering || idx >= order.length) return;
+  document.getElementById('card').classList.toggle('flipped');
+  isFlipped = !isFlipped;
+  if (isFlipped) {
+    document.getElementById('actions').classList.add('visible');
+    showPanels();
+  } else {
+    document.getElementById('actions').classList.remove('visible');
+    hidePanels();
+  }
+}
+
+function answer(knew) {
+  if (answering || idx >= order.length) return;
+  answering = true;
+
+  var q = QUESTIONS[order[idx]];
+  if (knew) {
+    correct++;
+    addKnown(q.id); // <-- immediately persist
+  } else {
+    wrong++;
+    wrongItems.push({q: q.q, a: q.a});
+  }
+  idx++;
+
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  hidePanels();
+  isFlipped = false;
+  updateStats();
+
+  if (idx >= order.length) {
+    setTimeout(function() { showResults(); }, 500);
+    return;
+  }
+
+  setTimeout(function() {
+    var nq = QUESTIONS[order[idx]];
+    document.getElementById('qId').textContent = '#' + nq.id;
+    document.getElementById('qText').textContent = nq.q;
+    document.getElementById('aText').textContent = nq.a;
+    answering = false;
+  }, 280);
+}
+
+function updatePanels() {
+  var el = document.getElementById('panelLeft');
+  if (!el) return;
+  var show = isFlipped && window.innerWidth > window.innerHeight;
+  el.classList.toggle('show', show);
+  document.getElementById('panelRight').classList.toggle('show', show);
+}
+function showPanels() { updatePanels(); }
+function hidePanels() {
+  document.getElementById('panelLeft').classList.remove('show');
+  document.getElementById('panelRight').classList.remove('show');
+}
+
+function updateStats() {
+  var left = order.length - idx;
+  document.getElementById('statOk').textContent = correct;
+  document.getElementById('statFail').textContent = wrong;
+  document.getElementById('statLeft').textContent = left;
+  var done = correct + wrong;
+  var total = order.length;
+  var pct = total > 0 ? ((done + 1) / total) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = Math.min(done + 1, total) + ' / ' + total;
+}
+
+function showResults() {
+  document.getElementById('quizView').classList.add('hidden');
+  document.getElementById('resultsView').style.display = '';
+  document.getElementById('resultsView').classList.add('visible');
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  document.getElementById('scorePct').textContent = pct + '%';
+  document.getElementById('scoreSub').textContent = correct + ' / ' + total;
+  var list = document.getElementById('mistakesList');
+  list.innerHTML = '';
+  if (wrongItems.length === 0) {
+    list.innerHTML = '<li style="color:#30d158">✓ Нет ошибок</li>';
+  } else {
+    for (var i = 0; i < wrongItems.length; i++) {
+      var li = document.createElement('li');
+      li.textContent = wrongItems[i].q + ' — ' + wrongItems[i].a;
+      list.appendChild(li);
+    }
+  }
+  updateStats();
+}
+
+function backToStart() {
+  showStart();
+}
+
+// ─── confetti ───
+function launchConfetti() {
+  var end = Date.now() + 2 * 1000;
+  (function frame() {
+    confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#0a84ff','#30d158','#af52de'] });
+    confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#0a84ff','#30d158','#af52de'] });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
+
+// ─── keyboard ───
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    if (isFlipped) answer(true);
+  } else if (e.key === 'ArrowRight') {
+    if (isFlipped) answer(false);
+  } else if (e.key === ' ' || e.key === 'Space') {
+    e.preventDefault();
+    flipCard();
+  } else if (e.key === 'Escape') {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+});
+
+// ─── boot ───
+showStart();
+</script>
+</body>
+</html>
