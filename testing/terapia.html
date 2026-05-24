@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Терапия — карточки</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: .4; } 50% { opacity: .8; } }
+  @keyframes glow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+
+  body {
+    min-height: 100vh;
+    background: #07070d;
+    background-image:
+      radial-gradient(ellipse at 15% 30%, rgba(10, 132, 255, .15) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 70%, rgba(175, 82, 222, .15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.03) 0%, transparent 70%);
+    color: #e0e0e0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 680px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+
+  /* ──────────── start screen ──────────── */
+  .start-screen {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 70vh;
+    animation: scaleIn .6s ease;
+    text-align: center;
+  }
+  .start-screen .logo {
+    font-size: 36px; font-weight: 700;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .start-screen .logo-line {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(10,132,255,.6), transparent);
+    margin: 0 auto 32px;
+  }
+  .start-screen .stat-block {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px; padding: 28px 48px;
+    margin-bottom: 28px;
+    animation: fadeIn .8s ease;
+  }
+  .start-screen .stat-label {
+    font-size: 14px; color: #888; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .start-screen .stat-block .big-num {
+    font-size: 52px; font-weight: 700; line-height: 1.2;
+    background: linear-gradient(135deg, #30d158, #0a84ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .start-screen .stat-block .desc {
+    font-size: 14px; color: #888; margin-top: 14px;
+  }
+  .start-screen .stat-block .desc span { color: #bbb; }
+  .start-screen .start-btn {
+    border: none; border-radius: 14px;
+    padding: 18px 64px;
+    font-size: 19px; font-weight: 600;
+    cursor: pointer; transition: all .25s;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    background: linear-gradient(135deg, rgba(10,132,255,.2), rgba(175,82,222,.15));
+    color: #fff;
+    border: 1px solid rgba(10,132,255,.35);
+    position: relative; overflow: hidden;
+  }
+  .start-btn:hover {
+    background: linear-gradient(135deg, rgba(10,132,255,.35), rgba(175,82,222,.25));
+    box-shadow: 0 0 50px rgba(10,132,255,.15);
+    transform: translateY(-2px);
+  }
+  .start-btn:active { transform: scale(.96); }
+  .reset-btn {
+    margin-top: 16px;
+    background: none; border: none;
+    color: #666; font-size: 13px;
+    cursor: pointer; transition: color .2s;
+    letter-spacing: .5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(255,255,255,.08);
+  }
+  .reset-btn:hover { color: #ff453a; text-decoration-color: rgba(255,69,58,.5); }
+  .all-done {
+    font-size: 15px; color: #30d158;
+    margin-top: 14px; font-weight: 600;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* ──────────── header ──────────── */
+  .header {
+    text-align: center; animation: fadeIn .4s ease;
+  }
+  .header h1 {
+    font-size: 24px; font-weight: 600;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    position: relative; display: inline-block;
+  }
+  .header h1::after {
+    content: ''; position: absolute; bottom: -4px; left: 10%; width: 80%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(10,132,255,.5), transparent);
+  }
+  .stats-row {
+    display: flex; justify-content: center; gap: 32px;
+    margin-top: 14px; font-size: 15px; color: #777;
+  }
+  .stats-row .stat { display: flex; align-items: center; gap: 6px; }
+  .stats-row .num  { font-weight: 700; color: #ccc; min-width: 24px; text-align: center; }
+  .stat-ok .icon  { color: #30d158; }
+  .stat-ok .num   { color: #30d158; }
+  .stat-fail .icon { color: #ff453a; }
+  .stat-fail .num  { color: #ff453a; }
+  .stat-left .icon { color: #0a84ff; }
+  .stat-left .num  { color: #0a84ff; }
+  .stat-restart {
+    display: none; cursor: pointer; font-size: 13px; letter-spacing: .3px; color: #777;
+  }
+  .restart-below {
+    text-align: center; cursor: pointer; color: #666;
+    font-size: 12px; letter-spacing: .5px; padding: 4px 0;
+    transition: color .2s; user-select: none;
+  }
+
+  /* ──────────── card ──────────── */
+  .card-wrapper {
+    perspective: 1400px;
+    min-height: 300px;
+    animation: fadeIn .5s ease;
+    margin-top: 8px;
+  }
+  .card {
+    position: relative;
+    width: 100%; min-height: 300px;
+    transition: transform .55s cubic-bezier(.4,0,.2,1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+  .card.flipped { transform: rotateX(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 35px 35px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,.1);
+    box-shadow: 0 16px 56px rgba(0,0,0,.7), 0 0 100px rgba(10,132,255,.06);
+    transition: box-shadow .3s;
+  }
+  .card-face::before {
+    content: ''; position: absolute; inset: -1px;
+    border-radius: 20px; padding: 1px;
+    background: linear-gradient(135deg, rgba(10,132,255,.25), rgba(175,82,222,.18), rgba(255,255,255,.06));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .card-face .label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 24px; font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-face .label .line { display: inline-block; width: 28px; height: 1px; }
+  .card-front {
+    background: rgba(16, 16, 28, .92);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  }
+  .card-front .label { color: rgba(10,132,255,.6); }
+  .card-front .label .line { background: rgba(10,132,255,.4); }
+  .card-front .q-text {
+    font-size: 17px; line-height: 1.7; text-align: center;
+    color: #f0f0f0; max-width: 600px;
+    overflow-y: auto; max-height: 210px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .card-front .q-text::-webkit-scrollbar { width: 4px; }
+  .card-front .q-text::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .card-front .q-id {
+    position: absolute; top: 16px; right: 20px;
+    font-size: 12px; color: rgba(255,255,255,.15);
+    font-weight: 500; letter-spacing: 1px;
+  }
+  .card-front .tap-hint {
+    position: absolute; bottom: 20px;
+    font-size: 12px; color: rgba(255,255,255,.18);
+    letter-spacing: 1px;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  .card-back {
+    background: rgba(10, 10, 20, .96);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    transform: rotateX(180deg);
+  }
+  .card-back .label { color: rgba(48,209,88,.6); }
+  .card-back .label .line { background: rgba(48,209,88,.4); }
+  .card-back .a-text {
+    font-size: 18px; line-height: 1.7; text-align: center;
+    color: #40e86d; max-width: 600px; font-weight: 500;
+    overflow-y: auto; max-height: 210px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .card-back .a-text::-webkit-scrollbar { width: 4px; }
+  .card-back .a-text::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .card-back .hint-key {
+    position: absolute; bottom: 20px;
+    font-size: 11px; color: rgba(255,255,255,.15);
+    letter-spacing: 1px;
+  }
+
+  /* ──────────── actions ──────────── */
+  .actions {
+    display: flex; gap: 16px; justify-content: center;
+    opacity: 0; transition: opacity .25s, transform .25s;
+    pointer-events: none;
+    transform: translateY(6px);
+	margin-top:15px;
+  }
+  .actions.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .actions button {
+    border: none; border-radius: 14px;
+    padding: 16px 44px;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+    letter-spacing: .5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .actions button:active { transform: scale(.94); }
+  .btn-ok {
+    background: rgba(48,209,88,.12); color: #40e86d;
+    border: 1px solid rgba(48,209,88,.25);
+  }
+  .btn-ok:hover { background: rgba(48,209,88,.22); box-shadow: 0 0 32px rgba(48,209,88,.1); }
+  .btn-fail {
+    background: rgba(255,69,58,.12); color: #ff5a4a;
+    border: 1px solid rgba(255,69,58,.25);
+  }
+  .btn-fail:hover { background: rgba(255,69,58,.22); box-shadow: 0 0 32px rgba(255,69,58,.1); }
+
+  /* ──────────── side panels ──────────── */
+  .side-panel {
+    position: fixed; top: 0; bottom: 0;
+    width: 80px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s, background .3s;
+    z-index: 10; cursor: pointer;
+    user-select: none;
+  }
+  .side-panel .sp-icon { font-size: 36px; transition: transform .2s; }
+  .side-panel .sp-label {
+    position: absolute; bottom: 32px;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    opacity: .6;
+  }
+  .side-panel-left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(48,209,88,.12) 0%, transparent 100%);
+    border-right: 1px solid rgba(48,209,88,.15);
+  }
+  .side-panel-left .sp-icon { color: rgba(48,209,88,.6); }
+  .side-panel-left:hover { background: linear-gradient(90deg, rgba(48,209,88,.25) 0%, transparent 100%); }
+  .side-panel-left:hover .sp-icon { color: rgba(48,209,88,1); transform: scale(1.2); }
+  .side-panel-right {
+    right: 0;
+    background: linear-gradient(270deg, rgba(255,69,58,.12) 0%, transparent 100%);
+    border-left: 1px solid rgba(255,69,58,.15);
+  }
+  .side-panel-right .sp-icon { color: rgba(255,69,58,.6); }
+  .side-panel-right:hover { background: linear-gradient(270deg, rgba(255,69,58,.25) 0%, transparent 100%); }
+  .side-panel-right:hover .sp-icon { color: rgba(255,69,58,1); transform: scale(1.2); }
+  .side-panel.show { opacity: 1; pointer-events: auto; }
+  @media (min-width: 1100px) {
+    .side-panel { width: 110px; }
+    .side-panel .sp-icon { font-size: 42px; }
+  }
+
+  /* ──────────── progress bar ──────────── */
+  .progress-wrap {
+    position: relative; height: 4px;
+    background: rgba(255,255,255,.06);
+    border-radius: 4px; overflow: hidden;
+    animation: fadeIn .6s ease;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #0a84ff, #af52de);
+    border-radius: 4px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+    position: relative;
+  }
+  .progress-bar::after {
+    content: ''; position: absolute; right: 0; top: -3px; width: 16px; height: 10px;
+    background: radial-gradient(circle, rgba(175,82,222,.8) 0%, transparent 70%);
+    filter: blur(4px);
+  }
+  .progress-label {
+    text-align: center; font-size: 12px; color: #666;
+    margin-top: 6px; letter-spacing: .5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ──────────── results ──────────── */
+  .results { display: none; }
+  .results.visible { display: block; animation: slideUp .5s ease; }
+  .results .score { text-align: center; padding: 40px 0; }
+  .results .score .pct {
+    font-size: 72px; font-weight: 700;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .results .score .sub { font-size: 16px; color: #777; margin-top: 8px; }
+  .results .mistakes {
+    background: rgba(255,69,58,.06);
+    border: 1px solid rgba(255,69,58,.15);
+    border-radius: 14px; padding: 24px 28px;
+    max-height: 300px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .results .mistakes::-webkit-scrollbar { width: 4px; }
+  .results .mistakes::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .results .mistakes h3 {
+    font-size: 12px; letter-spacing: 2px; color: #ff5a4a;
+    margin-bottom: 14px; text-transform: uppercase; font-weight: 600;
+  }
+  .results .mistakes ul { list-style: none; }
+  .results .mistakes li {
+    font-size: 14px; line-height: 1.5; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    color: #aaa;
+  }
+  .results .mistakes li:last-child { border: none; }
+  .results .btn-again {
+    display: block; margin: 24px auto 0;
+    border: 1px solid rgba(10,132,255,.35);
+    background: rgba(10,132,255,.1);
+    color: #0a84ff; border-radius: 12px;
+    padding: 14px 32px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .results .btn-again:hover { background: rgba(10,132,255,.2); }
+  .hidden { display: none !important; }
+
+  /* ──────────── modal ──────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,.6);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: #181828; border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 28px 36px; max-width: 380px; width: 90%;
+    text-align: center;
+    transform: scale(.92); transition: transform .25s;
+  }
+  .modal-overlay.open .modal-box { transform: scale(1); }
+  .modal-msg { font-size: 15px; color: #ccc; margin-bottom: 24px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 12px; justify-content: center; }
+  .modal-btn {
+    border: none; border-radius: 10px; padding: 10px 24px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all .2s;
+  }
+  .modal-btn:active { transform: scale(.94); }
+  .modal-cancel { background: rgba(255,255,255,.06); color: #999; }
+  .modal-cancel:hover { background: rgba(255,255,255,.1); }
+  .modal-ok { background: rgba(255,69,58,.12); color: #ff5a4a; border: 1px solid rgba(255,69,58,.2); }
+  .modal-ok:hover { background: rgba(255,69,58,.22); }
+
+  @media (orientation: landscape) {
+    .stat-restart { display: inline; margin-left: auto; }
+    .restart-below { display: none; }
+  }
+
+  @media (min-width: 1200px) {
+    .app { max-width: 820px; gap: 28px; }
+    .card-wrapper { min-height: 350px; }
+    .card { min-height: 350px; }
+    .card-face { padding: 48px 52px; }
+    .card-front .q-text { font-size: 24px; max-height: 240px; }
+    .card-back .a-text { font-size: 25px; max-height: 240px; }
+    body { padding: 40px; }
+    .header h1 { font-size: 28px; }
+    .stats-row { font-size: 16px; gap: 40px; }
+    .actions button { padding: 18px 52px; font-size: 17px; }
+    .start-screen .logo { font-size: 44px; }
+    .start-screen .stat-block .big-num { font-size: 60px; }
+    .start-screen .stat-label { font-size: 16px; }
+    .start-screen .stat-block .desc { font-size: 16px; }
+    .start-screen .start-btn { padding: 20px 72px; font-size: 21px; }
+    .results .score .pct { font-size: 84px; }
+    .results .score .sub { font-size: 18px; }
+    .side-panel { width: 110px; }
+    .side-panel .sp-icon { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- ── START SCREEN ── -->
+  <div class="start-screen" id="startView">
+    <div class="logo">Терапия</div>
+    <div class="logo-line"></div>
+    <div class="stat-block" id="statBlock">
+      <div class="stat-label">осталось</div>
+      <div class="big-num" id="remainingCount">0</div>
+      <div class="stat-label">вопросов</div>
+      <div class="desc">Усвоено <span id="knownCount">0</span> из <span id="totalCount">0</span> (<span id="knownPct">0%</span>)</div>
+    </div>
+    <button class="start-btn" id="startBtn">Старт!</button>
+    <button class="reset-btn hidden" id="resetBtn">Сбросить прогресс</button>
+    <div class="all-done hidden" id="allDoneMsg">Все вопросы изучены ✓</div>
+  </div>
+
+  <!-- ── QUIZ VIEW ── -->
+  <div id="quizView" class="hidden">
+    <div class="header">
+      <h1>Терапия</h1>
+      <div class="stats-row">
+        <span class="stat stat-ok">✓&thinsp;<span class="num" id="statOk">0</span></span>
+        <span class="stat stat-fail">✗&thinsp;<span class="num" id="statFail">0</span></span>
+        <span class="stat stat-left">осталось&thinsp;<span class="num" id="statLeft">0</span></span>
+        <span class="stat-restart" id="restartBtn">Обновить страницу ⟳</span>
+      </div>
+    </div>
+    <div class="card-wrapper">
+      <div class="card" id="card">
+        <div class="card-face card-front" onclick="flipCard()">
+          <span class="q-id" id="qId"></span>
+          <div class="label"><span class="line"></span> Вопрос <span class="line"></span></div>
+          <div class="q-text" id="qText">Загрузка...</div>
+          <div class="tap-hint">нажмите, чтобы открыть ответ</div>
+        </div>
+        <div class="card-face card-back" onclick="flipCard()">
+          <div class="label"><span class="line"></span> Ответ <span class="line"></span></div>
+          <div class="a-text" id="aText"></div>
+          <div class="hint-key">&larr; знаю &nbsp;&middot;&nbsp; не знаю &rarr;</div>
+        </div>
+      </div>
+    </div>
+    <div class="actions" id="actions">
+      <button class="btn-ok" onclick="answer(true)">&#10003; Знаю</button>
+      <button class="btn-fail" onclick="answer(false)">&#10007; Не знаю</button>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div class="results" id="resultsView">
+    <div class="score">
+      <div class="pct" id="scorePct">0%</div>
+      <div class="sub" id="scoreSub">0 / 0</div>
+    </div>
+    <div class="mistakes" id="mistakesWrap">
+      <h3>Ошибки</h3>
+      <ul id="mistakesList"></ul>
+    </div>
+    <button class="btn-again" onclick="backToStart()">&#10227; На старт</button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 0</div>
+  <div class="restart-below" id="restartBtn2">Обновить страницу ⟳</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <p class="modal-msg">Сбросить прогресс изученных вопросов?</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-cancel" id="modalCancel">Отмена</button>
+      <button class="modal-btn modal-ok" id="modalOk">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<!-- side panels -->
+<div class="side-panel side-panel-left" id="panelLeft" onclick="answer(true)">
+  <span class="sp-icon">&larr;</span>
+  <span class="sp-label">Знаю</span>
+</div>
+<div class="side-panel side-panel-right" id="panelRight" onclick="answer(false)">
+  <span class="sp-icon">&rarr;</span>
+  <span class="sp-label">Не знаю</span>
+</div>
+
+<script>
+var QUESTIONS = [{id:1,q:'Определите нормальное  содержание железа в сыворотке крови?',a:'12-30 мкмоль/л'},
+{id:2,q:'Укажите нормальное содержание гемоглобина в крови у взрослых?',a:'120-170 г/л'},
+{id:3,q:'Укажите характерный симптом анемического синдрома?',a:'беспричинная общая слабость'},
+{id:4,q:'Выберите проявления сидеропенического синдрома?',a:'деформация ногтей'},
+{id:5,q:'В каких случаях возможно развитие гипосидероза?',a:'хронических очагах кровопотери'},
+{id:6,q:'Укажите орган, содержащий основные запасы железа в организме?',a:'печень'},
+{id:7,q:'Какое исследование необходимо для диагностики гипохромной анемии?',a:'ферритин в сыворотке крови'},
+{id:8,q:'Что характерно для   дефицита железа?',a:'гипохромия эритроцитов'},
+{id:9,q:'Выберите нормальное содержание ферритина в сыворотке крови?',a:'15 - 300 мкг/л'},
+{id:10,q:'В каком органе содержится основные запасы витамина В12?',a:'печень'},
+{id:11,q:'Укажите причину развития синдрома фуникулярного миелоза?',a:'образование метилмалоновой кислоты'},
+{id:12,q:'Чем обусловлено макроцитоз и гиперхромия эритроцитов?',a:'дефицитом фолиевой кислоты'},
+{id:13,q:'Укажите проявления гемолитического синдрома?',a:'желтушность кожи'},
+{id:14,q:'К чему приводит гемолиз эритроцитов?',a:'непрямой гипербилирубинемии'},
+{id:15,q:'Чем подтверждается гемолиз эритроцитов вследствие образования антиэритроцитарных антител?',a:'прямой пробой Кумбса'},
+{id:16,q:'Дисметаболическая дегенерация боковых и частично задних канатиков спинного мозга при дефиците витамина В12 приводит к чему?',a:'нейроанемическому синдрому'},
+{id:17,q:'Что является причиной ретикулоцитоза?',a:'гемолиз эритроцитов'},
+{id:18,q:'Когда развивается аретикулоцитемия?',a:'при наличии антител против эритрокариоцитов костного мозга'},
+{id:19,q:'Что является причиной  микроцитоза эритроцитов?',a:'уменьшение содержание гемоглобина в эритроците'},
+{id:20,q:'При обследовании у больного выявлена панцитопения.   Что нужно проводить в первую очередь в плане обследования?',a:'исследование костного мозга'},
+{id:21,q:'Чем  проявляется синдром фуникулярного миелоза?',a:'нарушением тактильной и болевой чувствительности'},
+{id:22,q:'Сколько составляет нормальное содержание тромбоцитов в крови?',a:'150-450х109/л'},
+{id:23,q:'Какие клетки являются предшественниками тромбоцитов?',a:'мегакариоциты'},
+{id:24,q:'Мегакариоциты являются предшественниками каких клеток?',a:'тромбоцитов'},
+{id:25,q:'Укажите продолжительность жизни тромбоцитов?',a:'8-11 суток'},
+{id:26,q:'Укажите тип кровоточивости при тромбоцитопении?',a:'петехиально-синячковый тип кровоточивости'},
+{id:27,q:'Выберите тип кровоточивости при дефиците факторов свертывания крови VIII и IX?',a:'гематомный тип кровоточивости'},
+{id:28,q:'Чем обусловлен васкулитно-пурпурный тип кровоточивости?',a:'патологией эндотелиоцитов капилляров'},
+{id:29,q:'Укажите тип кровоточивости при дефиците фактора Виллебранда?',a:'петехиально-гематомный тип кровоточивости'},
+{id:30,q:'Врожденная неполноценность стенок капилляров с расширением просвета сосудов приводит  к чему?',a:'ангиоматозному типу кровоточивости'},
+{id:31,q:'Выберите уровень критической тромбоцитопении?',a:'20х109/л'},
+{id:32,q:'Укажите количество тромбоцитов, синтезируемых  из одного мегакариоцита?',a:'4000-8000'},
+{id:33,q:'Чем обусловлен геморрагический синдром при  аплазии кроветворения?',a:'недостаточным  образованием  мегакариоцитов'},
+{id:34,q:'Какой из лабораторных признаков является патогномичным для дефицита факторов свертывания?',a:'удлинение времени свертывания крови'},
+{id:35,q:'При каком типе кровоточивости наблюдаются межмышечные, подкожные, забрюшинные  гематомы?',a:'гематомном'},
+{id:36,q:'Удлинение активированного частично тромбопластинового времени (АЧТВ) наблюдается при каком типе кровоточивости?',a:'гематомном типе кровоточивости'},
+{id:37,q:'Когда происходит удлинение длительности кровотечения по Дюке?',a:'тромбоцитопении'},
+{id:38,q:'Когда происходит нарушение функции тромбоцитов?',a:'тромбоцитопатии'},
+{id:39,q:'Укажите первую стадию коагуляционного гемостаза?',a:'активная протромбиназа'},
+{id:40,q:'Вторая стадия коагуляционного гемостаза заканчивается образованием чего?',a:'тромбина'},
+{id:41,q:'Выберите физиологический антикоагулянт?',a:'тромбомодулин'},
+{id:42,q:'Определите механизм развития гиперпластического синдрома?',a:'гиперплазия лимфоидной ткани'},
+{id:43,q:'Укажите клетки-предшественницы плазматические клеток?',a:'В-лимфоциты'},
+{id:44,q:'Что из себя представляют клетки Боткина-Гумпрехта?',a:'разрушенные лимфоциты'},
+{id:45,q:'Селезенка расположена на каком уровне ребер?',a:'IX-XI ребер'},
+{id:46,q:'Селезенка как покрыта брюшиной?',a:'со всех сторон'},
+{id:47,q:'Где расположен костный мозг?',a:'ячейках губчатого вещества костей'},
+{id:48,q:'Что относится к центральным органам кроветворной системы?',a:'вилочковая железа'},
+{id:49,q:'Выберите орган, содержащий красную и белую пульпу?',a:'селезенка'},
+{id:50,q:'Какая ткань составляет мягкую строму костного мозга?',a:'ретикулярная'},
+{id:51,q:'Определите  гиперспленизм?',a:'спленомегалия+цитопения'},
+{id:52,q:'Больная И., 34 года, жалобы на общую слабость, быструю утомляемость, головокружение головные боли, одышка и сердцебиение при незначительной физической нагрузке. Из анамнеза: обильные, длительные менструальные кровотечения. О каком синдроме можно подумать?',a:'анемическом синдроме'},
+{id:53,q:'Пациентка С., 28 лет, обратилась на прием к врачу с жалобами на извращение вкуса, выпадение волос, ломкость ногтей, затрудненное глотание пищи, сухость кожи.ОА крови: Нв 128 г/л, эритр.4,7х1012/л, MCV 62 fl, MCH 18 pg . О каком синдроме идет речь?',a:'сидеропеническом синдроме'},
+{id:54,q:'Пациентка Ж., 42 года, обратилась в ЦСМ. Жалобы при обращении к врачу: желтушность кожи и видимых слизистых оболочек, изменение цвета мочи по типу крепко заваренного чая, чувство тяжести в подреберьях, периодически зуд кожи. Общий билирубин 78,4 мкмоль/л, в основном за счет непрямой фракции. Какой синдром имеется у пациента?',a:'гемолитический синдром'},
+{id:55,q:'У больного Д., 19 лет, при проведении общего анализа крови выявлены: Нв 58 г/л, эритр.3,7х1012/л, MCV 58 fl, MCH 15 pg, тромб.325,0х109/л, лейк.4,3х109/л. Какие изменения имеются в общем анализе крови?',a:'микроцитарная, гипохромная анемия'},
+{id:56,q:'Общий анализ крови: Нв 62 г/л, эритр.1,7х1012/л, MCV 118 fl, MCH 36pg, тромб.155,0х109/л, лейк.3,9х109/л. Какие изменения имеются в общем анализе крови?',a:'макроцитарная, гиперхромная анемия'},
+{id:57,q:'Больной А., 26 лет, поступил в клинику с жалобами на выраженную общую слабость, быструю утомляемость, головные боли, головокружение, ухудшение зрения, одышку и сердцебиение при малейшей физической нагрузке, желтушность кожи, чувство тяжести и боли в левом подреберье, изменение цвета мочи.ОА крови: эритроциты 1,6х1012/л, Нв 48 г/л, MCV 92 fl, MCH 31 pg, тромбоциты 187,4х109/л, лейкоциты 8,6х109/л: пал. 6, сегм.72, мон. 6, лимф.16, СОЭ 32 мм/час. Что определяется со стороны общего анализа крови?',a:'нормоцитарная, нормохромная анемия'},
+{id:58,q:'У больного И., 16 лет, при исследовании обнаружены: количество тромбоцитов  периферической крови 20,0х109/л; количество мегакариоцитов костного мозга в 1 мкл 185 клеток. Какой тип кровоточивости  может развиться у пациента?',a:'петехиально-синячковый'},
+{id:59,q:'Больной К., 16 лет, поступил в клинику с жалобами на боли и резкое ограничение движения в правом коленном суставе. Боль в суставе усиливается при малейшем движении. Анамнез: болен с раннего детства. ОА крови: эритроциты 4,6х1012/л, Нв 148 г/л, MCV 64 fl, MCH 30pg, тромбоциты 410х109/л, лейкоциты 4,6х109/л: пал. 6, сегм.72, мон. 6, лимф.16, СОЭ 12 мм/час. Какое исследование нужно проводить для уточнения типа кровоточивости?',a:'определение факторов свертывания крови VIII, IX'},
+{id:60,q:'Больной У., 20 лет, поступил в клинику с жалобами на множественные высыпания на коже нижних конечностей, нижней части  туловища, боли в голеностопных и коленных суставах, усиливающиеся при физической нагрузке, боли в животе, тошноту, однократную рвоту, жидкий стул темного цвета, повышение температуры тела до 37,8 - 38,00С, общую слабость',a:'Анамнез: заболел остро, начало болезни связывает с перенесенной ОРВИ.'},
+{id:61,q:'ОА крови: Нв 130 г/л, эритроциты 4,2х1012/л, ЦП 0,9, тромбоциты 416,6х109/л, лейкоциты 13,8х109/л: пал. 5, сегм. 62, баз. 2, эозин. 3, мон. 4, лимф. 24, СОЭ 24 мм/час. Определите вариант геморрагического синдрома?',a:'васкулитно-пурпурный'},
+{id:62,q:'Пациентка И., 26 лет, обратилась в поликлинику.  Со слов больной выяснено, что в течение последних 6-ти месяцев стала замечать появление мелкоточечных высыпаний на конечностях, синяков после незначительных ушибов, увеличение продолжительности менструальных кровотечений до 10-12 дней. Какое исследование показано?',a:'подсчет тромбоцитов, мегакариоцитов'},
+{id:64,q:'Больная К., 35 лет, жалобы на чувство тяжести и боли в левом подреберье, усиливающиеся при физической активности, после приема пищи, общую слабость. Объективно: Общее состояние тяжелое. Периферические л/узлы не пальпируются. Язык обложен белым налетом, сухой. Живот увеличен в объеме, асимметричен за счет увеличенной селезенки. Нижний край селезенки у входа в малый таз, заходит за срединную линию на 3-4 см, плотная, поверхность ровная, чувствительная при пальпации. Печень не пальпируется. О каком синдроме идет речь?',a:'спленомегалии'},
+{id:65,q:'У больного  имеется генерализованная лимфаденопатия и спленомегалия. В общем анализе крови имеется лейкоцитоз. Какие клетки крови могут быть увеличены?',a:'моноциты, лимфоциты'},
+{id:66,q:'Больной З., 68 лет. В течение 6 лет наблюдается у врача гематолога. По показаниям получает лечение в амбулаторно-стационарных условиях. При поступлении состояние тяжелое: диффузное увеличение всех групп периферических лимфатических узлов в больших размерах, плотной консистенции; спленогепатомегалия; проявления экссудативного плеврита справа. Какое исследование провести в первую очередь?',a:'общий анализ крови+тромбоциты'},
+{id:68,q:'Что относится к клиническими проявлениям facies nefritica?',a:'бледность и отечность лица'},
+{id:69,q:'Кто из перечисленных ученных внес вклад в развитие нефрологии?',a:'Брайт'},
+{id:70,q:'Какие микроорганизмы вызывают развитие  хронического пиелонефрита?',a:'грамотрицательная флора'},
+{id:71,q:'Что происходит под действием ренина?',a:'сужение приносящих артериол клубочка'},
+{id:72,q:'Какие изменения в пробе по Нечипоренко наблюдаются при синдроме инфекции мочевыводящих путей',a:'лейкоциты - 5000, эритроциты - 1000, цилиндры - 500'},
+{id:73,q:'Какой анализ мочи используется для установления факта гематурии?',a:'микроскопия осадка мочи'},
+{id:74,q:'В каком отделе нефрона действует антидиуретический гормон?',a:'в собирательной трубочке'},
+{id:75,q:'Чем обусловлен болевой синдром при остром гломерулонефрите?',a:'растяжением почечной капсулы.'},
+{id:76,q:'Какой отдел почек поражается при инфекции мочевыводящих путей?',a:'чашечно-лоханочный аппарат'},
+{id:77,q:'Как называется  низкий показатель удельного веса мочи?',a:'гипостенурия'},
+{id:78,q:'Как называется учащенное мочеиспускание?',a:'поллакиурия'},
+{id:79,q:'Какой отдел почек поражается при остро-нефритическом синдроме?',a:'клубочки'},
+{id:80,q:'Какие признаки характерны для остро-нефритического синдрома?',a:'отеки, гематурия, артериальная гипертензия'},
+{id:81,q:'Какой фактор имеет большое значение в возникновении остро-нефритического синдрома?',a:'бактериальная инфекция'},
+{id:82,q:'Для какого синдрома характерны следующие рентгенологические признаки: размытые границы почечных лоханок, деформация почечных чашечек, сужение и втянутость шеек?',a:'инфекции мочевыводящих путей'},
+{id:83,q:'Больной М. 20 лет, поступил в отделение нефрологии с жалобами на отеки в ногах, на лице, одышку, слабость, головные боли. 3 года назад после ангины в анализах мочи был выявлен белок 3 г/сутки, отеки лица и стоп, лечился неоднократно в стационаре. Обьективно: кожные покровы бледные, лицо одутловатое, отеки ног, поясницы. В легких дыхание жесткое, справа ниже угла лопатки несколько ослабленное, пульс 84 уд в мин АД-110/70  мм рт ст.  При обследовании: в общем анализе крови: Эр- 3,6х1012/л, Нв-80г/л. СОЭ-35 мм/ч. В общем анализе мочи: удельный вес 1015, белок 4600мг/л, лейк 5-6-3 в п зр, эр 10 -20-18 в п зр. Общий белок- 57 г/л, альбумины- 32,4%, холестерин крови -12,3 ммоль/л. При каком синдроме выявляются вышеперечисленные признаки?',a:'нефротическом'},
+{id:84,q:'Больная Е., 27 лет, поступила в отделение нефрологии с жалобами на боли и тяжесть в поясничной области, чувство жжения в конце акта мочеиспускания, повышение температуры тела. Из анамнеза – считает себя больной в течение 3-х месяцев, когда после переохлаждения повысилась температура тела до 38.5 градусов, появился озноб, головная боль, частое болезненное мочеиспускание. При объективном осмотре отеков нет. Симптом поколачивания по 12 ребру положительный с обеих сторон. В общем анализе крови: Эритр. - 5.2х1012/л, лейк. – 10х109/л, СОЭ - 28 мм/ч. В общем анализе мочи: реакция щелочная, удельный вес - 1007, белок - 400 мг/л, лейкоциты – 15-20-12 в п/зр, эритр.- 2-3 в п/зр. При каком синдроме выявляются вышеперечисленные признаки?',a:'инфекций мочевыводящих путей'},
+{id:85,q:'При какой протеинурии происходит гемолиз с гемоглобирурией и стрессовой секрецией катехоламинов с преходящим нарушением гломерулярного кровотока?',a:'лихорадочной'},
+{id:86,q:'Больной К., 22 лет, поступил с жалобами на слабость, головные боли, повышение температуры тела до 37,5 С, отеки нижних конечностей, лица. В анамнезе частые ангины, последнюю перенес около месяца назад. Объективно: бледность кожных покровов, отеки ног, АД 170/100 мм.рт.ст., симптом поколачивания по 12 ребру положительный с обеих сторон. При обследовании в общем анализе мочи: цвет светло-розовый, реакция - кислая, удельный вес 1010, белок 1000 г/л, лейкоциты 2 – 3 -4  в п/зр., эритроциты 50 – 80-30 в п/зр., циллиндры зернистые 3-4-5 в п/зр. При каком из нижеперечисленных синдромов встречаются вышеперечисленные данные?',a:'нефротическом'},
+{id:87,q:'Какая протеинурия развивается при повышенном образовании плазменных низкомолекулярных белков, которые фильтруются нормальными клубочками в количестве, превышающем способность канальцев к реабсорбции?',a:'«переполнения»'},
+{id:88,q:'Как называется протеинурия, связанная с повышенной фильтрацией плазменных белков через клубочковые капилляры при повреждении гломерулярного фильтра с выходом в мочу альбумина, трансферина?',a:'гломерулярная'},
+{id:89,q:'Какой синдром характеризуется совокупностью следующих признаков: отеки, высокая протеинурия, гипопротеинемия, диспротеинемия, гиперлипидемия?',a:'нефротический'},
+{id:90,q:'Какие бывают отеки при нефротическом синдроме?',a:'распространенные'},
+{id:91,q:'С помощью какой пробы устанавливают локализацию патологического процесса в органах мочевыделительной системы?',a:'трехстаканной Томпсона'},
+{id:92,q:'Какой патологический процесс является причиной терминальных проявлений хронической болезни почек?',a:'склерозирование большей части нефронов'},
+{id:93,q:'Какой патологический процесс является причиной острого почечного повреждения?',a:'васкулит почечных артерий'},
+{id:94,q:'Какой синдром характеризуется как клинико-лабораторный симптомокомплекс с отеками, артериальной гипертонией, гематурией?',a:'остро-нефритический'},
+{id:95,q:'Больной П., 43 лет, длительно страдает гипертонией. Врачей посещал редко, нерегулярно принимал гипотензивные препараты. В последнее время стал отмечать вялость, апатию, сухость и зуд кожи, никтурию. В анализах крови: креатинин- 500 мкмоль/л, в пробе Реберга-Тареева отмечается снижение фильтрации до 10 мл/мин. Какой синдром развился у пациента?',a:'почечной недостаточности'},
+{id:96,q:'Больная 22 года, поступила в отделение нефрологии с жалобами на отеки лица, ног, уменьшение выделяемой мочи до 500 мл за сутки. В анамнезе частые ангины. Объективно: бледность кожи, отеки по всему телу по типу анасарки. В легких в нижних отделах дыхание ослабленное. Верхушечный толчок смещен влево, разлитой, усилен. АД 120/80 мм.рт.ст. Живот увеличен за счет асцита. Печень и селезенка не пальпируются. ОАК: эритроциты-3,6х1012/л, Нв-98г/л, СОЭ-34мм/ч. Холестерин в крови-7,2ммоль/л, Общий белок-45г/л. Суточная протеинурия-8450мг/с. Какой синдром вы обнаружите у больной?',a:'Нефротический'},
+{id:97,q:'Как называется синдром, характеризующийся комплексом изменений качественного и количественного состава мочи (протеинурия, гематурия, лейкоцитурия, цилиндрурия)?',a:'мочевой'},
+{id:98,q:'Что является первым проявлением почечной недостаточности?',a:'полиурия'},
+{id:99,q:'Проявлением какого синдрома является внезапное, быстрое, но потенциально обратимое нарушение функции почек, достаточное, чтобы привести к накоплению азотистых шлаков в жидкостях организма',a:'почечной недостаточности'},
+{id:100,q:'При каком синдроме выявляются в анализе мочи активные лейкоциты при окраске по Штернгеймеру-Мальбину?',a:'инфекции мочевыводящих путей'},
+{id:101,q:'Проба по Зимницкому позволяет выявить',a:'никтурию'},
+{id:102,q:'Больной 27 лет, поступил в отделение нефрологии с жалобами на учащенное болезненное мочевыделение, боли в поясничной области слева, повышение температуры тела до 37,5С. Заболевание связывает с переохлаждением. Объективно: отеков нет. АД 150/80 мм рт.ст. В анализах мочи: удельный вес-1014, белок-600мг/л, эпителий плоский-3-4 в п/зр, лейкоциты-20-25 в п/зр. Какой синдром определяется у данного пациента?',a:'инфекции мочевыводящих путей'},
+{id:103,q:'Единицы измерения клубочковой фильтрации',a:'мл/мин'},
+{id:104,q:'Какова величина канальцевой фильтрации в норме?',a:'80-120 мл/мин'},
+{id:105,q:'Что выявляет проба Нечипоренко ?',a:'лейкоцитурию и эритроцитурию'},
+{id:106,q:'Больной В., 30 лет. обратился в отделение нефрологии с жалобами на слабость, головную боль, головокружение. В анамнезе – частые ангины. В 16 лет впервые в моче обнаружен белок, через год стало повышаться АД. Объективно: Отеки ног. Границы сердца увеличены влево на 1,5см. АД 160/100 мм рт. ст. Почки не пальпируются. В анализах крови: Нв- 100 г/л, СОЭ-30 мм/ч, креатинин – 98 мкмоль/л. В анализе мочи: удельный вес – 1010, белок 2,0 г/л, эритроциты 25-30 в п/зр, лейкоциты-5-8 в п/зр, цилиндры гиалиновые -2-3 в п/зр. Какой синдром выявлен врачом у данного пациента?',a:'артериальной гипертензии'},
+{id:107,q:'Почки пальпируются при',a:'гидронефрозе'},
+{id:108,q:'Определение какого показателя наиболее информативно для выявления нефротического синдрома',a:'величина суточной протеинурии'},
+{id:109,q:'Микроальбуминурия представляет',a:'суточную экскрецию альбумина 30-300 мг/сут'},
+{id:110,q:'Щеточная кайма в нефроне имеется в',a:'Проксимальном канальце'},
+{id:111,q:'Укажите ранний признак хронической почечной недостаточности (ХПН)',a:'Никтурия'},
+{id:112,q:'Ведущим патогенетическим механизмом при хронической почечной недостаточности является',a:'прогрессирующая гибель действующих нефронов'},
+{id:113,q:'Укажите признаки почечных отеков.',a:'бледные, холодные, плотные'},
+{id:114,q:'Ведущим механизмом отеков при нефротическом синдроме является',a:'уменьшение онкотического давления плазмы крови'},
+{id:115,q:'Ведущим механизмом артериальной гипертензии является',a:'активация ренин-ангиотензин-альдостероновой системы'},
+{id:116,q:'Отеки почечного происхождения чаще всего сопровождает следующая окраска кожных покровов',a:'бледная'},
+{id:117,q:'Основной морфологической и функциональной единицей почки является',a:'нефрон'},
+{id:118,q:'Допустимое количество белка в суточной моче составляет',a:'50 мг/сут'},
+{id:119,q:'Мочевина, креатинин, глюкоза фильтруются в клубочке',a:'полностью'},
+{id:120,q:'Образование ангиотензина II происходит',a:'только в почках'},
+{id:121,q:'Реабсорбция белка осуществляется',a:'в проксимальных канальцах'},
+{id:122,q:'Каковы причины возникновения отеков при нефротическом синдроме?',a:'Снижение онкотического давления'},
+{id:123,q:'При исследовании крови у больных с нефротическим синдромом выявляется',a:'Гипоальбуминемия'},
+{id:124,q:'К признакам нефротического синдрома относятся',a:'Массивные отеки'},
+{id:125,q:'Признаки мочевого синдрома',a:'Протеинурия'},
+{id:126,q:'Какая протеинурия характерна для остронефритического синдрома?',a:'Гломерулярная'},
+{id:127,q:'Какая проба позволяет выявлять снижение клубочковой фильтрации?',a:'Проба Реберга-Тареева'},
+{id:128,q:'Для нефротического синдрома характерно',a:'Повышение в сыворотке ЛПОНП и ЛПНП'},
+{id:129,q:'Характерные гематологические нарушения при ХПН',a:'Анемия'},
+{id:130,q:'Какие признаки несут информацию о функциональных способностях почки?',a:'снижение клубочковой фильтрации'},
+{id:131,q:'От чего зависит темная и желтоватая окраска кожи при хронической почечной недостаточности?',a:'от нарушения выделения урохромов'},
+{id:132,q:'Об азотовыделительной функции почек можно судить',a:'по уровню мочевины и кpеатинина плазмы'},
+{id:133,q:'Преобладание ночного диуреза над дневным называется',a:'никтурией'},
+{id:134,q:'Критерии определения хронической почечной недостаточности',a:'СКФ <60 мл/мин/1,73м2 в течение > 3 месяцев'},
+{id:135,q:'Для внешнего вида больного с нефротическим синдромом характерно',a:'выраженная отечность лица'},
+{id:136,q:'При ХБП С5 отмечают',a:'скорость клубочковой фильтрации меньше 15 мл/мин'},
+{id:137,q:'Нормальный уровень калия в сыворотке крови',a:'3,5-5,5 ммоль/л'},
+{id:138,q:'Нормальный уровень креатинина в сыворотке крови',a:'44-105 мкмоль/л'},
+{id:139,q:'Показатели лейкоцитов в анализе мочи по Нечипоpенко в норме',a:'до 2000 в 1 мл'},
+{id:140,q:'Показатели эpитpоцитов в анализе мочи по Нeчипоpенко в норме',a:'1000 в 1 мл'},
+{id:141,q:'Наиболее точно характер морфологических изменений в почках позволяет определить',a:'биопсия почек'},
+{id:142,q:'Для определения клубочковой фильтрации используется следующий метод',a:'определение клиpенса по эндогенному кpеатинину'},
+{id:143,q:'Какой из ниже перечисленных возбудителей чаще всего является причиной развития острого нефритического синдрома?',a:'В-гемолитический стрептококк группы А'},
+{id:145,q:'Какие признаки отличают почечную эклампсию от гипертонического криза?',a:'Отек головного мозга'},
+{id:146,q:'У 15-летнего больного через 2 недели  после перенесенной ангины появились отеки, макрогематурия, повысилось АД. Наиболее вероятный диагноз',a:'Остро-нефритиченский синдром'},
+{id:147,q:'Какие методы могут быть использованы для дифференциальной диагностики преходящей острой от хронической необратимой почечной недостаточности?',a:'Проба Реберга'},
+{id:148,q:'Моча цвета «мясных помоев» характерна для',a:'острого гломерулонефрита'},
+{id:149,q:'Ноющая, тупая, двусторонняя боль в поясничной области характерна для',a:'острого гломерулонефрита.'},
+{id:150,q:'Остро возникшие головная боль, повышение АД, ухудшение зрения, отечность лица, уменьшение выделения мочи и изменение ее цвета характерны для',a:'острый гломерулонефрит'},
+{id:151,q:'Какой уровень глюкозы крови соответствует синдрому гипогликемии в венозной плазме',a:'2,8 ммоль/л'},
+{id:152,q:'Что из перечисленного соответствует нарушенной толерантности к глюкозе (венозная плазма)',a:'натощак – 6,8 ммоль/л, через 2ч после ПГТТ – 10,9 ммоль/л'},
+{id:153,q:'Перечислите триаду симптомов при синдроме гипергликемии',a:'Полидипсия, полифагия, полиурия'},
+{id:154,q:'Жалобой у больных с синдромом гипогликемии может быть',a:'Дрожь в теле и конечностях'},
+{id:155,q:'Перечислите основные факторы риска развития синдрома гипергликемии',a:'Наследственность, ожирение, гиподинамия'},
+{id:156,q:'Что из нижеперечисленного причина гипогликемического синдрома',a:'синдром гипокортицизма'},
+{id:157,q:'Что из нижеперечисленного причина гипергликемического синдрома',a:'синдром гиперкортицизма'},
+{id:158,q:'Уровень глюкозы в плазме венозной  крови  в норме',a:'натощак 4-6,1 ммоль/л, через 2 часа после   еды <7,8 ммоль/л'},
+{id:159,q:'Появление отеков при синдроме гиперкортицизма связано с',a:'Гипернатриемией'},
+{id:160,q:'Пероральный глюкозотолерантный тест проводится',a:'в случае сомнительных значений гликемии для уточнения диагноза'},
+{id:161,q:'При осмотре в ротовой полости при синдроме гипергликемии можно выявить',a:'расшатывание и раннее выпадение зубов'},
+{id:162,q:'Редкое мигание при синдроме гипертиреоза, это симптом',a:'Штельвага'},
+{id:163,q:'Появление микседемы на конечностях больного при синдроме гипотиреоза обусловлено нарушением',a:'Белкового обмена'},
+{id:165,q:'При осмотре кожи у больного с синдромом гипергликемии определяется',a:'рубеоз щек'},
+{id:166,q:'Для гиперфункции щитовидной железы характерна',a:'повышенная возбудимость'},
+{id:167,q:'При синдроме острой гипогликемии',a:'кожа влажная, двигательное возбуждение'},
+{id:168,q:'Гинекомастия у больных с синдромом гиперкортицизма возникает из-за изменений обмена',a:'Половых гормонов'},
+{id:169,q:'К симптомам гипотиреоза относятся',a:'запоры'},
+{id:170,q:'Лабораторные признаки синдрома гипотиреоза',a:'снижение Т3 иТ4 в крови'},
+{id:171,q:'Для синдрома гипокортицизма характерно',a:'гиперпигментация кожи'},
+{id:172,q:'Объём талии у мужчин в норме не должен превышать?',a:'не более 94 см'},
+{id:173,q:'Как рассчитать ИМТ (индекс массы тела)?',a:'вес/рост2'},
+{id:174,q:'В каких единицах измеряется индекс массы тела?',a:'кг/м2'},
+{id:175,q:'Объём талии у женщин в норме?',a:'не более 80 см'},
+{id:176,q:'На приём к эндокринологу пришел пациент. При подсчёте индекс массы тела оказался 29,8 кг/м2. Определите степень нарушения жирового обмена.',a:'избыточная масса тела'},
+{id:177,q:'При введении 1 мг дексаметазона в 12 часов ночи снижение кортизола на 50% и более на следующее утро свидетельствует',a:'о повышенной секреции АКТГ'},
+{id:178,q:'Для синдрома гипофункции щитовидной железы характерны следующие изменения на ЭКГ',a:'снижение вольтажа зубцов, брадикардия'},
+{id:179,q:'Зобом является',a:'увеличение щитовидной железы более 18 мл у женщин и более 25 мл у мужчин'},
+{id:180,q:'Лабораторные критерии синдром гипопаратиреоза',a:'снижение уровня кальция крови'},
+{id:181,q:'При увеличении щитовидной железы I степени (ВОЗ)',a:'щитовидная железа не видна на глаз, пальпируется'},
+{id:182,q:'На приеме пациент З., 36 лет. Рост – 180 см, вес – 95 кг. Дайте заключение по нарушению жирового обмена',a:'Избыточная масса тела'},
+{id:183,q:'У юноши 18 лет после простудного заболевания появились жажда, полиурия, слабость. Уровень сахара крови 16ммоль/л. Какой синдром у больного?',a:'синдром гипергликемии'},
+{id:184,q:'При пальпации у взрослых в норме  щитовидная железа',a:'мягкая, подвижная'},
+{id:185,q:'Классификация зоба по ВОЗ',a:'0,1,2 степени'},
+{id:186,q:'Какие сдвиги в содержании тиреотропного гормона, трийодтиронина и тироксина характерны для синдрома гипотиреоза?',a:'повышенное содержание ТТГ и снижение уровня Т3 и Т4 в сыворотке крови'},
+{id:187,q:'Укажите характерные электролитные нарушения при синдроме гипокортицизма',a:'Гиперкалиемия, гипонатриемия'},
+{id:188,q:'Мерцательная аритмия может встречаться при',a:'синдроме гипертиреоза'},
+{id:189,q:'Особенности отеков при синдроме гипофункции щитовидной железы',a:'плотные, не оставляют ямку'},
+{id:190,q:'Общая слабость, быстрая утомляемость, выраженная мышечная слабость, потемнение кожи, снижение массы тела, снижение аппетита, гипотония - эти жалобы характерны для синдрома',a:'гипокортицизма'},
+{id:191,q:'Для какого синдрома  характерны «матронизм», «бычья шея», «мраморный рисунок кожи»',a:'гиперкортицизма'},
+{id:192,q:'Пигментация век (верхних) при синдроме гиперфункции щитовидной железы - это симптом',a:'Елинека'},
+{id:193,q:'Белая полоска склеры между радужной оболочкой и верхним веком при взгляде вниз при синдроме гиперфункции щитовидной железе – это симптом',a:'Грефе'},
+{id:194,q:'Белая полоска склеры между радужнойоболочкой и верхним веком при взгляде вверх при синдроме гиперфункции щитовидной железы – это симптом',a:'Кохера'},
+{id:195,q:'Широкое раскрытие глазных щелей при синдроме гиперфункции щитовидной железы – это симптом',a:'Дельримпля'},
+{id:196,q:'Усиленная пульсация сонных артерий, приподнимающийся верхушечный толчок, пульс 110 уд. в минуту, аритмичный или частый пульс характерны при',a:'синдроме гиперфункции щитовидной железы'},
+{id:197,q:'При синдроме гиперфункции щитовидной железы пульс',a:'напряженный, скорый'},
+{id:198,q:'Какое количество безводной глюкозы необходимо для проведения орального глюкозотолерантного теста у взрослых?',a:'75 г'},
+{id:199,q:'Укажите лабораторные признаки синдрома первичного гипокортицизма',a:'Повышение адренокортикотропного гормона, снижение кортизола'},
+{id:200,q:'У больного синдром гипергликемии, после физической нагрузки возникла дрожь, сердцебиение, сильный голод, слабость, беспокойство. Ваша тактика',a:'срочное кормление больного, дать сладкий чай'},
+{id:201,q:'Для синдрома гипергликемии характерно',a:'полиурия'},
+{id:202,q:'Мужчина 30 лет, рост 170 см, масса тела 105 кг, преобладает отложение жира в области туловища, на коже внутренней поверхности плеч и бедер багровые стрии, на лице и спине множественные вульгарные угри. АД стойко повышено на уровне 150/90 – 165/110 мм рт. ст. Суточная экскреция кортизола с мочой выше нормы. Гликемия натощак 6,0 ммоль/л, в моче сахар – отр., реакция мочи на ацетон отрицательная. Выделите основной синдром.',a:'синдром гиперкортицизм'},
+{id:203,q:'Тяга к соленой пище наиболее характерна для синдрома',a:'Гипокортицизма'},
+{id:204,q:'Больная Л., 34 лет. Жалуется на избыточную массу тела, повышенную утомляемость. Масса тела значительно увеличилась 5 лет тому назад после родов. Менструации с 13 лет, регулярные. Любит мучные изделия, сладости. Отец и мать страдают ожирением 1-2 ст. Младший брат имеет ожирение 1 ст. Объективно. Рост - 168 см, масса тела - 96 кг. ИМТ – 34кг/2, окружность талии – 95 см. окружность бедер – 106 см.  Отложение подкожной жировой клетчатки в области бедер. Определите типы и степени ожирение.',a:'гиноидный тип ожирение I степени'},
+{id:205,q:'Какой синдром проявляется увеличением размеров щитовидной железы, пучеглазием, похуданием, тахикардией, повышением АД',a:'гипертиреоз'},
+{id:206,q:'Для какого синдрома типичны сухая, морщинистая, холодная, утолщенная кожа, анемия, сужение глазных щелей, утолщение губ, языка, запоры, брадикардия, гипотермия',a:'гипотиреоза'},
+{id:207,q:'Синдром гипоальдостеронизма является проявлением следующего синдрома',a:'Гипокортицизма'},
+{id:208,q:'При какой патологии кожа гладкая, теплая, нежная на ощупь с гипергидрозом',a:'гипертиреозе'},
+{id:209,q:'Проявлением какой патологии являются психическое возбуждение, неуравновешенность, быстрота смены настроения, постоянное беспокойство',a:'гипертиреоза'},
+{id:210,q:'Больная Б., 48 лет. Жалобы на отёчность лица, конечностей, зябкость, слабость, снижение памяти, осиплость голоса, запоры. Объективно: рост – 170 см, масса тела – 89 лет. Кожа сухая, бледная, шелушащаяся. Голос низкий. Пульс – 50 в мин., АД – 110/80 мм рт.ст. О каком синдроме идет речь?',a:'гипотиреоза'},
+{id:211,q:'У юноши 17 лет после сильного стресса появились жажда, полиурия. Общая слабость, уровень сахара в крови - 20 ммоль/л, в моче - 5%, ацетон в моче положителен. Выделите основной синдром.',a:'гипергликемия'},
+{id:212,q:'Больная 56 лет, рост 160 см, масса 105 кг. Жалоб не предъявляет. Распределение жира равномерное, особенно на конечностях, животе, бедрах. Границы сердца увеличены влево, тоны глухие, систолический шум на верхушке. Выделите основной синдром.',a:'синдром ожирения'},
+{id:213,q:'На приём к эндокринологу пришел пациент. При подсчёте ИМТ оказался 30,8 кг/м2. Определите степень нарушения жирового обмена?',a:'ожирение I степени'},
+{id:214,q:'Абдоминальным ожирением у женщин считается окружность талии более',a:'88 см'},
+{id:215,q:'В норме объем щитовидной железы (по данным УЗИ) у женщин составляет',a:'до 18 мл'},
+{id:216,q:'В норме объем щитовидной железы (по данным УЗИ) у мужчин составляет',a:'до 25 мл'},
+{id:217,q:'Наиболее частой причиной надпочечниковой недостаточности является',a:'аутоимунное поражение надпочечников'},
+{id:218,q:'Назовите характерный признак синдрома гиперкортицизма',a:'матронизм'},
+{id:219,q:'Больной Ц., 46 лет, жалуется на резкую слабость, отсутствие аппетита, похудание за 6 месяцев на 10 кг, тошноту, периодически жидкий стул, временами снижение артериального давления. Из анамнеза: болен в течение полугода, постепенно появились и прогрессируют вышеуказанные симптомы. Выделите основной синдром.',a:'синдром хронической недостаточности коры надпочечников'},
+{id:220,q:'Больной Д., 32 года. Жалобы на значительную мышечную слабость, головокружение, боль в области сердца, исхудание, снижение аппетита. Анамнез: болен около 6 месяцев. Заболевание ни с чем не связывает. В возрасте 26 лет перенес туберкулез легких. Объективно: рост - 176 см, вес – 60 кг, кожа на открытых частях тела пигментирована.  Какой синдром развился у больного?',a:'синдром хронической недостаточности коры надпочечников'},
+{id:221,q:'Больная Д., 50 лет, домохозяйка. Жалуется на увеличение массы тела, мелькание «мушек» перед глазами, головные боли, слабость. Из анамнеза: вышеуказанные жалобы начались с изменения внешности: округлилось лицо, увеличился в объеме живот. Объективно: больная выглядит значительно старше своих лет. Рост-156 см, вес – 90 кг,  на бедрах – багровые широкие стрии. Определите предварительный синдром',a:'гиперкотицизма'},
+{id:222,q:'Для какого синдрома типичны «лунообразное» лицо, усиление рост волос над верхней губой, в подбородочной области и на боковых поверхностях лица. Кожа сухая, с мраморным рисунком. Гиперпигментация шеи. В подмышечных областях, на бедрах и боковых поверхностях живота широкие полосы багрово-красного цвета',a:'гиперкортицизм'},
+{id:223,q:'Больная И., 65 лет, жалуется на зябкость и отечность. Сбор анамнеза затруднен из-за выраженного снижения памяти и заторможенности пациентки. Результаты обследований: Т4 свободный – 0,1 пмоль/л; ТТГ- 69 мМе/л; Антитела к ТПО – 1000 МЕ/мл. Выделите основной синдром.',a:'гипотиреоз'},
+{id:224,q:'Зябкость, отечность, изменение голоса, нарушение речи, сухость кожных покровов, запоры – эти жалобы характерны для синдрома',a:'гипотиреоза'},
+{id:225,q:'Какой синдром проявляется увеличением размеров щитовидной железы, пучеглазием, исхуданием, тахикардией, повышением АД?',a:'гипертиреоз'},
+{id:226,q:'Больной Ш., 47 лет, в течение четырёх лет обращалась к различным специалистам с жалобами на слабость в конечностях, постоянную боль в икроножных мышцах и спине. На рентгенограммах костей обнаружены остеопороз, кисты и патологические переломы. Укажите синдром.',a:'гиперпаратиреоза'},
+{id:227,q:'У больной после струмэктомии возникли судороги и положительный симптом Хвостека. Выделите основной синдром.',a:'синдром гипопаратиреоза'},
+{id:228,q:'Тонкие руки и ноги, избыточное отложение жира на лице и туловище, «лунообразное» гиперемированное лицо бывают при синдроме',a:'гиперкортицизма'},
+{id:229,q:'Больная 40 лет, жалуется на зябкость, сонливость, запоры, сухость кожных покровов. При объективном исследовании обнаружено увеличение щитовидной железы. Для подтверждения данного синдрома наиболее информативно определение уровня ТТГ, св. Т4. Какие исследования необходимо провести?',a:'Кортизол, адренокортикотропный гормон'},
+{id:232,q:'Диффузная аллопеция – это',a:'Равномерное выпадение волос'},
+{id:233,q:'Пациент 56 л., жалуется на боли в коленных, голеностопных суставах, усиливающиеся при ходьбе. Объективно: правый коленный сустав припухлый, при движении в суставах слышны крепитации. Какой индекс или шкалу можно использовать для оценки выраженности боли в суставах?',a:'ВАШ'},
+{id:236,q:'ДВС-синдром расшифровывается как',a:'Диссеминированного внутрисосудистого свертывания – синдром'},
+{id:237,q:'ДВС-синдром может быть осложнением',a:'Синдрома диффузного поражения соединительной ткани'},
+{id:238,q:'Антифосфолипидный синдром встречается при',a:'При синдроме диффузного поражения соединительной ткани'},
+{id:239,q:'Больная 75 лет, обратилась в отделение ревматологии. Жалобы на боли в коленных суставах, которые усиливаются к вечеру. Из анамнеза: у матери заболевания опорно-двигательного аппарата. Неоднократно получала травмы коленного сустава. Объективно: пациентка повышенного питания, ИМТ 35 кг/м2. Локально: в межфаланговых суставах кистей рук, определяются узелки Гебердена, варусная деформация коленных суставов. Отмечается хруст в коленных суставах. ОАК, ОАМ: без изменений. Какой синдром у данного пациента?',a:'синдром дегенеративного поражения суставов'},
+{id:240,q:'Из внесуставных проявлений при синдроме диффузного поражения соединительной ткани наиболее серьезным является',a:'Поражение почек'},
+{id:241,q:'Сетчатое ливедо - это',a:'Стойкая синюшного  цвета неравномерная окраска кожи в виде древовидных пятен'},
+{id:242,q:'Остеолиз - это',a:'рассасывание костной ткани, чаще ногтевых фаланг'},
+{id:243,q:'Асептические некрозы костей –',a:'полный некроз губчатого вещества и костного мозга'},
+{id:244,q:'У пациента М. 36лет. Отмечается гиперемия, гипертермия, резкая болезненность в 1 плюснефаланговом суставе стопы слева. Мочевая кислота 455ммоль/л. СОЭ 20 мм/час. Укажите основной синдром',a:'синдром воспалительного поражения суставов'},
+{id:245,q:'Клиническими особенностями аутоиммунных заболеваний является',a:'склонность к прогрессированию и рецидивированию'},
+{id:246,q:'В развитии диффузных болезней  соединительной ткани имеет основное значение',a:'сочетание генетической предрасположенности и иммунные нарушения'},
+{id:247,q:'Женщина 35 лет. Отмечает выраженную миастению и лихорадку. Объективно: периорбитальный отек с пурпурно-лиловой эритемой вокруг глаз, уплотнение мышц плеч и бедер с болезненной реакцией на пальпацию. В крови повышение СРБ, СОЭ. На какой анализ нужно отправить пациента для уточнения синдрома?',a:'Креатинфосфокиназу'},
+{id:248,q:'У пациента жалобы  на боли и припухание в правом коленном суставе. На УЗИ в полости сустава около 50 мл жидкости. Это соответствует',a:'Выраженной степени дефигурации сустава'},
+{id:249,q:'У пациента с болью и ограничением объема движений в тазобедренном суставе, при рентген исследовании можно определить',a:'Наличие деструктивных изменений в суставе'},
+{id:250,q:'Деформация по типу «бутоньерки» - это',a:'Деформация со сгибанием проксимальных и переразгибанием  дистальных межфаланговых суставов'},
+{id:251,q:'Ульнарная девиация -  это',a:'Деформация, сопровождающаяся отклонением  кисти в локтевую сторону'},
+{id:252,q:'Деформация по типу мутилирующего артрита характеризуется',a:'Разнонаправленным искривлением и укорочением фаланг пальцев'},
+{id:253,q:'Выявляемые при рентгенологическом исследовании костные эрозии – это',a:'Краевые дефекты костной ткани по типу узурации'},
+{id:254,q:'Моноартикулярные поражения – это',a:'Поражение суставов с одной стороны Поражение одного сустава'},
+{id:255,q:'Визуальная аналоговая шкала (ВАШ) – это',a:'Метод объективизации болевого синдрома, оцениваемого самим больным'},
+{id:256,q:'Утренняя скованность – это',a:'Чувство тугоподвижности   в суставах в утренние часы после пробуждения'},
+{id:257,q:'Тофусы – это',a:'Подкожные скопления солей моноурата натрия'},
+{id:258,q:'Ревматоидные узелки наиболее характерны для',a:'Синдрома воспалительного поражения суставов'},
+{id:259,q:'При воспалительном поражении сустава методом ультрасонографии можно выявить следующие характерные признаки',a:'Скопление синовиального экссудата, пролиферацию синовиальной оболочки'},
+{id:260,q:'Ревматоидный фактор – это',a:'Серологоческий маркер ревматоидного артрита'},
+{id:261,q:'Больной 28 лет, в отделение кардиоревматологии. Жалуется на боль в суставе. Объективно выявляется покраснение, припухлость, местное повышение температуры, болезненность в области сустава. Он отказывается наступать на больную ногу. Из анамнеза: заболел неделю назад, отмечает после травмы. Выставлен предварительно синдром поражения мягких околосуставных тканей (Бурсит коленного сустава слева). Какой метод исследования подтверждает ваш синдром',a:'УЗИ коленного сустава'},
+{id:262,q:'Женщина 46 лет обратилась в клинику с жалобами на боли ноющего характера в плечевом суставе, усиливающиеся при пальпации в области поражения. Так же, на нарушение подвижности, отек и гиперемию. Связывает после длительной физической нагрузке. Работает тренером по теннису. ОАК без особенности. УЗИ плечевого сустава: Надостная мышца. Структура неоднородная, эхогенность сухожилия обычная. Субакромио-субдельтовидная сумка в размерах не увеличена. О каком симптоме идет речь?',a:'тендинит'},
+{id:263,q:'Как называется повышенная чувствительность к ультрафиолетовому облучению открытых поверхностей кожи?',a:'Фотосенсибилизация'},
+{id:264,q:'Больная Р. 36 лет поступила в клинику с жалобами на боль в пястно-фаланговых, лучезапястных, коленных суставах, припухлость этих суставов, ограничение движений в них. По утрам отмечает скованность в пораженных суставах до 12 часов дня. Укажите основной синдром',a:'Синдром воспалительных изменений суставов'},
+{id:265,q:'Наиболее типичным признаком деформации кисти при синдроме дегенеративного поражения суставов является',a:'узелки Гебердена'},
+{id:266,q:'Какие суставы часто поражаются при синдроме дегенеративно-дистрофическом поражении костно-суставной системы',a:'коленные суставы'},
+{id:267,q:'Узелки Бушара появляются',a:'при синдроме дегенеративного поражения суставов'},
+{id:268,q:'Характерный симптом при синдроме дегенеративного поражения суставов является',a:'«стартовый» характер болей'},
+{id:269,q:'Деформация сустава обусловлена',a:'костными разрастаниями'},
+{id:270,q:'Анкилоз – это',a:'отсутствие подвижности в суставе за счет костных сращений.'},
+{id:271,q:'Измерение окружности сустава производится с помощью',a:'сантиметровой ленты'},
+{id:272,q:'Для определения объема движений в суставе используется',a:'Гониометр'},
+{id:273,q:'Как называется пальпаторное ощущение хруста или треска в суставе при движениях?',a:'Крепитация'},
+{id:274,q:'Как называется симптом, характеризующийся периодическими острыми болями в суставе при движениях, попаданием в суставную щель отломков растрескивающегося хряща?',a:'«блокады» сустава'},
+{id:275,q:'Как характеризуется стартовый характер боли?',a:'боль  в суставе в начале движения'},
+{id:276,q:'Одной из особенностей  боли при дегенеративном поражении тазобедренного сустава является',a:'иррадиация боли в паховую область'},
+{id:277,q:'При лабораторном  исследовании в случае  дегенеративного поражения суставов  выявляют',a:'нормальные показатели ОАК'},
+{id:278,q:'Больная А., 67 лет.  Жалобы на боли в коленных, тазобедренных суставах, при движениях и  при спуске по лестнице. Из анамнеза:  боли в суставах  в течении 5-6 лет. На кистях рук  узелки  Гебердена и Бушара.  СРБ – отр. РФ – отр. R-графия коленных суставов: сужение межсуставных щелей, субхондральный остеосклероз, остеофиты. О каком синдроме идет речь?',a:'синдром дегенеративного поражения суставов'},
+{id:279,q:'Больная Д., 54 года, жалобы на боли в коленных суставах, которые усиливаются к вечеру. Локально: в области  межфаланговых суставов рук определяются Геберденовские узелки, коленные суставы дефигурированы и варусная деформация. Отмечается хруст в коленных суставах. ОАК, ОАМ: без изменений. Ваш предполагаемый синдром?',a:'синдром дегенеративного поражения суставов'},
+{id:280,q:'Как называется синдром, характеризующиеся уменьшением минеральной плотности костной ткани и нарушение ее микроархитектоники с последующим переходом в остеопороз?',a:'Остеопении'},
+{id:281,q:'Какие костные клетки отвечают за резорбцию при ремоделировании  костной ткани?',a:'Остеокласты'},
+{id:282,q:'Наиболее информативным инструментальным методом диагностики остеопенического синдрома является',a:'Рентгеновская денситометрия'},
+{id:283,q:'Денситометрия определяет',a:'Минеральную плотность костной ткани'},
+{id:284,q:'Наиболее частая локализация остеопенических переломов',a:'Шейка бедренной кости, тела позвонков, перелом лучевой кости'},
+{id:285,q:'Маркер формирования кости',a:'Костная щелочная фосфатаза (bone ALP)'},
+{id:286,q:'Возрастные изменения костной ткани связаны',a:'с торможением синтеза витамина D3'},
+{id:287,q:'Дефигурация обусловлена',a:'Экссудативно пролиферативными явлениями в синовиальной оболочке'},
+{id:288,q:'При нарушении функции сустава изменяется',a:'Походка'},
+{id:289,q:'Методом  исследования,  выявляющего плоскостопие  является',a:'Плантография'},
+{id:290,q:'Модифицируемые факторы риска синдрома остеопении',a:'Недостаточное поступление кальция с пищей и дефицит витамина Д'},
+{id:291,q:'Измерение окружности сустава помогает выявить',a:'Припухлость сустава'},
+{id:292,q:'Компенсаторные переломы позвоночника проявляются',a:'Острыми болями в нижней части спины, возникающими после физической нагрузки'},
+{id:293,q:'Биопсия синовиальной оболочки может использоваться для выявления',a:'Опухолей, гранулематозных заболеваний'},
+{id:294,q:'При  анализе синовиальной жидкости учитывают',a:'Цитоз, содержание белка, наличие и характер кристаллов солей'},
+{id:295,q:'Тендинит -  это',a:'изолированное поражение сухожилия'},
+{id:296,q:'Лигаментит – это',a:'воспалительное поражение внесуставных связок, чаще всего связочного канала'},
+{id:297,q:'Миотендинит – это',a:'поражение, локализующееся в области сухожильно-мышечной связки'},
+{id:298,q:'Фиброзит – это',a:'воспалительное поражение фасции и апоневрозов'},
+{id:299,q:'Паникуллиты - это',a:'воспалительные очаги в подкожной околососудистой клетчатке с развитием в них некроза и склерозирования'},
+{id:300,q:'Синдром диффузного воспаления соединительной ткани  характеризуется',a:'системным аутоиммунным воспалительным поражением соединительной ткани'},
+{id:752,q:'Кожный симптом „бабочка" представляет собой',a:'эритематозно-сквамозные очаги на спинке носа, в надбровной области и щеках'},
+{id:753,q:'Типичным проявлением  наружного  эпикондилита  плеча является',a:'боль при разгибании пальцев кисти'},
+{id:301,q:'Формирование "щелкающего" пальца обусловлено',a:'артритом межфалангового сустава кисти'},
+{id:302,q:'Больная С. 18 лет, обратилась в терапевту с жалобами на слабость и боли в мышцах, лихорадка, одышку, похудание на 6 кг. Из анамнеза: после вирусной инфекции появились боли в суставах и мыщцах. Объективно: Состояние тяжелое. Не может поднять голову, встать, самостоятельно кушать. Периорбитальные отеки, на коже бедер лиловые пятна. Какое обследование из перечисленных наиболее целесообразно для верификации синдрома?',a:'Определение ревматоидного фактора'},
+{id:303,q:'Больная Ж. 38 лет. Поступила с жалобами на стягивание кожи лица и рук, похудание на 12 кг, боли в суставах, затруднение глотания сухой пищи, одышку. Из анамнеза: Болеет в течении 5 лет, появились плотные отеки на кистях и лице, артралгии, нарушения глотания. Объективно: Пониженного питания. Телеангиоэктазии на шее, груди. Маскообразное лицо. «Кисетный» рот. Муляжные пальцы. Кожа в складку не берется. Какое обследование наиболее целесообразно для верификации диагноза?',a:'Антитела к топоизомеразе (SCL-70)'},
+{id:304,q:'Больная В., 23 года. Жалобы: на боли в суставах, кашель, одышку, высыпания на коже, появляющиеся после пребывания на солнце, общую слабость, аллопеция, нарушение менструального цикла. Из анамнеза: заболела полгода назад после прерывания беременности. Беспокоили боли в суставах и субфебрилитет. Объективно: Общее состояние средней тяжести. В области скул и спинке носа эритема. На губах – чешуйчатые корочки. Ваш предполагаемый синдром?',a:'Синдром диффузного поражения соединительной ткани'},
+{id:305,q:'Больная 64 лет, обратилась в отделение ревматологии. Жалобы на ограничение подвижности в дистальных межфаланговых суставах обеих кистей, которое возникло около 12 лет назад и постепенно прогрессирует. При осмотре обращают на себя внимание узловатые утолщения в области дистальных межфаланговых суставах обеих кистей, пальцы деформированы, подвижность в них ограничена. Со стороны внутренних органов патологии не выявлено. Анализы крови и мочи в пределах нормы. Какой синдром у данной пациентки?',a:'Дегенеративно-дистрофических изменений суставов'},
+{id:306,q:'Больной 65 лет, обратился в отделение ревматологии, жалуется на выраженные боли при ходьбе в правом коленном и тазобедренном суставах, усиливающиеся к концу дня, уменьшение объема движений в правом тазобедренном суставе. Из анамнеза: считает себя больным в течение 8 лет. Объективно: болезненное ограничение движения в правом коленном суставе, крепитация. ОАК: в пределах нормы. РФ – отрицательный, СРБ – отрицательный. Предварительно выставлен синдром дегенеративно – дистрофических изменений суставов. Какой симптом подтверждает?',a:'Блокады'},
+{id:307,q:'Женщина 36 лет, обратилась в отделение ревматологии. Жалобы на высыпания в области скул и щек, особенно усиливающиеся при нахождении на солнце, постоянно холодные конечности с побелением пальцев кистей рук. Потеря массы тела до 6 кг в течение одного месяца, выпадение волос. В анализах крови антитела к двуспиральной ДНК, антитела к Sm антигену положительные. Какой синдром у данного пациента?',a:'диффузного поражения соединительной ткани'},
+{id:308,q:'Мужчина 36 лет, обратилась в отделение ревматологии с  жалобами на боли в левом коленном суставе, боль усиливается во время нажатия на область около сустава и при физической нагрузке, покраснение, отечность, слабость в мышцах и повышение температуры над пораженным суставом, скованность по утрам. Из анамнеза: в течении 10 дней появились вышеперечисленные жалобы, после того как упал во время футбола. Со слов больного в течении 10 лет занимается футболом и ранее таких жалоб отрицает. Какой предварительный синдром у данного пациента?',a:'поражения мягких около суставных тканей.'},
+{id:309,q:'Ревматоидный фактор – это',a:'Иммунный комплекс, содержащий антитела класса IgM и Fc- фрагмент IgG.'},
+{id:310,q:'Варусная деформация  – это',a:'О-образная деформация коленного сустава'},
+{id:311,q:'Вальгусная деформация – это',a:'Х-образная деформация коленного сустава'},
+{id:312,q:'Проявлением дегенеративных изменений каких суставов, являются узелки Бушара?',a:'проксимальных межфаланговых суставов кисти'},
+{id:313,q:'Боли "механического" типа, периодическая "блокада" суставов, медленное развитие болезни, преимущественное поражение нагрузочных суставов, речь о каком идет синдроме',a:'Синдром дегенеративно-дистрофических изменений суставов'},
+{id:314,q:'Повышенная рентген прозрачность костной ткани, подчеркнутость контуров тел позвонков, истончение кортикального слоя диафизов трубчатых костей, о каком синдроме идет речь',a:'Синдром остеопении'},
+{id:315,q:'Симптом Кушелевского свидетельствует о поражении',a:'илеосакральных сочленений'},
+{id:316,q:'Что определяет симптом Форестье?',a:'подвижность шейного отдела позвоночника'},
+{id:317,q:'Больная 65 лет, обратилась в дежурную клинику. Жалобы на боли в коленных суставах, которые усиливаются к вечеру. Из анамнеза: у матери заболевания опорно-двигательного аппарата. Неоднократно получала травмы коленного сустава. Объективно: пациентка повышенного питания, ИМТ 35 кг/м2. Локально: в межфаланговых суставах кистей рук, определяются узелки Гебердена, варусная деформация коленных суставов. Отмечается хруст в коленных суставах. ОАК, ОАМ: без изменений. Выделите модифицирующие факторы риска у данной пациентки',a:'избыточный вес'},
+{id:318,q:'У больной 57 лет, месяц назад возникли боли при ходьбе в области тазобедренного сустава. В пользу свидетельствует',a:'ограничение ротации бедра на пораженной стороне'},
+{id:319,q:'Больная 69 лет, поступила  в отделение ревматологии, с жалобами на боли в костях и суставах. Из анамнеза, перелом лучевой кости в 2012 году.  Был выставлен предварительный синдром остеопении. По результатам денситометрии, ожидаемый Т-критерий чему будет  равен?',a:'«-1» — «-2,5»'},
+{id:320,q:'Ревматоидный фактор - это',a:'иммуноглобулин М'},
+{id:321,q:'Ревматоидный фактор определяют в реакции',a:'Ваалера-Розе'},
+{id:322,q:'Пациентка 56 лет. В анамнезе дважды за год, получила перелом лучевой кости в дистальной трети, при падении с высоты своего роста. Какой инструментальный метод диагностики будет наиболее информативный для подтверждения  остеопенического синдрома',a:'Рентгеновская денситометрия'},
+{id:323,q:'Пациентка 76 лет. В течении 15 месяцев получает лечение с диагнозом остеопороз; На повторном осмотре - жалоб не отмечает. Какой маркер формирования костной ткани можно проверить у данной пациентки?',a:'Костная щелочная фосфатаза'},
+{id:324,q:'У пациента 36 лет отмечается гиперемия, гипертермия, резкая болезненность в первом плюснефаланговом суставе стопы слева. Мочевая кислота 455 ммоль/л, СОЭ 20 мм/час. О каком синдроме идет речь?',a:'воспалительного поражения суставов'},
+{id:325,q:'Женщина 35 лет, обратилась в отделении ревматологии. Отмечает жалобы на выраженную миастению и лихорадку. Объективно: периорбитальный отек с пурпурно-лиловой эритемой вокруг глаз, уплотнение мышц плеч и бедер с болезненной реакцией на пальпацию. В крови повышение СРБ, СОЭ. Какой анализ необходим для уточнения диагноза в данном случае?',a:'Креатинфосфокиназа'},
+{id:326,q:'У пациентки 40 лет с синдромом воспалительного поражения суставов на рентгенограмме кистей определяются: околосуставной остеопороз, сужение суставных щелей, множественные эрозии. Какой рентгенологической стадии по Штейн-Брокеру соответствует данное описание?',a:'3'},
+{id:327,q:'По какому анализу крови определяют серопозитивность при синдроме воспалительного поражения суставов?',a:'Ревматоидный фактор'},
+{id:328,q:'Больная 65 лет, обратилась в отделение ревматологии. Жалобы на боли в коленных суставах, которые усиливаются к вечеру. Из анамнеза частые травмы. У мамы остеоартрит коленных суставов. Курит около десяти лет. Объективно: ИМТ 35кг/м2. Отмечается хруст в коленных суставах. ОАК, ОАМ: без изменений. Какие не модифицируемые факторы риска присутствуют у данного пациента?',a:'пожилой возраст, пол, наследственность'},
+{id:329,q:'Больная 37 лет, обратилась в отделение ревматологии. Предъявляет жалобы на боли в суставах, лихорадку, похудание, усиленное выпадение волос. Объективно: Эритема в области верхних скул, переносицы, верхней трети груди, на шее. Язвы на слизистой оболочке полости рта. В легких дыхание ослаблено в нижних отделах. Сердечные тоны приглушены, ритмичны. ЧСС 81 ударов в минуту. АД 100/70 мм рт.ст. Живот мягкий, чувствителен в правом подреберье. Какой синдром у данной больной?',a:'диффузное воспаление соединительной ткани'},
+{id:330,q:'Больная 42 лет поступила в отделение кардиоревматологии, с жалобами на боли в суставах, лихорадку, боли при глотании, выраженную общую слабость, одышку при малейшей физической нагрузке, сухой кашель, болезненность пальцев рук на холоде. Объективно: кожа лица уплотнена, «кисетный рот». В легких дыхание ослаблено, в базальных отделах выслушивается крепитация. Сердечные тоны приглушены, аритмичны. Врач поставил предварительный синдром диффузного воспаления соединительной ткани. Какие анализы могут подтвердить данный синдром?',a:'антицентромерные антитела'},
+{id:331,q:'В физиологических условиях пища находится в ротовой полости',a:'15-20 сек'},
+{id:332,q:'У взрослого язык в норме',a:'влажный, чистый и розового цвета'},
+{id:333,q:'В норме верхняя граница печени по среднеключичной линии располагается',a:'в V межреберье'},
+{id:334,q:'Длина пищевода в норме',a:'25-30 см'},
+{id:335,q:'Перкуторно размеры печени по Курлову в норме',a:'9-8-7см'},
+{id:336,q:'Внутрижелудочковая рН-метрия оценивает',a:'кислотопродуцирующую функцию желудка'},
+{id:337,q:'Глубокую скользящую пальпацию слепой кишки проводят',a:'в правой подвздошной области'},
+{id:338,q:'Дисфагия-это',a:'нарушение прохождения пищи по пищеводу'},
+{id:339,q:'Болезненное глотание называют',a:'одинофагией'},
+{id:340,q:'При дуоденальном зондировании порция "А"- это содержимое',a:'12 перстной кишки'},
+{id:341,q:'При дуоденальном зондировании порция "С"- это содержимое',a:'внутрипеченочных желчных протоков'},
+{id:342,q:'Характер болей при синдроме недостаточности экзокринной функции поджелудочной железы',a:'сильная, постоянная боль'},
+{id:343,q:'В норме рН базальной секреции',a:'рН 1,6 – 2,0'},
+{id:344,q:'Какой метод обследования применяется определения «шума плеска»?',a:'пальпация'},
+{id:345,q:'По каким линиям определяют размеры  печени по Курлову?',a:'среднеключичной линии, срединной и по левой реберной дуге'},
+{id:346,q:'Боли при заболеваниях печени и желчных путей иррадиируют  в  область',a:'правой лопатки'},
+{id:347,q:'Нормальный длинник селезенки по X ребру равен',a:'6-8 см'},
+{id:348,q:'Нормальный поперечник селезенки равен',a:'4-6 см'},
+{id:349,q:'Наиболее типичной жалобой свойственной для патологии пищевода является',a:'дисфагия'},
+{id:350,q:'При желудочно-пищеводном рефлюксе у больного возникают жалобы на',a:'изжогу'},
+{id:351,q:'Для заболеваний пищевода  характерно',a:'дисфагия, слюнотечение'},
+{id:352,q:'Мужчина 58 лет, обратился к участковому врачу с жалобами на затруднение при глотании твердой пищи. Анамнез: заболел 6 месяцев назад, 3 месяца спустя появились боли в межлопаточной области, слабость, стала проходить только полужидкая пища, похудел на 6 кг. Объективно: кожные покровы бледные, при пальпации умеренная болезненность в эпигастральной области. При рентгенологическом исследовании пищевода отмечено сужение его просвета в средней трети за счет дефекта наполнения на протяжении 6 см. Какое исследование необходимо провести для уточнения синдрома?',a:'лапароскопию'},
+{id:353,q:'К диспепсическим жалобам относятся',a:'тошнота, чувство дискомфорта в эпигастральной области'},
+{id:354,q:'Какой метод исследования показан для выявления дивертикула пищевода?',a:'рентгенография'},
+{id:355,q:'Ориентировочную поверхностную пальпацию обычно начинают с',a:'правой подвздошной области'},
+{id:356,q:'Париетальные клетки секретируют',a:'соляную кислоту'},
+{id:357,q:'Что можно услышать при аускультации живота у взрослого в норме?',a:'легкое урчание, переливание жидкости'},
+{id:358,q:'Какие боли характерны для язвенной болезни желудка',a:'голодные боли'},
+{id:359,q:'Патогномоничные признаки желудочного кровотечения',a:'рвота "кофейной гущей", дегтеобразный стул'},
+{id:360,q:'Желудочное кровотечение проявляется',a:'шумом плеска в эпигастрии натощак'},
+{id:361,q:'Какой метод исследования является наиболее информативным для установления причины и локализации кровотечения из верхнего отдела желудочно-кишечного тракта',a:'гастродуоденоскопия'},
+{id:362,q:'Пациентка 23 лет, обратилась в стационар с жалобами  на тяжесть и чувство распирания в эпигастральной области после приема пищи, изжога кислым, тошнота. Из анамнеза: пациент много курит, злоупотребляет кофе, иногда по поводу головных болей принимает диклофенак. Болен около 4 лет. Не обследовался и не лечился. Какой синдром можно предположить?',a:'синдром воспаления желудка'},
+{id:363,q:'Наиболее часто язвы в желудке локализуются',a:'на малой кривизне, в антральном отделе'},
+{id:364,q:'У здоровых лиц объем желудочного сока при базальной секреции (в мл) равен',a:'140-180'},
+{id:365,q:'Больная  37лет, поступила в стационар с жалобами на боли в эпигастральной области, через 20-30мин.после еды, изжогу, тошноту, рвоту, которые беспокоят в течение недели. Из анамнеза: страдает хроническим гастритом в течение 5 лет, по поводу чего не лечилась. На ЭГДС: пищевод проходим, слизистая не изменена, кардиальный жом обычной формы и размеров. Желудок обычной формы и размеров. Слизистая гиперемирована, в антральном отделе глубокий язвенный дефект размером 1,5 -2,0см, складки обычной формы и размеров. Луковица 12перстной кишки обычной формы и размеров, слизистая не изменена. Для выявления причин пептической язвы желудка, какие дополнительные анализы необходимо?',a:'исследование Helicobacter pylori'},
+{id:366,q:'Женщина 56 лет, обратилась в поликлинику с жалобами на горечь во рту, тошнота, иногда рвота, ноющие боли в правом подреберье, плохая переносимость жирной пищи, алкоголя. Вышеуказанные жалобы беспокоят в течение года, ранее не обследовался и не лечился. Объективно: субиктеричность склер, в правом подреберье и правой лопаточной области – зоны кожной гиперестезии, положительный симптом Грекова-Ортнера. Ваш предполагаемый синдром',a:'синдром воспаления желчного пузыря'},
+{id:367,q:'Большие размеры язвы желудка',a:'2-3 см и выше'},
+{id:368,q:'Для какой локализации язвы характерны голодные боли через 1,5 часа после приема пищи',a:'язвы пилорического отдела желудка, язвы 12 перстной кишки'},
+{id:369,q:'Больной М., 35 лет, предъявляет жалобы на ноющие, голодные боли по ночам в подложечной области. Боли проходят после приема пищи. Из анамнеза заболевания: в течение многих лет наблюдался в поликлинике с диагнозом хронический гастрит. Питается нерегулярно, часто в сухомятку. При осмотре: живот симметричный, участвует в акте дыхания. При пальпации: симптом Щеткина-Блюмберга отрицательный, симптом Менделя положительный. О каком синдроме должен думать врач?',a:'синдроме пептических язв'},
+{id:370,q:'Гиперсекреция и гиперхлоргидрия желудочного содержимого характерны для локализации язв',a:'в 12 перстной кишке'},
+{id:371,q:'Черный, дегтеобразный стул обнаруживается при кровотечении из',a:'желудка и 12 - перстной кишки'},
+{id:372,q:'Прямым признаком наличия язвы при рентгенологическом исследовании является',a:'симптом «ниши»'},
+{id:373,q:'При физикальном обследовании больных с синдромом пептических язв отмечается болезненность при перкуссии в эпигастрии. Это симптом',a:'Менделя'},
+{id:374,q:'Рвота через 2-3 часа после приема пищи характерна для',a:'язвы 12 перстной кишки'},
+{id:375,q:'Боли при пептической язве уменьшаются или исчезают',a:'после рвоты'},
+{id:376,q:'Кожный зуд при заболеваниях гепатобилиарной системы обусловлен',a:'повышением в крови желчных кислот'},
+{id:377,q:'В норме содержание билирубина в сыворотке крови составляет',a:'8,55-20,5 мкмоль/л'},
+{id:378,q:'Снижение трудоспособности, общая слабость, быстрая утомляемость, недомогание, головные боли у больных с заболеваниями печени обозначается синдромом',a:'астено-вегетативным'},
+{id:379,q:'Содержание общего белка в крови в норме',a:'65-85 г/л'},
+{id:380,q:'Снижение аппетита, тяжесть в подложечной области, тошнота, рвота, метеоризм, расстройства стула у больных с заболеваниями печени являются признаками',a:'гепатолиенального синдрома'},
+{id:381,q:'Обильный кашицеобразный жирный кал наблюдается при',a:'внешнесекреторной недостаточности поджелудочной железы'},
+{id:382,q:'В норме содержание общего белка в крови',a:'65-85 г/л'},
+{id:383,q:'В норме тимоловая проба составляет',a:'0-5 ед.'},
+{id:384,q:'Асцит, расширение подкожных вен передней брюшной стенки, увеличение селезенки, варикозное расширение вен пищевода у больных с заболеваниями печени обозначается синдромом',a:'портальной гипертензии'},
+{id:385,q:'В норме давление крови в воротной вене',a:'50-115мм вод.ст.'},
+{id:386,q:'«Сосудистые звездочки» представляют собой',a:'расширение мелких сосудов на коже'},
+{id:387,q:'Мужчина 50 лет, поступил на стационар с жалобами: на увеличение живота, общую слабость, плохой аппетит, похудание последние 2 недели. Из анамнеза заболевания: 2 года назад после посещения стоматолога заболел, перенес вирусный гепатит. Объективно: Отеки в нижних конечностях, кожа и видимые слизистые желтушные. При осмотре живот в положении лежа распластан с выпячиванием в боковых отделах, перкуторно в этих отделах определяется тупой звук, при пальпации – положительный симптом “флюктуации”. Печень выступает из-под края реберной дуги на 1,5-2 см, плотной консистенции. Пальпируется нижний полюс селезенки. Лабораторно: общий билирубин-34мкмоль/л, общий белок-55г/л. Выделить основной синдром.',a:'синдром портальной гипертензии'},
+{id:388,q:'Признаки синдрома печеночной недостаточности',a:'снижение содержания альбумина'},
+{id:389,q:'Возможной причиной появления сосудистых звездочек при синдроме печеночно-клеточной недостаточности является',a:'гиперэстрогенемия'},
+{id:390,q:'При печеночной желтухе гипербилирубинемия за счет',a:'свободного и связанного билирубина'},
+{id:391,q:'О чем свидетельствует зуд кожи при заболеваниях печени?',a:'увеличении желчных кислот в крови на фоне выраженного холестаза'},
+{id:392,q:'Для синдрома цитолиза, развивающегося при повреждениях печени характерно',a:'повышение активности АЛТ, АСТ, ЛДГ'},
+{id:393,q:'При надпеченочной желтухе в крови обнаруживается',a:'повышение неконьюгированного билирубина'},
+{id:394,q:'При надпеченочной желтухе в моче обнаруживается',a:'повышение содержания уробилина'},
+{id:395,q:'При надпеченочной желтухе в кале обнаруживается',a:'повышение содержания стеркобилина'},
+{id:396,q:'В горизонтальном положении живот мягкий, боковые отделы выбухают (лягушачий живот) свидетельствует о',a:'накоплении жидкости в брюшной полости'},
+{id:397,q:'«Печеночные ладони» представляют собой',a:'симметричное покраснение тенара и гипотенара'},
+{id:398,q:'Цвет кожных покровов при подпеченочной желтухе',a:'темно-зеленоватого оттенка'},
+{id:399,q:'Проекция (локализация) желчного пузыря соответствует',a:'точке пересечения наружного края правой прямой мышцы живота с реберной дугой'},
+{id:400,q:'Кровотечение из носа, десен, маточные кровотечения, кожные кровоизлияния, кровотечения их расширенных вен пищевода у больных с заболеваниями печени обозначается синдромом',a:'портальной гипертонии'},
+{id:402,q:'Толщина стенки желчного пузыря по результатам УЗИ в норме составляет',a:'не более 2 мм'},
+{id:403,q:'Желчный пузырь сокращается под влиянием',a:'холецистокинина'},
+{id:404,q:'Основной функцией желчи является',a:'эмульгация жиров'},
+{id:405,q:'При гипомоторной дискинезии желчного пузыря наблюдается',a:'снижение тонуса желчного пузыря с застоем желчи'},
+{id:406,q:'При экзогенной желтухе, в отличие от желтухи истинной',a:'окрашивание склер не характерно'},
+{id:407,q:'Болезненность при поколачивании по реберным дугам говорит о положительном симптоме….',a:'Ортнера'},
+{id:408,q:'Приступ желчной колики может провоцировать',a:'обильный прием жирной пищи'},
+{id:409,q:'Холецистография – это рентгенологическое исследование',a:'желчного пузыря'},
+{id:410,q:'Кожный зуд при заболеваниях гепатобилиарной системы обусловлен',a:'повышением в крови желчных кислот'},
+{id:411,q:'Метод физикального обследования для определения верхних и нижних границ печени',a:'перкуссия'},
+{id:412,q:'При заболеваниях гепатобилиарной системы боли чаще всего иррадируют',a:'вверх, вправо, кзади'},
+{id:413,q:'При гипермоторной дискинезии желчного пузыря наблюдается',a:'спазм сфинктера Одди и Люткенса'},
+{id:414,q:'Боли опоясывающего характера в верхней половине живота наблюдаются при патологии',a:'поджелудочной железы'},
+{id:415,q:'Точка Дежардена - это',a:'проекция головки поджелудочной железы'},
+{id:416,q:'Как называется внутрикожное отложение холестерина в области век в виде желтых бляшек?',a:'ксантоматозом'},
+{id:417,q:'Золотым стандартом оценки недостаточности экзокринной функции поджелудочной железы является',a:'определение активности панкреатической эластазы в кале'},
+{id:418,q:'Для внешнесекреторной недостаточности поджелудочной железы характерно',a:'стеаторея, креаторея, амилорея'},
+{id:419,q:'При поражении головки поджелудочной железы боль определяется в',a:'точке Дажардена'},
+{id:420,q:'Зона Губергрица',a:'отражает начальную часть тела поджелудочной железы'},
+{id:421,q:'Резкая боль при поколачивании в области проекции желчного пузыря на высоте вдоха - симптом',a:'Василенко'},
+{id:422,q:'Боль при поколачивании ребром кисти по правой реберной дуге - это симптом',a:'Ортнера'},
+{id:423,q:'Боль при надавливании между ножками грудинно-ключично-сосцевидной мышцы справа - это симптом',a:'Мюсси – Георгиевского'},
+{id:424,q:'При дуоденальном зондировании обнаружение в порции «В» большого количества лейкоцитов и увеличение содержания клеток эпителия желчного пузыря  свидетельствует о',a:'о воспалении желчного пузыря'},
+{id:425,q:'Частота стула при запоре',a:'задержка стула более 3 суток'},
+{id:426,q:'Боли в правой подвздошной области возникают при патологии',a:'слепой кишки'},
+{id:427,q:'В норме над кишечником при перкуссии определяется',a:'тимпанический звук'},
+{id:428,q:'Поверхностной пальпацией выявляют',a:'напряжение брюшной стенки'},
+{id:429,q:'Метеоризм – это',a:'вздутие живота'},
+{id:430,q:'Ректороманоскопия позволяет осмотреть слизистую толстой кишки на расстоянии (см)',a:'35'},
+{id:431,q:'Колоноскопия позволяет обследовать',a:'весь отдел толстой кишки'},
+{id:432,q:'Рентгенологическое исследование толстого кишечника - это',a:'ирригоскопия'},
+{id:433,q:'Признаки синдрома мальдигестии по данным анализа кала',a:'стеаторея, креаторея'},
+{id:434,q:'Если в кале определяется большое количество мышечных волокон, то это',a:'креаторея'},
+{id:435,q:'Больной С., 46 лет, жалобы при поступлении: на увеличение живот, общую слабость, тяжесть в правом подреберье, желтушность кожных покровов. Из анамнеза заболевания. В течение года отмечает постепенное нарастание вышеуказанной симптоматики. В детстве перенес болезнь Боткина, злоупотребляет алкоголем. Какие инструментальные исследование необходимы для уточнения синдрома?',a:'УЗИ органов брюшной полости'},
+{id:436,q:'Как называется синдром, обусловленный нарушением  всасывания питательных веществ в тонком кишечнике',a:'синдром мальабсорбции'},
+{id:437,q:'Первичная мальабсорбция возникает при',a:'наследственном дефиците лактазы'},
+{id:438,q:'При синдроме мальабсорбции пастозность и отеки связаны с',a:'гипопротеинемией'},
+{id:439,q:'С калом у взрослого в норме выделяется',a:'стеркобилин'},
+{id:440,q:'Полное отсутствие соляной кислоты и пепсина в желудочном соке называется',a:'ахилией'},
+{id:441,q:'Макроскопическая характеристика кала в норме',a:'оформленный, коричневого цвета'},
+{id:442,q:'При синдроме мальабсорбции дефицит витамина А приводит к',a:'ночной слепоте'},
+{id:443,q:'Больной, 64 лет, по поводу кашля  с обильной слизистой мокротой, одышки, повышение температуры до 37,7°С . Получал внутрь 5 дней тетрациклин , замененный затем на инъекции канамицина на 10-й день болезни возникла диарея ( 7 раз в сутки ) , кровь в стуле, боли по всему животу, вздутие живота, лихорадка  до 39°С . Больному необходимо провести',a:'анализ кала на аскаридоз'},
+{id:444,q:'Если в кале определяется большое количество нейтрального жира, то это',a:'стеаторея'},
+{id:445,q:'При заболеваниях тонкого кишечника боль наблюдается',a:'вокруг пупка'},
+{id:446,q:'О чем свидетельствует положительный симптом волны (флюктуации) при бимануальной перкуторной пальпации живота?',a:'в брюшной полости имеется свободная жидкость'},
+{id:447,q:'При диарее стул',a:'более 3 раз в сутки'},
+{id:448,q:'Пробу Шмидта проводят для',a:'выявления белковой экссудации ССС'},
+{id:449,q:'Когда верхушечный толчок пальпируется в VI межреберье на 2 см кнаружи от срединно-ключичной линии и становится разлитым высоким?',a:'при гипертрофии и дилатации левого желудочка'},
+{id:450,q:'При пальпации сердца на верхушке выявляется дрожание, не совпадающее с пульсацией a. carotis. Для какого порока сердца это характерно?',a:'митральный стеноз'},
+{id:451,q:'При каком пороке сердца увеличивается левое предсердие?',a:'митральном стеноз'},
+{id:452,q:'При каком пороке наблюдается следующая  аускультативная картина: I тон на верхушке ослаблен, там же систолический шум, который проводится в подмышечную область?',a:'недостаточность митрального клапана'},
+{id:453,q:'Где лучше выслушивается митральный клапан?',a:'в пятом межреберье слева на 1,5 см кнутри от скл'},
+{id:454,q:'Чем образован верхушечный толчок?',a:'левым желудочком'},
+{id:455,q:'Дайте характеристику верхушечного толчка при недостаточности аортального клапана?',a:'высокий, усиленный, разлитой'},
+{id:456,q:'При каком пороке определяются следующие изменения границ относительной тупости сердца: правая граница - на 1 см вправо от правого края грудины, левая - по передней аксиллярной линии, верхняя - III ребро?',a:'недостаточность аортального клапана'},
+{id:457,q:'При каком пороке определяются следующие изменения границ относительной тупости сердца: правая граница - на 3 см вправо от края грудины, левая - на 1 см кнутри от левой срединноключичной линии, верхняя - верхний край II ребра?',a:'митральный стеноз'},
+{id:458,q:'При каком пороке определяются следующие изменения границ относительной тупости сердца: правая граница - на 1 см вправо от края грудины, левая - на 2 см кнаружи от левой срединноключичной линии, верхняя - II ребро?',a:'митральная недостаточность'},
+{id:459,q:'При какой частоте сердечных сокращений доктор подумает о «тахикардии»?',a:'80 и более ударов в минуту'},
+{id:460,q:'Какая площадь митрального отверстия в норме?',a:'4-6 см2'},
+{id:461,q:'Какая площадь митрального отверстия при критическом митральном стенозе?',a:'1 см2'},
+{id:462,q:'Когда наблюдается полное разобщение предсердного и желудочкового ритмов?',a:'при атриовентрикулярной блокаде III степени'},
+{id:463,q:'Из каких компонентов состоит ритм «перепела» при митральном стенозе?',a:'хлопающий  I тон, усиленный II тон и тон открытия митрального клапана'},
+{id:464,q:'С помощью какого исследования можно подтвердить недостаточности митрального клапана?',a:'ЭХОКГ'},
+{id:465,q:'Какой основной аускультативный признак недостаточности митрального клапана?',a:'систолический шум на верхушке'},
+{id:466,q:'Какие изменения будут при недостаточности митрального клапана во время допплеровского  исследования?',a:'регургитация крови из левого желудочка в левое предсердие во время систолы'},
+{id:467,q:'Куда направлена струя регургитации при недостаточности аортального клапана при допплеровском исследовании сердца?',a:'из аорты в левый желудочек'},
+{id:468,q:'Какой признак патогномоничен для левожелудочковой сердечной недостаточности?',a:'ортопноэ'},
+{id:469,q:'При каком пороке наблюдается выраженная пульсация сонных артерий?',a:'недостаточностью аортального клапана'},
+{id:470,q:'При каком синдроме возникает акцент II тона на аорте?',a:'артериальной гипертензии'},
+{id:471,q:'Какие изменения встречаются при «митральном лице»?',a:'цианотичный румянец щек'},
+{id:472,q:'Какие изменения на ЭКГ вы ожидаете получить у больного с синдромом  хронической коронарной недостаточности вне приступа?',a:'ЭКГ без динамики'},
+{id:474,q:'Укажите уровень АД, характерный для недостаточности аортального клапана',a:'160/40  ммрт.ст.'},
+{id:475,q:'Где лучше выслушивания клапан легочного ствола?',a:'во втором межреберье слева от грудины'},
+{id:476,q:'Какой симптом появляется при правожелудочковой сердечной недостаточности?',a:'гепатомегалия'},
+{id:477,q:'Каким методом диагностики подтверждается гипертрофия левого желудочка?',a:'ЭхоКГ'},
+{id:478,q:'Какой рентгенологический признак недостаточности аортального клапана?',a:'аорта расширена на всем протяжении, выбухает IV дуга'},
+{id:479,q:'Отражением какого процесса является появление на ЭКГ патологического зубца Q при синдроме острой коронарной недостаточности?',a:'некроза миокарда'},
+{id:480,q:'У больного 42 лет  значительное смещение границ относительной тупости сердца влево, усиление верхушечного толчка, выраженный симптом «систолического дрожания» во 2-м межреберье справа от грудины и там же – ослабление II  тона. Какой из нижеперечисленных аускультативных  феноменов непременно должен иметь место у данного больного?',a:'систолический шум над аортой'},
+{id:481,q:'Какой пульс характерен для недостаточности аортального клапана?',a:'pulsus  celer  et  altus'},
+{id:482,q:'Каков механизм возникновения систолического шума  при  аортальном  стенозе?',a:'B .изгнание крови из левого желудочка в аорту'},
+{id:483,q:'Каков механизм возникновения диастолического шума при митральном стенозе?',a:'изгнанием крови из левого предсердия в левый желудочек'},
+{id:484,q:'Какой механизм возникновения диастолического шума  при недостаточности аортального клапана?',a:'регургитация крови из аорты в левый желудочек'},
+{id:485,q:'При каком  пороке выслушивается диастолический  шум на верхушке?',a:'стенозе митрального клапана'},
+{id:486,q:'Какие изменения на ЭХОКГ являются признаком  левожелудочковой сердечной недостаточности?',a:'ФВ<55%, КДРЛЖ >5,5см'},
+{id:487,q:'Для какого патологического состояния  характерна «треугольная» форма конфигурации сердца?',a:'экссудативный перикардит'},
+{id:488,q:'При каком пороке встречается положительный венный пульс?',a:'для недостаточности 3-створчатого клапана'},
+{id:489,q:'Выберите наиболее правильную трактовку данных пальпации - выраженный сердечный толчок и эпигастральная пульсация',a:'гипертрофия и дилатация правого желудочка'},
+{id:490,q:'Симптом «кошачьего мурлыканья» определяется каким методом?',a:'пальпации'},
+{id:491,q:'Симптом «кошачьего мурлыканья» в области верхушки сердца определяется при каком пороке?',a:'стенозе  левого  A-V отверстия'},
+{id:492,q:'Ритм синусовый, правильный. ЧСС 57 в мин.  с неизмененными комплексами QRS. Данные показатели ЭКГ характерны для какого синдрома?',a:'синусовой брадикардии'},
+{id:493,q:'При пальпации на основании сердца выявляется дрожание, совпадающее с пульсацией на а. carotis. Это характерно для',a:'аортального стеноза'},
+{id:494,q:'Величину АД, измеренного у пациента в состоянии покоя и равную 140/85 мм рт. ст., следует рассматривать в соответствии с современными рекомендациями, как',a:'высокое нормальное АД'},
+{id:495,q:'При аускультации сердца у больных с выраженной сердечной недостаточностью можно выявить',a:'протодиастолический ритм галопа'},
+{id:496,q:'Пульсация сонных артерий («пляска каротид») является признаком',a:'недостаточности аортального клапана'},
+{id:497,q:'Полная A-V блокада характеризуется',a:'самостоятельными сокращениями предсердий и желудочков'},
+{id:498,q:'II тон при стенозе устья аорты',a:'ослаблен на аорте'},
+{id:499,q:'При стенозе устья аорты выслушивается',a:'систолический шум во II межреберье справа'},
+{id:500,q:'Парадоксальный пульс определяется при',a:'синдроме  воспаления перикарда'},
+{id:501,q:'ЭКГ-признаки атриовентрикулярной блокады I степени',a:'удлинение интервала PQ>0,20 сек'},
+{id:502,q:'Назовите компоненты I тона',a:'мышечный, клапанный, сосудистый, предсердный'},
+{id:503,q:'При недостаточности аортального клапана  выслушивается',a:'протодиастолический шум в точке Боткина - Эрба'},
+{id:504,q:'Усиление верхушечного толчка свидетельствует о',a:'гипертрофии левого желудочка'},
+{id:505,q:'Акцент II тона на легочной артерии отмечается при',a:'гипертензии малого круга кровообращения'},
+{id:506,q:'Дисфагия при митральном стенозе обусловлена',a:'сдавлением пищевода увеличенным левым предсердием'},
+{id:507,q:'Выберите симптомокомплекс, характерный для синдрома левожелудочковой сердечной недостаточности',a:'кашель, кровохарканье, удушье, ортопноэ'},
+{id:508,q:'При недостаточности митрального клапана аускультативно определяется',a:'ослабление I тона на верхушке сердца'},
+{id:509,q:'Систолический шум при стенозе устья аорты проводится',a:'на сосуды шеи'},
+{id:510,q:'Какой из следующих факторов предрасполагает к развитию синдрома коронарной недостаточности',a:'курение'},
+{id:511,q:'Субъективная характеристика болей при синдроме хронической коронарной недостаточности',a:'сжимающие, давящие'},
+{id:512,q:'Симптом Мюссе наблюдается при',a:'недостаточности аортального клапана'},
+{id:513,q:'«Сердечный горб» возникает при',a:'выраженной гипертрофии правого желудочка'},
+{id:514,q:'Признаком острой левожелудочковой недостаточности является',a:'приступ удушья с клокочущим дыханием'},
+{id:515,q:'Вынужденное положение больного сидя, нагнувшись вперед, наблюдается при',a:'выпотном перикардите'},
+{id:516,q:'«Дефицит» пульса бывает при',a:'мерцательной аритмии'},
+{id:517,q:'Верхняя граница относительной сердечной тупости увеличивается за счет',a:'гипертрофии левого предсердия'},
+{id:518,q:'Какой симптом из нижеперечисленных характерен для левожелудочковой сердечной недостаточности',a:'инспираторная одышка'},
+{id:519,q:'Типичным проявлением сердечной недостаточности является',a:'одышка'},
+{id:520,q:'Абсолютный ЭКГ-признак синдрома острой коронарной недостаточности',a:'патологический зубец Q'},
+{id:521,q:'Диастолический шум при недостаточности аортального клапана лучше выслушивается',a:'в точке Боткина-Эрба'},
+{id:522,q:'Наиболее информативным методом диагностики коронарной недостаточности является',a:'коронароангиография'},
+{id:523,q:'Основным методом диагностики синдрома нарушения ритма сердца является',a:'ЭКГ'},
+{id:524,q:'Наиболее информативным методом подтверждения некротических изменений в миокарде является',a:'определение уровня тропонинов'},
+{id:525,q:'Выявление на ЭКГ интервала РQ, равного 0,28сек. свидетельствует о наличии у больного',a:'блокады атриовентрикулярного проведения'},
+{id:526,q:'Наиболее достоверным признаком стеноза левого атриовентрикулярного отверстия является',a:'мезодиастолический шум и наличие «щелчка открытия» митрального клапана на верхушке'},
+{id:527,q:'Для недостаточности митрального клапана характерно',a:'систолический шум на верхушке'},
+{id:528,q:'Артериальное давление при недостаточности аортального клапана',a:'повышается систолическое и понижается диастолическое'},
+{id:529,q:'Укажите наиболее характерные признаки артериального пульса pulsus dificiens',a:'число пульсовых волн на лучевой артерии меньше числа сердечных сокращений'},
+{id:530,q:'Какие изменения в общем анализе крови могут наблюдаться при   синдроме  воспаления эндокарда?',a:'анемия, лейкоцитоз, ускорение СОЭ'},
+{id:531,q:'Укажите уровень АД, соответствующий I степени артериальной гипертензии',a:'АД – 150/95 мм Hg'},
+{id:532,q:'Что из нижеперечисленного является модифцированным  фактором риска развития  коронарной недостаточности',a:'повышение уровня липопротеидов низкой плотности'},
+{id:533,q:'Пульсация зрачков характерна для',a:'недостаточности   аортального клапана'},
+{id:534,q:'Гипертрофия левого желудочка устанавливается при',a:'RV5+SV1 ≥ 38 мм,  R aVL> 11мм'},
+{id:535,q:'Что из нижеперечисленного является немодифицированным  фактором риска развития  коронарной недостаточности',a:'наследственная предрасположенность'},
+{id:536,q:'При стенозе устья аорты выслушивается',a:'систолический шум во втором межреберье справа от грудины'},
+{id:537,q:'Ослабление I тона  наблюдается  при',a:'недостаточности митрального клапана'},
+{id:538,q:'Укажите правильное определение термина «сердечный толчок»',a:'диффузная пульсация всей прекардиальной области'},
+{id:539,q:'Для выявления выпота в полости перикарда наиболее информативным методом является',a:'ЭхоКГ'},
+{id:540,q:'Пульсовое давление – это',a:'разница между систолическим и диастолическим АД'},
+{id:541,q:'Малый, медленный, редкий пульс характерен для',a:'стеноза устья аорты'},
+{id:542,q:'Верхушечный толчок при  недостаточности клапана аорты',a:'высокий, усиленный, разлитой'},
+{id:543,q:'Укажите причину синдрома острой коронарной недостаточности',a:'тромбоз коронарных артерий'},
+{id:544,q:'ЭКГ-критерием синдрома хронической коронарной недостаточности является',a:'уменьшение амплитуды зубца R'},
+{id:545,q:'Наиболее информативным методом для подтверждения наличия порока сердца является',a:'эхокардиография'},
+{id:546,q:'Большое пульсовое давление, двойной тон Траубе и шум Дюрозье на сосудах, быстрый и высокий пульс, симптом Мюссе  характерны',a:'для недостаточности аортального клапана'},
+{id:547,q:'Укажите физикальный признак синдрома воспаления перикарда',a:'шум трения перикарда'},
+{id:548,q:'Положение ортопное — это',a:'вынужденное положение сидя  для  облегчения одышки'},
+{id:549,q:'При патологии какого органа из нижеперечисленных может развиться вторичная  артериальная  гипертензия',a:'надпочечники'},
+{id:550,q:'Какая особенность болевого синдрома при острой коронарной недостаточности',a:'длительность свыше 30 минут'},
+{id:551,q:'Увеличение пульсового давления наблюдается при',a:'недостаточности аортального   клапана'},
+{id:552,q:'Какой Эхо-КГ признак является критерием диагностики синдрома воспаления эндокарда',a:'вегетации на клапанах'},
+{id:553,q:'Эхокардиографический признак  острой коронарной недостаточности',a:'локальный гипокинез стенок левого желудочка'},
+{id:554,q:'Органы-мишени при артериальной гипертензии',a:'cердце, почки, головной мозг, сосуды глазного дна и аорта'},
+{id:555,q:'Площадь устья аорты в норме составляет',a:'2,5-3,5 см2'},
+{id:556,q:'Тон открытия митрального клапана выслушивается',a:'на верхушке сердца'},
+{id:557,q:'Для стеноза левого атриовентрикулярного отверстия характерным является',a:'дополнительный высокочастотный тон в диастоле, отстоящий от II тона на 0,07-0,12 секунд'},
+{id:558,q:'Наиболее информативный метод диагностики синдрома воспаления миокарда',a:'ЭХО-КГ'},
+{id:559,q:'Назовите симптом, характерный для внешнего вида больных со стенозом устья аорты',a:'бледность кожных покровов'},
+{id:560,q:'Из перечисленных факторов риска коронарной недостаточности  наиболее значимой «тройкой» является',a:'гиперхолестеринемия,  артериальная гипертензия, курение'},
+{id:561,q:'Общим симптомом в объективном статусе больных с недостаточностью аортального клапана и стенозом устья аорты является',a:'бледность кожных покровов'},
+{id:562,q:'Для больных с синдромом воспаления миокарда наиболее характерны следующие жалобы',a:'боли в области сердца, сердцебиение, одышка'},
+{id:563,q:'Укажите антиатерогенный класс липопротеидов',a:'ЛПВП-холестерин'},
+{id:564,q:'Щелчок открытия митрального клапана',a:'возникает через 0,06-0,12 секунд после закрытия  аортальных клапанов'},
+{id:565,q:'Парадоксальный пульс — это',a:'уменьшение или исчезновение пульсовых волн на вдохе'},
+{id:566,q:'Назовите ЭКГ-признак, который является отражением ишемии миокарда',a:'снижение амплитуды зубца R'},
+{id:567,q:'Прекапиллярный  пульс  Квинке  встречается  при',a:'недостаточности аортального клапана'},
+{id:568,q:'Подтверждением  синдрома  острой коронарной недостаточности у больного с ангинозным приступом служит один из нижеперечисленных лабораторных показателей',a:'повышение активности тропонинов сыворотки крови'},
+{id:569,q:'К нарушениям проводимости относится',a:'A-V блокада'},
+{id:570,q:'Артериальная гипертензия характеризуется следующим уровнем повышения артериального давления',a:'≥140/90 мм рт.ст.'},
+{id:571,q:'Появление на ЭКГ крупноволновой недифференцированной линии при отсутствии зубца Р и комплекса QRS говорит о',a:'фибрилляции желудочков'},
+{id:572,q:'Правая граница абсолютной тупости сердца в норме расположена',a:'по левому краю грудины'},
+{id:573,q:'Для  II тона сердца справедливо высказывание',a:'громче в области основания сердца'},
+{id:574,q:'Акроцианоз   определяется',a:'на ушных раковинах, кончике носа, пальцах рук и ног'},
+{id:575,q:'Наиболее информативным лабораторным тестом, подтверждающим диагноз синдрома воспаления эндокарда, является',a:'положительная гемокультура при посеве  крови'},
+{id:576,q:'Акцент II тона во 2-ом межреберье справа  отмечается при',a:'артериальной гипертензии'},
+{id:577,q:'Какой уровень АД из нижеперечисленных  соответствует  3-й степени артериальной гипертензии',a:'180/110 мм рт ст.'},
+{id:578,q:'В норме длительность желудочкового комплекса QRS',a:'менее 0,10"'},
+{id:579,q:'Зубец Р на ЭКГ отражает',a:'деполяризацию предсердий'},
+{id:580,q:'При митральном стенозе границы сердца смещены',a:'влево и вверх'},
+{id:581,q:'При недостаточности митрального клапана  границы сердца смещены',a:'влево и вверх'},
+{id:582,q:'При недостаточности  клапана  аорты границы сердца смещены',a:'влево и вниз'},
+{id:583,q:'При компенсированном стенозе устья  аорты границы сердца смещены',a:'влево и вниз'},
+{id:584,q:'Какой уровень АД  из нижеперечисленных  Вы считаете нормальным?',a:'120/90 мм.рт.ст.'},
+{id:585,q:'Митральная конфигурация сердца это',a:'увеличение левого предсердия и конуса легочной артерии'},
+{id:586,q:'На ЭКГ отсутствие зубцов Р, волны f и разные расстояния RR характерны для',a:'мерцательной аритмии'},
+{id:587,q:'На ЭКГ желудочковая экстрасистолическая аритмия характеризуется появлением',a:'преждевременного внеочередного появления неизмененного желудочкового комплекса QRS'},
+{id:588,q:'Поражение сердца при синдроме первичной артериальной гипертензии проявляется',a:'гипертрофией левого желудочка'},
+{id:589,q:'Выберите критерий гипертрофии левого желудочка',a:'Rv5 + Sv1 ≥38мм'},
+{id:590,q:'Вынужденное положение ортопноэ облегчает состояние больного с',a:'синдромом левожелудочковой сердечной недостаточности'},
+{id:591,q:'Наиболее характерными жалобами при  хронической коронарной  недостаточности являются',a:'жгучие боли за грудиной, с иррадиацией в шею и левую руку, возникающие при физической нагрузке, купирующиеся в покое или после приема нитроглицерина через 1-2 минуты'},
+{id:592,q:'При митральном стенозе  I тон',a:'«хлопающий» на верхушке'},
+{id:593,q:'Тон открытия митрального клапана выслушивается',a:'на верхушке сердца'},
+{id:594,q:'У больного в 4-й точке аускультации выявлен систолический шум, усиливающийся на вдохе. Это характерно для',a:'недостаточности трехстворчатого клапана'},
+{id:595,q:'Изменения  ЭКГ  при  стенозе устья аорты',a:'признаки гипертрофии левого желудочка'},
+{id:596,q:'Синусовая брадикардия часто наблюдается',a:'у хорошо тренированных спортсменов в покое'},
+{id:597,q:'Для шума трения перикарда характерно',a:'усиливается при надавливании стетоскопом на грудную клетку'},
+{id:598,q:'ЭКГ-признаком  предсердной экстрасистолической аритмии  считается',a:'наличие зубца Р перед  внеочередным  неизмененным  комплексом  QRS с последующей компенсаторной  паузой'},
+{id:599,q:'Трехстворчатый клапан лучше  выслушивается',a:'справа от грудины в четвёртом межреберье'},
+{id:600,q:'Пароксизмальная наджелудочковая тахикардия на ЭКГ проявляется',a:'нормальными неизмененными комплексами QRS с частотой > 160  в мин'},
+{id:601,q:'Патологический зубец Q  на ЭКГ выявляется при',a:'при острой  коронарной недостаточности'},
+{id:602,q:'Определите характерную окраску кожи при эндокардите',a:'цвет "кофе с молоком"'},
+{id:603,q:'Какой  уровень АД  из нижеперечисленных соответствует   артериальной гипертензии  II степени',a:'АД – 174/108 мм Hg'},
+{id:604,q:'В состав атеросклеротической бляшки входят',a:'покрышка и ядро бляшки'},
+{id:605,q:'Лабораторные показатели, характерные для острой коронарной недостаточности',a:'увеличение уровня тропонина I или Т'},
+{id:606,q:'Наиболее частой причиной синдрома воспаления миокарда  являются',a:'стрептококки РС ТЕСТЫ'},
+{id:607,q:'В результате каких физиологических процессов возникает везикулярное дыхание?',a:'Колебания альвеолярных стенок в фазу вдоха и выдоха'},
+{id:608,q:'В результате каких физиологических процессов возникает бронхиальное дыхание?',a:'Завихрения воздуха при прохождении через голосовую щель'},
+{id:609,q:'Какие изменения грудной клетки характерны при воспалительном уплотнении доли легкого?',a:'отставание в дыхании половины грудной клетки'},
+{id:610,q:'Какой перкуторный  звук  появляется при воспалительном  уплотнении легочной ткани?',a:'тупой или притупленный'},
+{id:611,q:'С какой целью используется дополнительный прием при аускультации легких – «покашливание»?',a:'отличить хрипы от крепитации'},
+{id:612,q:'Какой основной дыхательный шум выслушивается при долевом воспалительном уплотнении?',a:'бронхиальное дыхание'},
+{id:613,q:'Наличием каких компонентов обусловлено появление крепитации?',a:'небольшого количества экссудата в альвеолах (пристеночно)'},
+{id:614,q:'В каком отделе дыхательной системы возникает крепитация?',a:'Альвеолах'},
+{id:615,q:'Какая  мокрота встречается у  больных  при  синдроме  долевого уплотнения  легочной ткани?',a:'Слизисто-гнойная'},
+{id:616,q:'Какое  рентгенологическое изменение выявляется  при синдроме  уплотнения  легочной ткани?',a:'Долевое затемнение легочной ткани.'},
+{id:617,q:'Чем отличается крепитация от мелкопузырчатых влажных хрипов?',a:'возникает на вдохе'},
+{id:618,q:'Какой симптомокомплекс характерен  для синдрома воспалительного  уплотнения  легочной ткани?',a:'лихорадка, озноб, кашель с мокротой "ржавого цвета"'},
+{id:619,q:'При какой патологии происходит уменьшение половины грудной клетки, ее западение и отставание в дыхании?',a:'обтурационный ателектаз'},
+{id:620,q:'При каком синдроме голосовое дрожание усилено?',a:'Уплотнения легочной ткани'},
+{id:621,q:'Какой основной дыхательный шум наиболее часто выслушивается при наличии полости, соединяющейся с бронхом?',a:'амфорическое дыхание'},
+{id:622,q:'К врачу в поликлинику обратилась женщина, 62 лет, с жалобами на озноб, кашель с выделением  обильной гнойной мокроты, потливость. Из анамнеза: последние 10 лет страдает сахарным диабетом. При физикальном обследовании, врач выявил: усиление голосового дрожания, тимпанический звук, бронхиальное дыхание, обилие влажных звучных хрипов на ограниченном участке. Какой синдром можно заподозрить у пациентки?',a:'наличия полости в легком'},
+{id:623,q:'При каком синдроме выделяется обильная, гнойная, трехслойная мокрота полным ртом, с неприятным запахом, с примесью крови?',a:'Наличия полости в легком'},
+{id:624,q:'Какой дыхательный шум возникает при наличии жидкого бронхиального секрета в крупных бронхах или полостях, сообщающихся с бронхом?',a:'Влажные крупнопузырчатые хрипы'},
+{id:625,q:'Какой из элементов мокроты с достоверностью свидетельствует о деструкции ткани легкого?',a:'эластические волокна'},
+{id:626,q:'Какие дыхательные шумы выслушиваются на вдохе и выдохе, как треск или «лопанье пузырьков» и исчезают при имитации дыхательных движений?',a:'влажные хрипы'},
+{id:627,q:'Какой основной метод диагностики  синдрома  наличия полости в легком?',a:'анализ мокроты'},
+{id:628,q:'Что представляют собой бронхоэктазы?',a:'расширение дистальных отделов бронхов'},
+{id:629,q:'Какое изменение  дыхания наблюдается при  спазме  мелких бронхов?',a:'экспираторная одышка'},
+{id:630,q:'Чем обусловлено появление сухих жужжащих (басовых) хрипов?',a:'наличием вязкого бронхиального секрета  в крупных бронхах'},
+{id:631,q:'С какой целью используется дополнительный прием при аускультации легких – «форсированный выдох»?',a:'выявить скрытой бронхиальной обструкции'},
+{id:632,q:'Выберите из нижепредложенных вариантов аускультативную картину при при синдроме бронхиальной обструкции',a:'жесткое дыхание с сухими хрипами при форсированном выдохе'},
+{id:633,q:'В приемное отделение поступила женщина, 42 лет, с жалобами на приступы удушья, надсадный мучительный кашель с отхождением скудной вязкой стекловидной мокроты. Из анамнеза: с молодости страдает аллергическим ринитом.  При осмотре: состояние тяжелое, диффузный цианоз, экспираторная одышка, слышны дистантные хрипы. При аускультации: масса сухих свистящих хрипов. Какой синдром можно заподозрить у пациентки?',a:'бронхиальной обструкции'},
+{id:634,q:'При скоплении каких компонентов  появляются сухие хрипы?',a:'вязкого секрета в просвете бронхов'},
+{id:635,q:'К врачу обратился мужчина, 37 лет, с жалобами на одышку, кашель со скудной «ржавой» мокротой, повышение температуры тела, озноб, ломоту в теле. Из анамнеза: работает автослесарем в СТО.  При осмотре врач выявил отставание правой половины грудной клетки при дыхании, там же на фоне ослабленного везикулярного дыхания слышна крепитация в нижних отделах. В общем анализе крови: лейкоциты 11,2х1012/л,  СОЭ-34мм/ч.  Какое обследование необходимо назначить пациенту для уточнения диагноза?',a:'рентгенография'},
+{id:636,q:'Какой симптом характеризуется внезапно наступающим чувством нехватки воздуха с затрудненным выдохом?',a:'удушье'},
+{id:637,q:'К врачу обратился мужчина, 57 лет, с жалобами на одышку при ходьбе, кашель со слизисто-гнойной мокротой, слабость.  Из анамнеза: курит более 20 лет, по 1-2 пачки сигарет в день.  При осмотре врач  аускультативно выявил: жесткое дыхание с удлиненным выдохом, слышны сухие свистящие хрипы по всем легочным полям. При проведении спирометрии: ОФВ 1-44%, ЖЕЛ-87%, МСВ-56%.  Какой синдром можно заподозрить у пациента?',a:'бронхиальной обструкции'},
+{id:638,q:'Для  какого  синдрома  характерна слизистая стекловидная мокрота с обнаружением в ней эозинофилов, спиралей Куршмана и кристаллов Шарко-Лейдена?',a:'бронхиальной обструкции'},
+{id:639,q:'Какой перкуторный  звук появляется при эмфиземе легких?',a:'коробочный'},
+{id:640,q:'При осмотре врач выявил у пациента увеличение передне-заднего и поперечного размеров грудной клетки, с втяжением межреберных промежутков в нижнебоковых отделах с обеих сторон. О каком синдроме идет речь?',a:'повышенной воздушности легочной ткани'},
+{id:641,q:'К врачу обратился молодой человек, 24 лет, с жалобами на выраженную одышку при ходьбе, кашель с обильной гнойной мокротой, чаще по утрам, иногда полным ртом, особенно на левом боку.  Из анамнеза: в младенчестве перенес корь, с детства страдает хроническим бронхитом, с частыми обострениями.  При осмотре: пациент пониженного питания, кожные покровы бледные, сухие, диффузный цианоз. При аускультации: жесткое дыхание, в нижних отделах справа слышны звучные разнокалиберные влажные хрипы. Какое инструментальное обследование важно при диагностике данного синдрома?',a:'спирометрия'},
+{id:642,q:'С изменениями каких структур в лёгком связано развитие эмфиземы лёгких?',a:'Перерастяжением эластических волокон в интерстиции лёгкого'},
+{id:643,q:'Какой симптом характеризуется субъективным ощущением нехватки воздуха, с изменением частоты, глубины и ритма дыхания?',a:'одышка'},
+{id:644,q:'При проведении сравнительной перкуссии легких врач определил коробочный звук над обоими легкими, нижняя граница легких опущена на 3 см, ограничена активная подвижность легочных краев. О каком синдроме идет речь?',a:'повышенной воздушности легочной ткани'},
+{id:645,q:'Чем обусловлено предрасположенность к развитию эмфиземы легких?',a:'недостаточность α-1-антитрипсина'},
+{id:646,q:'Чем обусловлено появление шума трения плевры?',a:'воспалением  листков плевры с отложением в ней фибрина'},
+{id:647,q:'Укажите наиболее характерные изменения грудной клетки при одностороннем гидротораксе',a:'отставание в дыхании, увеличение половины грудной клетки и сглаживание межреберных промежутков'},
+{id:648,q:'Какой перкуторный звук появляется при пневмотораксе',a:'тимпанический'},
+{id:649,q:'Какой основной дыхательный шум наиболее часто выслушивается при гидротораксе',a:'ослабленное везикулярное дыхание'},
+{id:650,q:'Чем отличается шум трения плевры от мелкопузырчатых хрипов?',a:'не изменяется при кашле'},
+{id:651,q:'Оцените результат исследования плеврального содержимого: относительная плотность - 1027, мутная жидкость, зеленовато-желтого цвета, белок - 60 г/л, проба Ривальта +++, микроскопия осадка - нейтрофилы покрывают все поля зрения',a:'гнойный экссудат'},
+{id:652,q:'Рентгенологическая картина при синдроме наличия жидкости в плевральной полости',a:'гомогенное затемнение нижней части легкого с линией Дамуазо.'},
+{id:653,q:'При синдроме скопления жидкости в плевральной полости над областью скопления жидкости  отмечается',a:'тупой или притупленный'},
+{id:654,q:'Рентгенологические признаки синдрома наличия воздуха в плевральной полости',a:'светлое  легочное  поле без легочного рисунка.'},
+{id:655,q:'Куда смещается средостение при синдроме  наличия жидкости в плевральной полости?',a:'в здоровую  сторону'},
+{id:656,q:'Куда смещается средостение при синдроме  наличия воздуха в плевральной полости?',a:'в здоровую  сторону'},
+{id:657,q:'При каком синдроме выявляется тимпанический перкуторный звук над грудной клеткой?',a:'скопления воздуха в полости плевры'},
+{id:658,q:'Характерным изменением состава крови при дыхательной недостаточности является',a:'гипоксемия'},
+{id:659,q:'Обтруктивный тип синдрома дыхательной недостаточности наблюдается при',a:'бронхоспазме.'},
+{id:660,q:'К компенсаторным механизмам при дыхательной недостаточности относится',a:'эритроцитоз'},
+{id:661,q:'При дыхательной недостаточности III степени уровень SpO2 составляет',a:'75-89%'},
+{id:662,q:'Основные  причины  развития  гипоксемической  формы дыхательной недостаточности',a:'заболевания,  непосредственно поражающие   легочную паренхиму'},
+{id:663,q:'Какой  признак, выявляемый при общем осмотре, свидетельствует  о наличии дыхательной недостаточности?',a:'диффузный  цианоз'},
+{id:664,q:'Первая степень хронической дыхательной недостаточности характеризуется',a:'одышкой при значительной физической нагрузке'},
+{id:665,q:'Укажите место наилучшего выслушивания клапана легочной артерии',a:'второе межреберье слева у грудины'},
+{id:666,q:'Как изменится II тон сердца при повышении давления в легочной артерии и выраженной гипертрофии правого желудочка?',a:'акцент и расщепление II тона на легочной артерии'},
+{id:667,q:'Осложнением со стороны сердечно-сосудистой системы, развивающимся в результате длительной хронической дыхательной недостаточности, является',a:'гипертрофия правого желудочка'},
+{id:668,q:'Характерным  рентгенологическим признаком легочного сердца является',a:'расширение границ сердца вправо за счет ПЖ'},
+{id:669,q:'Каким из нижеперечисленных инструментальных методов  исследования  можно подтвердить легочную артериальную  гипертензию',a:'ЭКГ'},
+{id:670,q:'Какой  уровень  систолического  давления в легочной артерии   считается нормальным',a:'25-30мм рт.ст.'},
+{id:671,q:'Как называется произвольный или непроизвольный рефлекторный акт защиты  и самоочищения дыхательных путей от инородных тел, слизи, гноя и мокроты?',a:'Кашель'},
+{id:230,q:'Как называется симптом, проявляющийся выделением примеси крови в мокроте',a:'Кровохарканье'},
+{id:672,q:'Какие дыхательные шумы выслушиваются при синдроме образования в легком полости с уровнем жидкости, сообщающейся с бронхом?',a:'хрипы влажные звучные, крупно и среднепузырчатые'},
+{id:673,q:'Какие дыхательные шумы могут выслушиваться в области треугольника Раухфуса-Грокко?',a:'резко ослабленное везикулярное дыхание'},
+{id:674,q:'Назовите отличительный признак экссудата?',a:'плотность жидкости выше 1015.'},
+{id:675,q:'Hазовите отличительный признак транссудата?',a:'проба  Ривальта  отрицательная.'},
+{id:733,q:'Назовите синдром, при котором с обеих сторон на симметричных участках грудной клетки определяются: ослабление голосового дрожания, коробочный звук, ослабленное везикулярное дыхание.',a:'Повышенная воздушность легочной ткани.'},
+{id:676,q:'У больного в области проекции нижней доли правого легкого определяются усиленное голосовое дрожание, тупой перкуторный звук, бронхиальное дыхание, усиленная  бронхофония.  О каком синдроме идет речь?',a:'Уплотнение легочной ткани.'},
+{id:734,q:'Назовите синдром, при котором над одной половиной грудной клетки резко ослаблено голосовое дрожание, тимпанический звук, не выслушиваются дыхательные шумы.',a:'Скопление воздуха в полости плевры.'},
+{id:735,q:'Назовите синдром, при котором в области проекции доли легкого определяются: усиление голосового дрожания, притупленный звук, ослабленное везикулярное дыхание, крепитация.',a:'Уплотнение легочной ткани.'},
+{id:736,q:'Назовите синдром, при котором на обеих половинах грудной клетки выявляются: ослабленное голосовое дрожание, коробочный звук, ослабленное везикулярное дыхание и сухие «свистящие» хрипы преимущественно на фазе удлиненного выдоха.',a:'Бронхиальной обструкции'},
+{id:737,q:'У больного в области проекции нижней доли справа  резко ослаблено голосовое дрожание, при перкуссии тупой звук, не выслушиваются дыхательные шумы. Назовите синдром.',a:'Синдром скопления жидкости в полости плевры'},
+{id:738,q:'Назовите  синдром, при  котором на ограниченном участке в проекции верхней доли легкого усилено голосовое дрожание, тимпанический звук, амфорическое дыхание и влажные крупнопузырчатые звучные хрипы.',a:'Синдром нарушения проходимости бронхов'},
+{id:739,q:'Назовите синдром, при котором выявляется одностороннее западение над- и подключичной ямок, в проекции верхней доли не проводится голосовое дрожание, тупой перкуторный звук и дыхание не выслушивается.',a:'Синдром скопления жидкости в плевральной полости.'},
+{id:677,q:'Как называется показатель, отражающий объем воздуха, который человек в состоянии выдохнуть при самом глубоком выдохе после максимального вдоха?',a:'Объем форсированного выдоха за одну секунду (ОФВ1)'},
+{id:678,q:'Что такое пульсоксиметрия?',a:'Инвазивный метод, определяющий газовый состав крови'},
+{id:679,q:'При каком синдроме наблюдается выраженное снижение ФЖЕЛ и ОФВ1?',a:'нарушения бронхиальной проходимости'},
+{id:680,q:'Какой показатель является наиболее чувствительным параметром для определения бронхиальной обструкции  при спирометрии?',a:'ФЖЕЛ'},
+{id:681,q:'Что определяют при пикфлоуметрии?',a:'Максимальную скорость выдоха'},
+{id:682,q:'При каком синдроме главной жалобой является кашель с отделением гнойной, а иногда зловонной мокроты в суточном количестве более 100мл?',a:'При наличии полости в легком после вскрытия.'},
+{id:683,q:'Для какого синдрома характерны приступы экспираторной одышки?',a:'бронхиальной  обструкции.'},
+{id:684,q:'Больной жалуется на одышку. При осмотре имеет вид «розового пыхтильщика». Грудная клетка выбухает в нижнебоковых отделах, межреберные промежутки широкие, ход ребер приближается к горизонтальному, надключичные ямки выбухают. При топографической перкуссии нижние границы легких смещены вниз на одно ребро. О каком синдроме идет речь?',a:'повышенной воздушности легочной ткани'},
+{id:685,q:'У больного  жалобы на кашель с отделением слизисто-гнойной мокроты, одышку при физической нагрузке. При аускультации над всей поверхностью легких определяется жесткое дыхание, сухие  жужжащие и свистящие хрипы.  О каком синдроме идет речь?',a:'бронхиальной обструкции'},
+{id:686,q:'Больной жалуется на повышение температуры до 39°С, озноб, тяжесть в левой половине грудной клетки, одышку. При топографической перкуссии нижняя граница левого легкого проходит по линии Демуазо. Ниже линии Демуазо на стороне поражения определяется отсутствие голосового дрожания. При аускультации в этой зоне дыхание не выслушивается. О каком синдроме  идет речь?',a:'наличия жидкости в плевральной полости.'},
+{id:687,q:'Больной при кашле выделил 300 мл гнойной мокроты, которая при стоянии разделилась на три слоя.  О каком синдроме идет речь?',a:'наличия полости в легком.'},
+{id:688,q:'Больной почувствовал внезапно возникшую боль в левой половине грудной клетки. При осмотре левая половина грудной клетки выбухает, отстает в акте дыхания. Голосовое дрожание слева усилено, при перкуссии определяется тимпанический звук. О какой патологии идет речь?',a:'наличия полости в легком.'},
+{id:689,q:'Больная предъявляет жалобы на повышение температуры до 39,6°С, озноб, боли в правой половине грудной клетки, одышку, преимущественно сухой кашель. При осмотре наблюдается румянец на правой щеке, herpeslabialis, правая половина грудной клетки отстает в акте дыхания, голосовое дрожание усилено в нижних отделах правого легкого. При аускультации в той же области выслушивается крепитация. О каком синдроме идет речь?',a:'уплотнения легочной ткани'},
+{id:690,q:'Мокрота имеет гнойный характер, трехслойная, при микроскопическом исследовании выявляется большое количество лейкоцитов, эритроциты, эластические волокна. Для какого из нижеперечисленных синдромов  характерна такая мокрота?',a:'наличия полости в легком.'},
+{id:691,q:'ФЖЕЛ - 70%; ОФВ1 - 45%; индексТиффно - 64%. При каком синдроме наблюдаются такие изменения?',a:'бронхиальной обструкции'},
+{id:692,q:'При каком синдроме встречается патологическое бронхиальное дыхание?',a:'уплотнения легочной ткани'},
+{id:693,q:'Какой метод диагностики бронхоэктазов   из нижеперечисленных является ведущим?',a:'рентгенография'},
+{id:694,q:'Особенность болевого синдрома при сухом плеврите',a:'связана с кашлем и дыханием'},
+{id:695,q:'Рентгенологическим признаком  синдрома уплотнения легочной ткани является',a:'наличие негомогенной неинтенсивной тени в пределах доли  без отчетливых границ'},
+{id:696,q:'Осмотр и пальпация области сердца больного с хроническим легочным сердцем  позволяют выявить следующие отклонения',a:'прекардиальную  и  эпигастральную пульсацию'},
+{id:697,q:'Какое обследование является решающим в дополнение к клиническим критериям при постановке диагноза  синдрома уплотнения легочной ткани?',a:'рентгенография органов грудной клетки'},
+{id:740,q:'При хроническом легочном сердце отмечается гипертрофия и дилатация правых отделов сердца Наиболее достоверным методом диагностики  бронхоэктазов является',a:'компьютерная томография высокого разрешения'},
+{id:698,q:'Укажите объективный  признак, характерный для  легочной гипертензии',a:'акцент II тона над легочной артерией'},
+{id:699,q:'Шум трения плевры возникает при',a:'воспалении листков плевры («сухой» плеврит)'},
+{id:700,q:'Какие изменения могут обнаруживаться при пальпации грудной клетки над жидкостью при экссудативном плеврите?',a:'ослабление или исчезновение голосового дрожания'},
+{id:701,q:'Какие данные аускультации при экссудативном плеврите над жидкостью?',a:'везикулярное дыхание ослаблено или отсутствует'},
+{id:702,q:'Для какого синдрома наиболее характерно кровохарканье?',a:'синдром полости в легком'},
+{id:703,q:'Какой патологический тип грудной клетки характеризуется выраженным удлинением переднезаднего размера за счет выступающей вперед грудины?',a:'рахитический'},
+{id:704,q:'При каком патологическом типе грудной клетки отмечается выбухание заднебоковых отделов, расширение межреберных промежутков, участие вспомогательных мышц в акте дыхания?',a:'эмфизематозный'},
+{id:705,q:'Назовите расположение нижней границы правого легкого по срединноключичной  линии у здорового человека нормостенического типа телосложения',a:'YI ребро'},
+{id:706,q:'Назовите расположение нижней границы  легкого по средней подмышечной линии у здорового человека нормостенического типа телосложения',a:'YIII ребро IX ребро'},
+{id:707,q:'К семейному врачу обратилась больная 25 лет с жалобами на кашель с отхождением трудноотделяемой мокроты слизисто-гнойного характера, повышение температуры до 38 градусов С. Из анамнеза: заболела остро после переохлаждения. При аускультации выслушиваются мелкопузырчатые хрипы слева в подлопаточной области. Там же определяется усиленная  бронхофония и притупление перкуторного звука. В общем анализе крови отмечается лейкоцитоз и ускоренное СОЭ. Определите синдром',a:'уплотнения легочной ткани'},
+{id:708,q:'Больной 50 лет, в течение 2 недель отмечает слабость, боли в грудной клетке справа. Лихорадка, кашель с гнойной мокротой. На рентгенограмме в верхней доле справа определяется  округлое образование 3 см в диаметре, наполненное жидкостью. Какой наиболее вероятный синдром у пациента?',a:'наличия полости в легком.'},
+{id:709,q:'При каком синдроме характерным рентгенологическим признаком будет обеднение сосудистого рисунка в легких, расширение межреберных промежутков?',a:'повышенной воздушности легочной ткани Шум трения плевры… выслушивается на протяжении вдоха и выдоха'},
+{id:710,q:'Мужчина 22 лет обратился в приемное отделение с жалобами на появление сильной одышки после полученного удара ногой в бок. ЧД - 40 в 1 минуту. Температура тела нормальная. При аускультации - ослабление дыхания справа. Предполагаемый синдром?',a:'наличия жидкости в плевральной полости.'},
+{id:711,q:'Укажите основной механизм появления патологического бронхиального дыхания',a:'проведение на поверхность грудной клетки ларинго-трахеального дыхания (с изменением его тембра) при уплотнении легкого или наличии в нем полости, соединенной с бронхом'},
+{id:712,q:'Укажите основной механизм появления жесткого дыхания',a:'сужение бронхов (спазм, вязкий бронхиальный секрет)'},
+{id:713,q:'Частота дыхания у здорового человека в покое составляет',a:'16-20 дыхательных движений в минуту'},
+{id:714,q:'Дайте характеристику дыхания при инспираторной одышке',a:'затруднен и удлинен вдох'},
+{id:715,q:'Дайте характеристику дыхания при экспираторной одышке',a:'затруднен и удлинен выдох'},
+{id:716,q:'Расширение пораженной стороны грудной клетки, сглаживание межреберий, ослабление или отсутствие голосового дрожания, тимпанический перкуторный звук, ослабленное везикулярное дыхание характерны для синдрома?',a:'наличия воздуха в плевральной полости'},
+{id:717,q:'Наиболее эффективным методом лучевой диагностики для определения малых количеств жидкости в плевральной полости является?',a:'ультразвуковое исследование плевральных полостей'},
+{id:718,q:'Чем характеризуется эмфизема легких',a:'уменьшением жизненной емкости легких'},
+{id:770,q:'Отхождение мокроты «полным ртом» наблюдается при',a:'синдроме наличия жидкости в плевральной полости'},
+{id:719,q:'Какой основной дыхательный шум наиболее часто выслушивается при долевом воспалительном уплотнении?',a:'бронхиальное дыхание'},
+{id:720,q:'Укажите необратимый  компонент бронхиальной обструкции',a:'стеноз и облитерация просвета бронхов, а также экспираторный их коллапс.'},
+{id:721,q:'Наиболее достоверным аускультативным признаком обструкции бронхов является',a:'удлиненный выдох, сухие хрипы'},
+{id:722,q:'Минутный объем дыхания (МОД) – это количество воздуха, которое',a:'вентилируется через легкие за 1 минуту'},
+{id:723,q:'Чем обеспечивается спокойный выдох после вдоха в норме?',a:'расслаблением инспираторных мышц'},
+{id:724,q:'Какое минимальное количество жидкости в плевральной полости определяется при физикальном исследовании?',a:'более300 мл'},
+{id:725,q:'Характеристика полости в легком, соединенной с бронхом',a:'притупление с тимпаническим звуком, амфорическое дыхание, крупнопузырчатые хрипы'},
+{id:741,q:'Клиническим признаком гипертрофии правого желудочка у больных с синдромом легочного сердца является',a:'прекардиальная и эпигастральная пульсации'},
+{id:726,q:'С какой целью используется дополнительный прием при аускультации легких – надавливание стетоскопом на грудную клетку?',a:'для отличия шума трения плевры от крепитации и хрипов'},
+{id:727,q:'Какое значение насыщения крови кислородом  (SaО2) из нижеперечисленныхможно считать  нормальным?',a:'≥95%'},
+{id:728,q:'Дыхательный объем - это',a:'объем вдыхаемого или выдыхаемого воздуха'},
+{id:729,q:'Остаточный объем легких - это',a:'объем воздуха, остающегося в легких после максимального выдоха'},
+{id:730,q:'Укажите наиболее вероятную причину ограниченной подвижности нижних краев легких?',a:'повышение воздушности легочной ткани'},
+{id:731,q:'Больной 15 лет поступил с жалобами на кашель с выделением слизисто-гнойной мокроты до 200 мл в сутки, с неприятным запахом, повышение температуры до 38,2°С, одышку. С детства часто беспокоит кашель с отхождением мокроты гнойного характера. Аускультативно справа ниже угла лопатки на ограниченном участке выслушиваются звучные влажные разнокалиберные хрипы. Наиболее вероятный синдром?',a:'наличия  бронхоэктазов в легком.'},
+{id:732,q:'Какие изменения на ЭКГ вы ожидаете получить у больного с хроническим легочным сердцем',a:'гипертрофию правого желудочка'},
+{id:760,q:'При  лабораторном  исследовании  крови  при  гипоксемии  отмечается',a:'увеличение уровня гемоглобина и гематокрита'}];
+
+var LS_KEY = 'therapy_known_ids';
+
+var order = [];
+var idx = 0;
+var correct = 0;
+var wrong = 0;
+var wrongItems = [];
+var isFlipped = false;
+var answering = false;
+
+// ─── localStorage helpers ───
+function loadKnown() {
+  try {
+    var data = localStorage.getItem(LS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch(e) { return []; }
+}
+function saveKnown(ids) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(ids)); } catch(e) {}
+}
+function addKnown(id) {
+  var known = loadKnown();
+  if (known.indexOf(id) === -1) {
+    known.push(id);
+    saveKnown(known);
+  }
+}
+
+// ─── start screen ───
+function showStart() {
+  document.getElementById('startView').style.display = '';
+  document.getElementById('quizView').classList.add('hidden');
+  document.getElementById('resultsView').classList.remove('visible');
+  document.getElementById('resultsView').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('progressLabel').style.display = 'none';
+
+  var known = loadKnown();
+  var total = QUESTIONS.length;
+  var remaining = total - known.length;
+  var pct = total > 0 ? ((known.length / total) * 100).toFixed(2) : '0.00';
+  document.getElementById('remainingCount').textContent = remaining;
+  document.getElementById('knownCount').textContent = known.length;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('knownPct').textContent = pct + '%';
+
+  var resetBtn = document.getElementById('resetBtn');
+  var allDone = document.getElementById('allDoneMsg');
+
+  if (known.length === 0) {
+    resetBtn.classList.add('hidden');
+    allDone.classList.add('hidden');
+  } else if (known.length >= total) {
+    resetBtn.classList.remove('hidden');
+    allDone.classList.remove('hidden');
+    launchConfetti();
+  } else {
+    resetBtn.classList.remove('hidden');
+    allDone.classList.add('hidden');
+  }
+}
+
+document.getElementById('startBtn').addEventListener('click', function() {
+  startQuiz();
+});
+document.getElementById('resetBtn').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.add('open');
+});
+document.getElementById('modalCancel').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+});
+document.getElementById('modalOk').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  saveKnown([]);
+  showStart();
+});
+document.getElementById('restartBtn').addEventListener('click', function() {
+  location.reload();
+});
+document.getElementById('restartBtn2').addEventListener('click', function() {
+  location.reload();
+});
+
+// ─── start quiz ───
+function startQuiz() {
+  var known = loadKnown();
+  // build pool: indices of questions NOT in known list
+  var pool = [];
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    if (known.indexOf(QUESTIONS[i].id) === -1) {
+      pool.push(i);
+    }
+  }
+  if (pool.length === 0) {
+    backToStart();
+    return;
+  }
+  order = pool;
+  shuffle(order);
+  idx = 0; correct = 0; wrong = 0; wrongItems = [];
+  isFlipped = false; answering = false;
+
+  document.getElementById('startView').style.display = 'none';
+  document.getElementById('quizView').classList.remove('hidden');
+  document.getElementById('resultsView').classList.remove('visible');
+  document.getElementById('resultsView').style.display = 'none';
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('progressLabel').style.display = '';
+
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  hidePanels();
+  updateStats();
+  showQuestion();
+}
+
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+}
+
+function showQuestion() {
+  if (idx >= order.length) { showResults(); return; }
+  var q = QUESTIONS[order[idx]];
+  document.getElementById('qId').textContent = '#' + q.id;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('aText').textContent = q.a;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  isFlipped = false; answering = false;
+  hidePanels();
+  updateStats();
+}
+
+function flipCard() {
+  if (answering || idx >= order.length) return;
+  document.getElementById('card').classList.toggle('flipped');
+  isFlipped = !isFlipped;
+  if (isFlipped) {
+    document.getElementById('actions').classList.add('visible');
+    showPanels();
+  } else {
+    document.getElementById('actions').classList.remove('visible');
+    hidePanels();
+  }
+}
+
+function answer(knew) {
+  if (answering || idx >= order.length) return;
+  answering = true;
+
+  var q = QUESTIONS[order[idx]];
+  if (knew) {
+    correct++;
+    addKnown(q.id); // <-- immediately persist
+  } else {
+    wrong++;
+    wrongItems.push({q: q.q, a: q.a});
+  }
+  idx++;
+
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  hidePanels();
+  isFlipped = false;
+  updateStats();
+
+  if (idx >= order.length) {
+    setTimeout(function() { showResults(); }, 500);
+    return;
+  }
+
+  setTimeout(function() {
+    var nq = QUESTIONS[order[idx]];
+    document.getElementById('qId').textContent = '#' + nq.id;
+    document.getElementById('qText').textContent = nq.q;
+    document.getElementById('aText').textContent = nq.a;
+    answering = false;
+  }, 280);
+}
+
+function updatePanels() {
+  var el = document.getElementById('panelLeft');
+  if (!el) return;
+  var show = isFlipped && window.innerWidth > window.innerHeight;
+  el.classList.toggle('show', show);
+  document.getElementById('panelRight').classList.toggle('show', show);
+}
+function showPanels() { updatePanels(); }
+function hidePanels() {
+  document.getElementById('panelLeft').classList.remove('show');
+  document.getElementById('panelRight').classList.remove('show');
+}
+
+function updateStats() {
+  var left = order.length - idx;
+  document.getElementById('statOk').textContent = correct;
+  document.getElementById('statFail').textContent = wrong;
+  document.getElementById('statLeft').textContent = left;
+  var done = correct + wrong;
+  var total = order.length;
+  var pct = total > 0 ? (done / total) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' / ' + total;
+}
+
+function showResults() {
+  document.getElementById('quizView').classList.add('hidden');
+  document.getElementById('resultsView').style.display = '';
+  document.getElementById('resultsView').classList.add('visible');
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  document.getElementById('scorePct').textContent = pct + '%';
+  document.getElementById('scoreSub').textContent = correct + ' / ' + total;
+  var list = document.getElementById('mistakesList');
+  list.innerHTML = '';
+  if (wrongItems.length === 0) {
+    list.innerHTML = '<li style="color:#30d158">✓ Нет ошибок</li>';
+  } else {
+    for (var i = 0; i < wrongItems.length; i++) {
+      var li = document.createElement('li');
+      li.textContent = wrongItems[i].q + ' — ' + wrongItems[i].a;
+      list.appendChild(li);
+    }
+  }
+  updateStats();
+}
+
+function backToStart() {
+  showStart();
+}
+
+// ─── confetti ───
+function launchConfetti() {
+  var end = Date.now() + 2 * 1000;
+  (function frame() {
+    confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#0a84ff','#30d158','#af52de'] });
+    confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#0a84ff','#30d158','#af52de'] });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
+
+// ─── keyboard ───
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    if (isFlipped) answer(true);
+  } else if (e.key === 'ArrowRight') {
+    if (isFlipped) answer(false);
+  } else if (e.key === ' ' || e.key === 'Space') {
+    e.preventDefault();
+    flipCard();
+  } else if (e.key === 'Escape') {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+});
+
+// ─── boot ───
+showStart();
+</script>
+</body>
+</html>

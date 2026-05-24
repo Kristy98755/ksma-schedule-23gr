@@ -1,0 +1,3288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Педиатрия — карточки</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: .4; } 50% { opacity: .8; } }
+  @keyframes glow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+
+  body {
+    min-height: 100vh;
+    background: #07070d;
+    background-image:
+      radial-gradient(ellipse at 15% 30%, rgba(10, 132, 255, .15) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 70%, rgba(175, 82, 222, .15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.03) 0%, transparent 70%);
+    color: #e0e0e0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 680px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+
+  /* ──────────── start screen ──────────── */
+  .start-screen {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 70vh;
+    animation: scaleIn .6s ease;
+    text-align: center;
+  }
+  .start-screen .logo {
+    font-size: 36px; font-weight: 700;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .start-screen .logo-line {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(10,132,255,.6), transparent);
+    margin: 0 auto 32px;
+  }
+  .start-screen .stat-block {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px; padding: 28px 48px;
+    margin-bottom: 28px;
+    animation: fadeIn .8s ease;
+  }
+  .start-screen .stat-label {
+    font-size: 14px; color: #888; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .start-screen .stat-block .big-num {
+    font-size: 52px; font-weight: 700; line-height: 1.2;
+    background: linear-gradient(135deg, #30d158, #0a84ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .start-screen .stat-block .desc {
+    font-size: 14px; color: #888; margin-top: 14px;
+  }
+  .start-screen .stat-block .desc span { color: #bbb; }
+  .start-screen .start-btn {
+    border: none; border-radius: 14px;
+    padding: 18px 64px;
+    font-size: 19px; font-weight: 600;
+    cursor: pointer; transition: all .25s;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    background: linear-gradient(135deg, rgba(10,132,255,.2), rgba(175,82,222,.15));
+    color: #fff;
+    border: 1px solid rgba(10,132,255,.35);
+    position: relative; overflow: hidden;
+  }
+  .start-btn:hover {
+    background: linear-gradient(135deg, rgba(10,132,255,.35), rgba(175,82,222,.25));
+    box-shadow: 0 0 50px rgba(10,132,255,.15);
+    transform: translateY(-2px);
+  }
+  .start-btn:active { transform: scale(.96); }
+  .reset-btn {
+    margin-top: 16px;
+    background: none; border: none;
+    color: #666; font-size: 13px;
+    cursor: pointer; transition: color .2s;
+    letter-spacing: .5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(255,255,255,.08);
+  }
+  .reset-btn:hover { color: #ff453a; text-decoration-color: rgba(255,69,58,.5); }
+  .all-done {
+    font-size: 15px; color: #30d158;
+    margin-top: 14px; font-weight: 600;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* ──────────── header ──────────── */
+  .header {
+    text-align: center; animation: fadeIn .4s ease;
+  }
+  .header h1 {
+    font-size: 24px; font-weight: 600;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    position: relative; display: inline-block;
+  }
+  .header h1::after {
+    content: ''; position: absolute; bottom: -4px; left: 10%; width: 80%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(10,132,255,.5), transparent);
+  }
+  .stats-row {
+    display: flex; justify-content: center; gap: 32px;
+    margin-top: 14px; font-size: 15px; color: #777;
+  }
+  .stats-row .stat { display: flex; align-items: center; gap: 6px; }
+  .stats-row .num  { font-weight: 700; color: #ccc; min-width: 24px; text-align: center; }
+  .stat-ok .icon  { color: #30d158; }
+  .stat-ok .num   { color: #30d158; }
+  .stat-fail .icon { color: #ff453a; }
+  .stat-fail .num  { color: #ff453a; }
+  .stat-left .icon { color: #0a84ff; }
+  .stat-left .num  { color: #0a84ff; }
+  .stat-restart {
+    display: none; cursor: pointer; font-size: 13px; letter-spacing: .3px; color: #777;
+  }
+  .restart-below {
+    text-align: center; cursor: pointer; color: #666;
+    font-size: 12px; letter-spacing: .5px; padding: 4px 0;
+    transition: color .2s; user-select: none;
+  }
+
+  /* ──────────── card ──────────── */
+  .card-wrapper {
+    perspective: 1400px;
+    min-height: 300px;
+    animation: fadeIn .5s ease;
+    margin-top: 8px;
+  }
+  .card {
+    position: relative;
+    width: 100%; min-height: 300px;
+    transition: transform .55s cubic-bezier(.4,0,.2,1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+  .card.flipped { transform: rotateX(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 35px 35px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,.1);
+    box-shadow: 0 16px 56px rgba(0,0,0,.7), 0 0 100px rgba(10,132,255,.06);
+    transition: box-shadow .3s;
+  }
+  .card-face::before {
+    content: ''; position: absolute; inset: -1px;
+    border-radius: 20px; padding: 1px;
+    background: linear-gradient(135deg, rgba(10,132,255,.25), rgba(175,82,222,.18), rgba(255,255,255,.06));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .card-face .label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 24px; font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-face .label .line { display: inline-block; width: 28px; height: 1px; }
+  .card-front {
+    background: rgba(16, 16, 28, .92);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  }
+  .card-front .label { color: rgba(10,132,255,.6); }
+  .card-front .label .line { background: rgba(10,132,255,.4); }
+  .card-front .q-text {
+    font-size: 17px; line-height: 1.7; text-align: center;
+    color: #f0f0f0; max-width: 600px;
+    overflow-y: auto; max-height: 210px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .card-front .q-text::-webkit-scrollbar { width: 4px; }
+  .card-front .q-text::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .card-front .q-id {
+    position: absolute; top: 16px; right: 20px;
+    font-size: 12px; color: rgba(255,255,255,.15);
+    font-weight: 500; letter-spacing: 1px;
+  }
+  .card-front .tap-hint {
+    position: absolute; bottom: 20px;
+    font-size: 12px; color: rgba(255,255,255,.18);
+    letter-spacing: 1px;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  .card-back {
+    background: rgba(10, 10, 20, .96);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    transform: rotateX(180deg);
+  }
+  .card-back .label { color: rgba(48,209,88,.6); }
+  .card-back .label .line { background: rgba(48,209,88,.4); }
+  .card-back .a-text {
+    font-size: 18px; line-height: 1.7; text-align: center;
+    color: #40e86d; max-width: 600px; font-weight: 500;
+    overflow-y: auto; max-height: 210px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .card-back .a-text::-webkit-scrollbar { width: 4px; }
+  .card-back .a-text::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .card-back .hint-key {
+    position: absolute; bottom: 20px;
+    font-size: 11px; color: rgba(255,255,255,.15);
+    letter-spacing: 1px;
+  }
+
+  /* ──────────── actions ──────────── */
+  .actions {
+    display: flex; gap: 16px; justify-content: center;
+    opacity: 0; transition: opacity .25s, transform .25s;
+    pointer-events: none;
+    transform: translateY(6px);
+	margin-top:15px;
+  }
+  .actions.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .actions button {
+    border: none; border-radius: 14px;
+    padding: 16px 44px;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+    letter-spacing: .5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .actions button:active { transform: scale(.94); }
+  .btn-ok {
+    background: rgba(48,209,88,.12); color: #40e86d;
+    border: 1px solid rgba(48,209,88,.25);
+  }
+  .btn-ok:hover { background: rgba(48,209,88,.22); box-shadow: 0 0 32px rgba(48,209,88,.1); }
+  .btn-fail {
+    background: rgba(255,69,58,.12); color: #ff5a4a;
+    border: 1px solid rgba(255,69,58,.25);
+  }
+  .btn-fail:hover { background: rgba(255,69,58,.22); box-shadow: 0 0 32px rgba(255,69,58,.1); }
+
+  /* ──────────── side panels ──────────── */
+  .side-panel {
+    position: fixed; top: 0; bottom: 0;
+    width: 80px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s, background .3s;
+    z-index: 10; cursor: pointer;
+    user-select: none;
+  }
+  .side-panel .sp-icon { font-size: 36px; transition: transform .2s; }
+  .side-panel .sp-label {
+    position: absolute; bottom: 32px;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    opacity: .6;
+  }
+  .side-panel-left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(48,209,88,.12) 0%, transparent 100%);
+    border-right: 1px solid rgba(48,209,88,.15);
+  }
+  .side-panel-left .sp-icon { color: rgba(48,209,88,.6); }
+  .side-panel-left:hover { background: linear-gradient(90deg, rgba(48,209,88,.25) 0%, transparent 100%); }
+  .side-panel-left:hover .sp-icon { color: rgba(48,209,88,1); transform: scale(1.2); }
+  .side-panel-right {
+    right: 0;
+    background: linear-gradient(270deg, rgba(255,69,58,.12) 0%, transparent 100%);
+    border-left: 1px solid rgba(255,69,58,.15);
+  }
+  .side-panel-right .sp-icon { color: rgba(255,69,58,.6); }
+  .side-panel-right:hover { background: linear-gradient(270deg, rgba(255,69,58,.25) 0%, transparent 100%); }
+  .side-panel-right:hover .sp-icon { color: rgba(255,69,58,1); transform: scale(1.2); }
+  .side-panel.show { opacity: 1; pointer-events: auto; }
+  @media (min-width: 1100px) {
+    .side-panel { width: 110px; }
+    .side-panel .sp-icon { font-size: 42px; }
+  }
+
+  /* ──────────── progress bar ──────────── */
+  .progress-wrap {
+    position: relative; height: 4px;
+    background: rgba(255,255,255,.06);
+    border-radius: 4px; overflow: hidden;
+    animation: fadeIn .6s ease;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #0a84ff, #af52de);
+    border-radius: 4px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+    position: relative;
+  }
+  .progress-bar::after {
+    content: ''; position: absolute; right: 0; top: -3px; width: 16px; height: 10px;
+    background: radial-gradient(circle, rgba(175,82,222,.8) 0%, transparent 70%);
+    filter: blur(4px);
+  }
+  .progress-label {
+    text-align: center; font-size: 12px; color: #666;
+    margin-top: 6px; letter-spacing: .5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ──────────── results ──────────── */
+  .results { display: none; }
+  .results.visible { display: block; animation: slideUp .5s ease; }
+  .results .score { text-align: center; padding: 40px 0; }
+  .results .score .pct {
+    font-size: 72px; font-weight: 700;
+    background: linear-gradient(135deg, #0a84ff, #af52de);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .results .score .sub { font-size: 16px; color: #777; margin-top: 8px; }
+  .results .mistakes {
+    background: rgba(255,69,58,.06);
+    border: 1px solid rgba(255,69,58,.15);
+    border-radius: 14px; padding: 24px 28px;
+    max-height: 300px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+  .results .mistakes::-webkit-scrollbar { width: 4px; }
+  .results .mistakes::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+  .results .mistakes h3 {
+    font-size: 12px; letter-spacing: 2px; color: #ff5a4a;
+    margin-bottom: 14px; text-transform: uppercase; font-weight: 600;
+  }
+  .results .mistakes ul { list-style: none; }
+  .results .mistakes li {
+    font-size: 14px; line-height: 1.5; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    color: #aaa;
+  }
+  .results .mistakes li:last-child { border: none; }
+  .results .btn-again {
+    display: block; margin: 24px auto 0;
+    border: 1px solid rgba(10,132,255,.35);
+    background: rgba(10,132,255,.1);
+    color: #0a84ff; border-radius: 12px;
+    padding: 14px 32px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .results .btn-again:hover { background: rgba(10,132,255,.2); }
+  .hidden { display: none !important; }
+
+  /* ──────────── modal ──────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,.6);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: #181828; border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 28px 36px; max-width: 380px; width: 90%;
+    text-align: center;
+    transform: scale(.92); transition: transform .25s;
+  }
+  .modal-overlay.open .modal-box { transform: scale(1); }
+  .modal-msg { font-size: 15px; color: #ccc; margin-bottom: 24px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 12px; justify-content: center; }
+  .modal-btn {
+    border: none; border-radius: 10px; padding: 10px 24px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all .2s;
+  }
+  .modal-btn:active { transform: scale(.94); }
+  .modal-cancel { background: rgba(255,255,255,.06); color: #999; }
+  .modal-cancel:hover { background: rgba(255,255,255,.1); }
+  .modal-ok { background: rgba(255,69,58,.12); color: #ff5a4a; border: 1px solid rgba(255,69,58,.2); }
+  .modal-ok:hover { background: rgba(255,69,58,.22); }
+
+  @media (orientation: landscape) {
+    .stat-restart { display: inline; margin-left: auto; }
+    .restart-below { display: none; }
+  }
+
+  @media (min-width: 1200px) {
+    .app { max-width: 820px; gap: 28px; }
+    .card-wrapper { min-height: 350px; }
+    .card { min-height: 350px; }
+    .card-face { padding: 48px 52px; }
+    .card-front .q-text { font-size: 24px; max-height: 240px; }
+    .card-back .a-text { font-size: 25px; max-height: 240px; }
+    body { padding: 40px; }
+    .header h1 { font-size: 28px; }
+    .stats-row { font-size: 16px; gap: 40px; }
+    .actions button { padding: 18px 52px; font-size: 17px; }
+    .start-screen .logo { font-size: 44px; }
+    .start-screen .stat-block .big-num { font-size: 60px; }
+    .start-screen .stat-label { font-size: 16px; }
+    .start-screen .stat-block .desc { font-size: 16px; }
+    .start-screen .start-btn { padding: 20px 72px; font-size: 21px; }
+    .results .score .pct { font-size: 84px; }
+    .results .score .sub { font-size: 18px; }
+    .side-panel { width: 110px; }
+    .side-panel .sp-icon { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- ── START SCREEN ── -->
+  <div class="start-screen" id="startView">
+    <div class="logo">Пропедевтика детских болезней</div>
+    <div class="logo-line"></div>
+    <div class="stat-block" id="statBlock">
+      <div class="stat-label">осталось</div>
+      <div class="big-num" id="remainingCount">0</div>
+      <div class="stat-label">вопросов</div>
+      <div class="desc">Усвоено <span id="knownCount">0</span> из <span id="totalCount">0</span> (<span id="knownPct">0%</span>)</div>
+    </div>
+    <button class="start-btn" id="startBtn">Старт!</button>
+    <button class="reset-btn hidden" id="resetBtn">Сбросить прогресс</button>
+    <div class="all-done hidden" id="allDoneMsg">Все вопросы изучены ✓</div>
+  </div>
+
+  <!-- ── QUIZ VIEW ── -->
+  <div id="quizView" class="hidden">
+    <div class="header">
+      <h1>Пропедевтика детских болезней</h1>
+      <div class="stats-row">
+        <span class="stat stat-ok">✓&thinsp;<span class="num" id="statOk">0</span></span>
+        <span class="stat stat-fail">✗&thinsp;<span class="num" id="statFail">0</span></span>
+        <span class="stat stat-left">осталось&thinsp;<span class="num" id="statLeft">0</span></span>
+        <span class="stat-restart" id="restartBtn">Обновить страницу ⟳</span>
+      </div>
+    </div>
+    <div class="card-wrapper">
+      <div class="card" id="card">
+        <div class="card-face card-front" onclick="flipCard()">
+          <span class="q-id" id="qId"></span>
+          <div class="label"><span class="line"></span> Вопрос <span class="line"></span></div>
+          <div class="q-text" id="qText">Загрузка...</div>
+          <div class="tap-hint">нажмите, чтобы открыть ответ</div>
+        </div>
+        <div class="card-face card-back" onclick="flipCard()">
+          <div class="label"><span class="line"></span> Ответ <span class="line"></span></div>
+          <div class="a-text" id="aText"></div>
+          <div class="hint-key">&larr; знаю &nbsp;&middot;&nbsp; не знаю &rarr;</div>
+        </div>
+      </div>
+    </div>
+    <div class="actions" id="actions">
+      <button class="btn-ok" onclick="answer(true)">&#10003; Знаю</button>
+      <button class="btn-fail" onclick="answer(false)">&#10007; Не знаю</button>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div class="results" id="resultsView">
+    <div class="score">
+      <div class="pct" id="scorePct">0%</div>
+      <div class="sub" id="scoreSub">0 / 0</div>
+    </div>
+    <div class="mistakes" id="mistakesWrap">
+      <h3>Ошибки</h3>
+      <ul id="mistakesList"></ul>
+    </div>
+    <button class="btn-again" onclick="backToStart()">&#10227; На старт</button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 0</div>
+  <div class="restart-below" id="restartBtn2">Обновить страницу ⟳</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <p class="modal-msg">Сбросить прогресс изученных вопросов?</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-cancel" id="modalCancel">Отмена</button>
+      <button class="modal-btn modal-ok" id="modalOk">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<!-- side panels -->
+<div class="side-panel side-panel-left" id="panelLeft" onclick="answer(true)">
+  <span class="sp-icon">&larr;</span>
+  <span class="sp-label">Знаю</span>
+</div>
+<div class="side-panel side-panel-right" id="panelRight" onclick="answer(false)">
+  <span class="sp-icon">&rarr;</span>
+  <span class="sp-label">Не знаю</span>
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    "id": 1,
+    "q": "Какая окружность головы доношенного новорожденного при рождении (см.)?",
+    "a": "34-36"
+  },
+  {
+    "id": 2,
+    "q": "Какая длина тела, доношенного новорожденного при рождении (см.)?",
+    "a": "47-56"
+  },
+  {
+    "id": 3,
+    "q": "Какая масса тела, доношенного новорожденного при рождении (гр.)?",
+    "a": "2800-3500"
+  },
+  {
+    "id": 4,
+    "q": "Укажите, ежемесячную прибавку окружности грудной клетки у ребенка в возрасте до 1 года жизни (см.):",
+    "a": "1,25"
+  },
+  {
+    "id": 5,
+    "q": "Укажите, прибавку длины тела ребенка за первый квартал жизни(см.):",
+    "a": "9"
+  },
+  {
+    "id": 6,
+    "q": "Укажите, среднюю ежемесячную прибавку длины тела во втором квартале жизни у ребенка первого года жизни (см):",
+    "a": "2,5"
+  },
+  {
+    "id": 7,
+    "q": "Укажите, ежемесячную прибавку окружности головы у ребенка первого года жизни (см.):",
+    "a": "1,0"
+  },
+  {
+    "id": 8,
+    "q": "Укажите, ежемесячную прибавку длины тела в третьем квартале жизни у ребенка первого года жизни(см.):",
+    "a": "1,5"
+  },
+  {
+    "id": 9,
+    "q": "Укажите, ежемесячную прибавку длины тела в четвертом квартале жизни у ребенка первого года жизни(см.):",
+    "a": "1,0"
+  },
+  {
+    "id": 10,
+    "q": "Какова средняя ежегодная прибавка массы тела у детей в возрасте от 1года до 5 лет жизни (кг.)?",
+    "a": "2"
+  },
+  {
+    "id": 11,
+    "q": "Какова средняя ежегодная прибавка массы тела у детей в возрасте после 5 лет жизни(кг.)?",
+    "a": "3"
+  },
+  {
+    "id": 12,
+    "q": "Какова средняя ежегодная прибавка роста у детей в возрасте от 1 года до 4-х лет жизни(см.)?",
+    "a": "8"
+  },
+  {
+    "id": 13,
+    "q": "Какова средняя ежегодная прибавка роста у детей в возрасте после 4-х лет жизни(см.)?",
+    "a": "6"
+  },
+  {
+    "id": 14,
+    "q": "Какова средняя ежегодная прибавка окружности головы у детей в возрасте от 1 года до 5 лет(см.)?",
+    "a": "1,0"
+  },
+  {
+    "id": 15,
+    "q": "Какова средняя ежегодная прибавка окружности грудной клетки у детей в возрасте старше 10 лет(см.)?",
+    "a": "3"
+  },
+  {
+    "id": 16,
+    "q": "Какова максимальная потеря веса, от массы тела при рождении, у новорожденных при «физиологической убыли веса» (%)?",
+    "a": "6-8"
+  },
+  {
+    "id": 17,
+    "q": "Какова средняя ежегодная прибавка окружности грудной клетки у детей в возрасте от 1 года до 10 лет жизни(см.)?",
+    "a": "1,5"
+  },
+  {
+    "id": 18,
+    "q": "Укажите, к какому году жизни у детей заканчивается миелинизация нервных волокон:",
+    "a": "3-5"
+  },
+  {
+    "id": 19,
+    "q": "Назовите, на каком уровне поясничного позвонка у новорожденного расположен нижний сегмент спинного мозга:",
+    "a": "3"
+  },
+  {
+    "id": 20,
+    "q": "Определите, к какому месяцу жизни у ребенка исчезает Рефлекс Моро:",
+    "a": "4"
+  },
+  {
+    "id": 21,
+    "q": "Распознайте симптом, характерный для гидроцефального синдрома:",
+    "a": "расхождение костей черепа"
+  },
+  {
+    "id": 22,
+    "q": "Определить безусловный рефлекс спинального автоматизма у новорожденных:",
+    "a": "автоматической походки"
+  },
+  {
+    "id": 23,
+    "q": "Определите психомоторное умение у ребенка в 6 месяцев:",
+    "a": "сидит"
+  },
+  {
+    "id": 24,
+    "q": "Ребенок схватывает предмет, вложенный в ладонь и прочно удерживает его. Распознайтекакой это рефлекс:",
+    "a": "хватательный"
+  },
+  {
+    "id": 25,
+    "q": "Укажите симптом , характерный для менингеального синдрома:",
+    "a": "ригидность мышц затылка"
+  },
+  {
+    "id": 26,
+    "q": "Укажите симптом, характерный для гипертензионного синдрома:",
+    "a": "повышенная пульсация большого родничка"
+  },
+  {
+    "id": 27,
+    "q": "К какому возрасту кора головного мозга ребенка похожа по строению на кору взрослого к (год жизни)?",
+    "a": "8"
+  },
+  {
+    "id": 28,
+    "q": "С какого месяца жизни, ребёнок начинает держать голову в вертикальном положении?",
+    "a": "2"
+  },
+  {
+    "id": 29,
+    "q": "Определите психомоторное умение ребенка в 9-10 мес:",
+    "a": "стоит, держась за опору"
+  },
+  {
+    "id": 30,
+    "q": "Для определения какого рефлекса проводят штриховое раздражение подошвы по наружному краю стопы?",
+    "a": "Бабинского"
+  },
+  {
+    "id": 31,
+    "q": "Согнутую ногу в тазабедренном и коленном суставах пытаются разогнуть в коленном. Определите какой это рефлекс:",
+    "a": "Кернига"
+  },
+  {
+    "id": 32,
+    "q": "Укажите особенность состава спинномозговой жидкости новорожденного:",
+    "a": "ксантохромная, белка много"
+  },
+  {
+    "id": 33,
+    "q": "Назовите первый этап становления речи у ребенка:",
+    "a": "подготовительная"
+  },
+  {
+    "id": 34,
+    "q": "Укажите, чем представлен цитоз в спинномозговой жидкости у здоровых детей (в поле зрения):",
+    "a": "лимфоцитами 3-5"
+  },
+  {
+    "id": 35,
+    "q": "Определите,ккакому месяцу жизни у ребенка исчезает рефлекс автоматической походки:",
+    "a": "2 мес"
+  },
+  {
+    "id": 36,
+    "q": "Выберите бесполостной элемент красного, розового, серо-желтого или синюшного оттенка. Консистенция папул может быть мягкой, тестоватой, плотной, плотно-эластичной. Поверхность плоская или куполообразная. Размер от 1 до 5 мм.",
+    "a": "узелок"
+  },
+  {
+    "id": 37,
+    "q": "В каком возрасте (количество недель гестации) на подошве имеются поперечно расположенные кожные борозды?",
+    "a": "32-34"
+  },
+  {
+    "id": 38,
+    "q": "Какая желтуха появляется на 5-7сутки жизни?",
+    "a": "физиологическая"
+  },
+  {
+    "id": 39,
+    "q": "На какой неделе внутриутробного развития появляются кожные борозды на подошвах?",
+    "a": "32"
+  },
+  {
+    "id": 40,
+    "q": "Укажите, что относится к первичному элементу кожи:",
+    "a": "бугорок"
+  },
+  {
+    "id": 41,
+    "q": "Укажите бесполосное болезненное образование, расположенное в глубоких слоях дермы и подкожной жировой клетчатки, возвышающееся над уровнем кожи, размером 1— 3 см.",
+    "a": "узел"
+  },
+  {
+    "id": 42,
+    "q": "Отметьте, при каком уровне билирубина (мкмоль/л) отмечается желтушное окрашивание кожи у новорожденных?",
+    "a": "75"
+  },
+  {
+    "id": 43,
+    "q": "Выберите, что относится к вторичному элементу кожи:",
+    "a": "пигментация"
+  },
+  {
+    "id": 44,
+    "q": "Какие придатки кожи закладываются на 8 неделе внутриутробной жизни?",
+    "a": "потовые железы"
+  },
+  {
+    "id": 45,
+    "q": "Какова особенность подкожно жировой клетчатки детей первого года жизни?",
+    "a": "имеются участки эмбрионального характера"
+  },
+  {
+    "id": 46,
+    "q": "Что характерно для кожи детей первого года жизни?",
+    "a": "содержит значительно больше воды"
+  },
+  {
+    "id": 47,
+    "q": "На какой неделе внутриутробной жизни закладываются сальные железы?",
+    "a": "2"
+  },
+  {
+    "id": 48,
+    "q": "Глубокий дефект кожи, иногда достигающий подлежащих органов это:",
+    "a": "язва"
+  },
+  {
+    "id": 49,
+    "q": "На каком месяце внутриутробного развития сальные железы полностью оформляются и начинают функционировать?",
+    "a": "7"
+  },
+  {
+    "id": 50,
+    "q": "Какой слой кожи представлен только в коже ладоней и стоп?",
+    "a": "стекловидный"
+  },
+  {
+    "id": 51,
+    "q": "В каком возрасте появляется физиологический шейный лордоз(месяц)?",
+    "a": "2-3"
+  },
+  {
+    "id": 52,
+    "q": "В каком возрасте появляется физиологический грудной кифоз(месяц)?",
+    "a": "6-7"
+  },
+  {
+    "id": 53,
+    "q": "В каком возрасте появляются первые зубы у здорового ребенка(месяц)?",
+    "a": "6-7"
+  },
+  {
+    "id": 54,
+    "q": "В каком возрасте появляются первые постоянные зубы у здорового ребенка(лет)?",
+    "a": "6-7"
+  },
+  {
+    "id": 55,
+    "q": "Костный возраст устанавливается:",
+    "a": "по точкам окостенения"
+  },
+  {
+    "id": 56,
+    "q": "Выберите,с какой функцией у ребенка связано формирование поясничного лордоза?",
+    "a": "стоянием"
+  },
+  {
+    "id": 57,
+    "q": "Какую форму имеет грудная клетка у новорожденного?",
+    "a": "бочкообразную"
+  },
+  {
+    "id": 58,
+    "q": "Определите, что такое остеомаляция:",
+    "a": "размягчение"
+  },
+  {
+    "id": 59,
+    "q": "В каком возрасте должен закрыться большой родничок у здоровых детей (месяцев)?",
+    "a": "12-14"
+  },
+  {
+    "id": 60,
+    "q": "Какую форму имеет большой родничок у новорожденного?",
+    "a": "ромбовидную"
+  },
+  {
+    "id": 61,
+    "q": "Между какими костями черепа расположен малый родничок?",
+    "a": "затылочной и теменными"
+  },
+  {
+    "id": 62,
+    "q": "Выберите, с какой функцией связано формирование шейного лордоза у ребенка:",
+    "a": "держанием головы"
+  },
+  {
+    "id": 63,
+    "q": "На какой неделе внутриутробного развития, происходит закладка костной системы?",
+    "a": "5"
+  },
+  {
+    "id": 64,
+    "q": "На какой неделе внутриутробного развития, происходит закладка зубных зачатков?",
+    "a": "6"
+  },
+  {
+    "id": 65,
+    "q": "На каком месяце внеутробного развития должны закрыться стреловидный, венечный и затылочные швы?",
+    "a": "3-4"
+  },
+  {
+    "id": 66,
+    "q": "Выберите, какой клинический признак характерен для рахита у ребенка первого года жизни:",
+    "a": "краниотабес"
+  },
+  {
+    "id": 67,
+    "q": "При какой частоте дыхания определяется одышка у новорожденного ( более в минуту):",
+    "a": "60"
+  },
+  {
+    "id": 68,
+    "q": "Какое соотношение вдоха и выдоха при везикулярномдыхании?",
+    "a": "1/3"
+  },
+  {
+    "id": 69,
+    "q": "Какое соотношение вдоха и выдоха при жестком дыхании?",
+    "a": "1:1"
+  },
+  {
+    "id": 70,
+    "q": "Укажите, какой патологический шум выслушивается над легкими при синдроме уплотнения легочной ткани:",
+    "a": "крепитация"
+  },
+  {
+    "id": 71,
+    "q": "При каком синдроме усиливается голосовое дрожание?",
+    "a": "уплотнения легочной ткани"
+  },
+  {
+    "id": 72,
+    "q": "При какой частоте дыхания, у ребенка старше 1 года определяется одышка (более в минуту)?",
+    "a": "50"
+  },
+  {
+    "id": 73,
+    "q": "Укажите соотношение частоты дыхания и пульса у новорожденных:",
+    "a": "1:3"
+  },
+  {
+    "id": 74,
+    "q": "Какова частота дыхания у детей в возрасте 4 лет (в минуту)?",
+    "a": "24-26"
+  },
+  {
+    "id": 75,
+    "q": "Укажите, какие органы относятся к нижним дыхательным путям:",
+    "a": "альвеолы"
+  },
+  {
+    "id": 76,
+    "q": "Укажите, с какого возраста определяют верхнюю границу легких (лет)?",
+    "a": "5-7"
+  },
+  {
+    "id": 77,
+    "q": "Укажите, соотношение частоты дыхания и пульса у грудных детей в норме?",
+    "a": "1:3-3,5"
+  },
+  {
+    "id": 78,
+    "q": "Укажите, соотношение вдоха к выдоху при пуэрильном дыхании:",
+    "a": "2/3"
+  },
+  {
+    "id": 79,
+    "q": "Укажите, частоту дыхания у 5-ти летнего ребенка (в 1мин.):",
+    "a": "25"
+  },
+  {
+    "id": 80,
+    "q": "Укажите, тип дыхания у девочек в пубертатном периоде:",
+    "a": "грудной"
+  },
+  {
+    "id": 81,
+    "q": "Укажите, какой тип дыхания у новорожденных:",
+    "a": "брюшной"
+  },
+  {
+    "id": 82,
+    "q": "Укажите, где находится верхняя граница легкого у детей дошкольного возраста, по отношению к уровню ключицы(на):",
+    "a": "на ней"
+  },
+  {
+    "id": 83,
+    "q": "Укажите, какой характер кашля при ложном крупе у детей:",
+    "a": "лающий"
+  },
+  {
+    "id": 84,
+    "q": "Какой симптом проверяем методом перкуссии в подмышечной области?",
+    "a": "Аркавина"
+  },
+  {
+    "id": 85,
+    "q": "Сухие свистящие хрипы образуются при:",
+    "a": "сужении просвета бронхов"
+  },
+  {
+    "id": 86,
+    "q": "Укажите, какова подвижность нижней края легкого у детей школьного возраста (см):",
+    "a": "4-6"
+  },
+  {
+    "id": 87,
+    "q": "Укажите, при каком синдроме отмечается ослабление голосового дрожания:",
+    "a": "повышенной воздушности"
+  },
+  {
+    "id": 88,
+    "q": "Какой звук при перкуссии выслушивается над треугольником Раухфуса-Грокко при экссудативном плеврите?",
+    "a": "тупой"
+  },
+  {
+    "id": 89,
+    "q": "Какая анатомо-физиологическая особенность органов дыхания, способствует выслушиванию пуэрильного дыхания?",
+    "a": "узкий просвет бронхов"
+  },
+  {
+    "id": 90,
+    "q": "90.Определите, место образования крепитации:",
+    "a": "альвеолы"
+  },
+  {
+    "id": 91,
+    "q": "Укажите, какой перкуторный звук выслушивается над легкими у здоровых детей:",
+    "a": "ясный легочной"
+  },
+  {
+    "id": 92,
+    "q": "Укажите, что необходимо определить при пальпации:",
+    "a": "эластичность и резистентность грудной клетки"
+  },
+  {
+    "id": 93,
+    "q": "93.Укажите, что необходимо определить при осмотре:",
+    "a": "форму и симметричность грудной клетки"
+  },
+  {
+    "id": 94,
+    "q": "94.Укажите, что необходимо определить при перкуссии:",
+    "a": "подвижность нижнего края легких."
+  },
+  {
+    "id": 95,
+    "q": "Укажите, что необходимо определить при аускультации:",
+    "a": "характер дыхания"
+  },
+  {
+    "id": 96,
+    "q": "Укажите, характер основного дыхания над легкими у детей до 6 лет:",
+    "a": "пуэрильное"
+  },
+  {
+    "id": 97,
+    "q": "С какого возраста верхушка сердца у ребенка состоит только из левого желудочка(месяцев жизни)?",
+    "a": "6"
+  },
+  {
+    "id": 98,
+    "q": "Чем объясняется низкое артериальное давление у детей 0 -7 лет?",
+    "a": "эластичность стенок сосудов"
+  },
+  {
+    "id": 99,
+    "q": "Назовите ранний признак острой сердечной недостаточности у детей:",
+    "a": "неправильное соотношение ЧД: ЧСС"
+  },
+  {
+    "id": 100,
+    "q": "Как называется колебание большого участка грудной клетки в проекции сердца во время систолы?",
+    "a": "сердечный толчок"
+  },
+  {
+    "id": 101,
+    "q": "Назовите правильное соотношение частоты дыхания к частоте сердечных сокращений у детей в 1 год:",
+    "a": "1: 4"
+  },
+  {
+    "id": 102,
+    "q": "Какое напряжение пульса отмечается при врожденном стенозе устья аорты?",
+    "a": "нитевидный"
+  },
+  {
+    "id": 103,
+    "q": "Как называется симптом, когда грудная клетка на месте толчка не выпячивается, а втягивается внутрь?",
+    "a": "«симптом Маккензи»"
+  },
+  {
+    "id": 104,
+    "q": "Укажите чем обусловлен «капиллярный пульс» у детей:",
+    "a": "недостаточностью клапана аорты"
+  },
+  {
+    "id": 105,
+    "q": "По какой причине происходит смещение верхушечного толчка влево?",
+    "a": "расширение левого желудочка"
+  },
+  {
+    "id": 106,
+    "q": "На какой неделе гестационного возраста сердце у плода трехкамерное (соединенные предсердия)?",
+    "a": "6"
+  },
+  {
+    "id": 107,
+    "q": "Назовите, частую причину расширения границ относительной сердечной тупости, при отсутствии патологии сердца:",
+    "a": "высокое стояние диафрагмы"
+  },
+  {
+    "id": 108,
+    "q": "При стенозе митрального отверстия, на верхушке сердца и в 5-точке выслушивается ритм, характеризующийся тремя тонами через короткий промежуток. Как называется ритм?",
+    "a": "ритм «перепела»"
+  },
+  {
+    "id": 109,
+    "q": "Назовите один из критериев органического шума в отличие от неорганического:",
+    "a": "продолжительные"
+  },
+  {
+    "id": 110,
+    "q": "Назовите один из критериев неорганического шума в отличие от органического:",
+    "a": "только систолический"
+  },
+  {
+    "id": 111,
+    "q": "Выберите наиболее частую причину острой левожелудочковой сердечной недостаточности у детей:",
+    "a": "миокардит"
+  },
+  {
+    "id": 112,
+    "q": "Укажите положение больного ребенка при экссудативном перикардите:",
+    "a": "коленно-локтевое"
+  },
+  {
+    "id": 113,
+    "q": "Назовите правильное соотношение частоты дыхания к частоте сердечных сокращений у новорожденных:",
+    "a": "1:2-2,5"
+  },
+  {
+    "id": 114,
+    "q": "Где, в первую очередь, начинают появляться сердечные отеки у детей(на)?",
+    "a": "стопах"
+  },
+  {
+    "id": 115,
+    "q": "Как меняется цвет кожи, чаще всего, и при сердечных отеках у детей?",
+    "a": "цианоз"
+  },
+  {
+    "id": 116,
+    "q": "Какой из нижеперечисленных пороков относится к врожденным порокам с обеднением большого круга кровообращения?",
+    "a": "стеноз устья аорты"
+  },
+  {
+    "id": 117,
+    "q": "Признаком какого нарушения ритма сердца является пульс свыше 200 ударов в минуту у младенцев и свыше 150 у школьников?",
+    "a": "пароксизмальной тахикардии"
+  },
+  {
+    "id": 118,
+    "q": "Укажите, при каком пороке наблюдается «капиллярный пульс» у детей школьного возраста:",
+    "a": "недостаточности клапана аорты"
+  },
+  {
+    "id": 119,
+    "q": "Назовите одну из главных причин развития врожденного порока сердца у детей:",
+    "a": "инфекционные заболевания матери"
+  },
+  {
+    "id": 120,
+    "q": "При каком пороке выслушивается диастолический шум?",
+    "a": "недостаточности клапанов аорты"
+  },
+  {
+    "id": 121,
+    "q": "Назовите критический период для сердца плода (недели):",
+    "a": "3-4"
+  },
+  {
+    "id": 122,
+    "q": "Чем образована левая граница сердца?",
+    "a": "левым желудочком"
+  },
+  {
+    "id": 123,
+    "q": "Где находится точка выслушивания митрального клапана?",
+    "a": "верхушка сердца"
+  },
+  {
+    "id": 124,
+    "q": "Где находится точка выслушивания аортального клапана?",
+    "a": "II межреберье справа"
+  },
+  {
+    "id": 125,
+    "q": "Где находится точка выслушивания клапана легочного ствола?",
+    "a": "II межреберье слева"
+  },
+  {
+    "id": 126,
+    "q": "Где находится точка выслушивания трехстворчатого клапана?",
+    "a": "основание мечевидного отростка"
+  },
+  {
+    "id": 127,
+    "q": "Чем образован верхушечный толчок у новорожденного?",
+    "a": "обоими желудочками"
+  },
+  {
+    "id": 128,
+    "q": "К какому месяцу происходит облитерация артериального (Боталлова) протока?",
+    "a": "2-3"
+  },
+  {
+    "id": 129,
+    "q": "Какой крайний срок закрытия овального окна сердца (месяц)?",
+    "a": "6-12"
+  },
+  {
+    "id": 130,
+    "q": "Что отражает Зубец Р на ЭКГ:",
+    "a": "распространение возбуждения в предсердиях"
+  },
+  {
+    "id": 131,
+    "q": "О чем судят по данным фонокардиограммы?",
+    "a": "тоах сердца"
+  },
+  {
+    "id": 132,
+    "q": "Что означает эмбриокардия?",
+    "a": "равный интервал между тонами"
+  },
+  {
+    "id": 133,
+    "q": "Какой из нижеперечисленных пороков относится к врожденным порокам сердца с обеднением большого круга кровообращения?",
+    "a": "коарктация аорты"
+  },
+  {
+    "id": 134,
+    "q": "Сколько периодов вращения кишечника различают?",
+    "a": "3"
+  },
+  {
+    "id": 135,
+    "q": "С какого месяца внеутробного периода начинается физиологическая саливация?",
+    "a": "4"
+  },
+  {
+    "id": 136,
+    "q": "Сколько сантиметров составляет длина пищевода у новорожденных?",
+    "a": "10-12"
+  },
+  {
+    "id": 137,
+    "q": "На уровне каких грудных позвонков, располагается переход пищевода в желудок во все периоды детства?",
+    "a": "X-XI"
+  },
+  {
+    "id": 138,
+    "q": "В какой точке определяют болезненность головки поджелудочной железы?",
+    "a": "Дежардена"
+  },
+  {
+    "id": 139,
+    "q": "Какой процент от массы тела у новорожденных составляет печень?",
+    "a": "4"
+  },
+  {
+    "id": 140,
+    "q": "Какая особенность прямой кишки у детей раннего возраста?",
+    "a": "слабая фиксация слизистой оболочки"
+  },
+  {
+    "id": 141,
+    "q": "Укажите,на каком месяце внутриутробного развития происходит поворот кишечника:",
+    "a": "III"
+  },
+  {
+    "id": 142,
+    "q": "Укажите, какой объем желудка у новорожденного (мл.):",
+    "a": "30-35"
+  },
+  {
+    "id": 143,
+    "q": "В какой точке определяется болезненность желчного пузыря?",
+    "a": "Кера"
+  },
+  {
+    "id": 144,
+    "q": "Причиной срыгивания у детей раннего возраста,является слабое развитие:",
+    "a": "кардиального сфинктера"
+  },
+  {
+    "id": 145,
+    "q": "Запор у детей раннего возраста – это отсутствие стула в течение (часов):",
+    "a": "24"
+  },
+  {
+    "id": 146,
+    "q": "К какому месяцу внутриутробного развития завершается закладка кишечника?",
+    "a": "3"
+  },
+  {
+    "id": 147,
+    "q": "Какую функцию выполняет печень во внутриутробном периоде?",
+    "a": "кроветворную"
+  },
+  {
+    "id": 148,
+    "q": "Исследование кала на скрытую кровь называется:",
+    "a": "реакция Грегерсена"
+  },
+  {
+    "id": 149,
+    "q": "Причиной дискинезии по гипермоторному типу является повышение тонуса:",
+    "a": "сфинктера Одди"
+  },
+  {
+    "id": 150,
+    "q": "Какой симптом считается положительным, если при надавливании между ножками грудиноключичнососцевидной мышцы справа отмечается болезненность в правом подреберье?",
+    "a": "Мюсси"
+  },
+  {
+    "id": 151,
+    "q": "Для какого синдрома характерен положительный симптом Щеткина-Блюмберга?",
+    "a": "острого живота"
+  },
+  {
+    "id": 152,
+    "q": "Укажите, какие изменения характерны в анализах мочи при инфицировании мочевыделительной системы?",
+    "a": "лейкоцитурия"
+  },
+  {
+    "id": 153,
+    "q": "Укажите емкость мочевого пузыря у здорового ребенка в 3-5 лет (мл.)?",
+    "a": "100-150"
+  },
+  {
+    "id": 154,
+    "q": "Укажите допустимое количество гиалиновых цилиндров в суточном анализе мочи по Аддиса-Каковскому:",
+    "a": "20000"
+  },
+  {
+    "id": 155,
+    "q": "Укажите допустимое количество эритроцитов в пробе по Нечипоренко:",
+    "a": "1000"
+  },
+  {
+    "id": 156,
+    "q": "Укажите суточный диурез новорожденного в норме (мл):",
+    "a": "300"
+  },
+  {
+    "id": 157,
+    "q": "Какой симптом выявляют при поколачивании по 12 ребру с двух сторон со спины?",
+    "a": "Пастернацкого"
+  },
+  {
+    "id": 158,
+    "q": "Как трактуются изменения в общем анализе мочи, если цвет мочи «мясных помоев»?",
+    "a": "гематурия"
+  },
+  {
+    "id": 159,
+    "q": "На какой неделе внутриутробного развития происходит закладка почек?",
+    "a": "3"
+  },
+  {
+    "id": 160,
+    "q": "Назовите число мочеиспусканий в сутки у здорового новорожденного:",
+    "a": "20-25"
+  },
+  {
+    "id": 161,
+    "q": "Укажите, какую часть составляет дневной диурез от суточного диуреза в норме?",
+    "a": "2/3"
+  },
+  {
+    "id": 162,
+    "q": "Укажите формулу расчета суточного диуреза у детей от 1 до 10 лет:",
+    "a": "600+100 (п-1)"
+  },
+  {
+    "id": 163,
+    "q": "Какую функцию почек оценивают по пробе Зимницкого?",
+    "a": "концентрационную"
+  },
+  {
+    "id": 164,
+    "q": "Укажите допустимое количество лейкоцитов в 1 мл мочевого осадка в пробе по Нечипоренко:",
+    "a": "2000"
+  },
+  {
+    "id": 165,
+    "q": "К какому возрасту (годы) происходит окончательное формирование осморегуляторной функции почек?",
+    "a": "2"
+  },
+  {
+    "id": 166,
+    "q": "Какой показатель в анализе крови свидетельствует о клубочковой фильтрации почек?",
+    "a": "клиренс эндогенного креатинина"
+  },
+  {
+    "id": 167,
+    "q": "Определите, какой удельный вес мочи у детей старше 5 лет указывает на «изостенурию»:",
+    "a": "1010-1012"
+  },
+  {
+    "id": 168,
+    "q": "Какое число лейкоцитов в мочевом осадке суточной мочи по пробе Аддиса-Каковского указывает на пиурию?",
+    "a": "2 500 000"
+  },
+  {
+    "id": 169,
+    "q": "Укажите показатели удельного веса мочи у детей старше 5 лет при гиперстенурии:",
+    "a": "1030-1035"
+  },
+  {
+    "id": 170,
+    "q": "Как называется симптом при снижении суточного диуреза?",
+    "a": "олигурия"
+  },
+  {
+    "id": 171,
+    "q": "Назовите, на какой день вне утробной жизни происходит первый физиологический перекрест нейтрофилов и лимфоцитов:",
+    "a": "5-6"
+  },
+  {
+    "id": 172,
+    "q": "Назовите, на какой год жизни происходит второй физиологический перекрест нейтрофилов и лимфоцитов:",
+    "a": "5-6"
+  },
+  {
+    "id": 173,
+    "q": "Укажите, ближе к какому месяцу начинается физиологическая анемия:",
+    "a": "3"
+  },
+  {
+    "id": 174,
+    "q": "Назовите, что характерно для белой крови новорожденного:",
+    "a": "нейтрофилез"
+  },
+  {
+    "id": 175,
+    "q": "Назовите агранулоциты:",
+    "a": "моноциты"
+  },
+  {
+    "id": 176,
+    "q": "Назовите показатель продолжительности кровотечения по Дюке в норме в мин:",
+    "a": "2-4"
+  },
+  {
+    "id": 177,
+    "q": "Назовите нормативный показатель время свертывания крови по Ли-Уайту в мин:",
+    "a": "5-10"
+  },
+  {
+    "id": 178,
+    "q": "Что из представленного характерно для септических и гнойно-воспалительных заболеваний у детей?",
+    "a": "нейтрофилез"
+  },
+  {
+    "id": 179,
+    "q": "Разрушение каких клеток является причиной «физиологической желтухи» новорожденного?",
+    "a": "эритроцитов"
+  },
+  {
+    "id": 180,
+    "q": "По каким клеткам, можно судить об эффективности эритроцитопоэза?",
+    "a": "ретикулоцитам"
+  },
+  {
+    "id": 181,
+    "q": "Какие клетки продуцируются в лимфатических узлах у детей?",
+    "a": "лимфоциты"
+  },
+  {
+    "id": 182,
+    "q": "Назови, основную функцию эритроцитов (участие в):",
+    "a": "доставке кислорода"
+  },
+  {
+    "id": 183,
+    "q": "Назовите основную функцию тромбоцитов (участие в):",
+    "a": "свертывании крови"
+  },
+  {
+    "id": 184,
+    "q": "Тромбоцитопения – это снижение уровня тромбоцитов ниже:",
+    "a": "150х109/л"
+  },
+  {
+    "id": 185,
+    "q": "Определи, какой метод исследования позволяет обнаружить увеличение медиастинальных лимфатических узлов у детей:",
+    "a": "рентгенография"
+  },
+  {
+    "id": 186,
+    "q": "Под анемией у детей раннего возраста понимают снижение гемоглобина менее (г/л):",
+    "a": "110"
+  },
+  {
+    "id": 187,
+    "q": "Назовите уровень гемоглобина в крови здорового новорожденного (г/л):",
+    "a": "180-200"
+  },
+  {
+    "id": 188,
+    "q": "При глистных инвазиях у детей в периферической крови отмечается:",
+    "a": "эозинофилия"
+  },
+  {
+    "id": 189,
+    "q": "Гемартрозы у детей чаще наблюдаются при:",
+    "a": "гемофилии"
+  },
+  {
+    "id": 190,
+    "q": "Увеличение лимфатических узлов у детей сохраняется длительно при:",
+    "a": "туберкулезе"
+  },
+  {
+    "id": 191,
+    "q": "Назовите число эритроцитов в крови здорового новорожденного (млн):",
+    "a": "6-7,5"
+  },
+  {
+    "id": 192,
+    "q": "Какой уровень цветного показателя у детей считается признаком гипохромной анемии:",
+    "a": "0,7"
+  },
+  {
+    "id": 193,
+    "q": "Гиперлейкоцитозом называют уровень числа лейкоцитов более (тысяч):",
+    "a": "20"
+  },
+  {
+    "id": 194,
+    "q": "Под тяжелой анемией у детей понимают снижение гемоглобина менее (г/л):",
+    "a": "70"
+  },
+  {
+    "id": 195,
+    "q": "Петехии – это пятна геморрагического происхождения, размером (мм):",
+    "a": "1-2"
+  },
+  {
+    "id": 196,
+    "q": "Признаком какого патологического состояния является ускорение СОЭ?",
+    "a": "воспаления"
+  },
+  {
+    "id": 197,
+    "q": "Для лейкемического провала (лейкемическогозияния) характерно отсутствие каких клеток:",
+    "a": "переходных форм нейтрофилов"
+  },
+  {
+    "id": 198,
+    "q": "На что указывает положительная проба жгута и щипка?",
+    "a": "повышенную ломкость сосудов"
+  },
+  {
+    "id": 199,
+    "q": "Удлинение времени кровотечения по Дюке обычно возникает при:",
+    "a": "тромбоцитопении"
+  },
+  {
+    "id": 200,
+    "q": "Индекс ретракции кровяного сгустка в норме составляет:",
+    "a": "0,3 – 0,5"
+  },
+  {
+    "id": 201,
+    "q": "Панцитопения – это снижение количества:",
+    "a": "всех трех ростков"
+  },
+  {
+    "id": 202,
+    "q": "Укажите норму показателя гематокрита у грудных детей (%):",
+    "a": "50-60"
+  },
+  {
+    "id": 203,
+    "q": "Пойкилоцитоз – это изменение:",
+    "a": "формы эритроцитов"
+  },
+  {
+    "id": 204,
+    "q": "204.Анизоцитоз – это изменение:",
+    "a": "величины эритроцитов"
+  },
+  {
+    "id": 205,
+    "q": "Назовите нормативный показатель времени свертывания крови по Бюркеру (в мин, начало-конец):",
+    "a": "2,5 -5"
+  },
+  {
+    "id": 206,
+    "q": "Укажите, в каком возрасте необходимо ввести первый прикорм ребенку на грудном вскармливании (месяцы):",
+    "a": "6"
+  },
+  {
+    "id": 207,
+    "q": "Укажите, что является первым прикормом у ребенка на грудном вскармливании:",
+    "a": "овощное пюре"
+  },
+  {
+    "id": 208,
+    "q": "Назовите какое количество овощного пюре следует дать ребенку в первый день, в первый раз (г.)?",
+    "a": "10-15"
+  },
+  {
+    "id": 209,
+    "q": "Выделите, в какое кормление следует дать ребенку первый прикорм – овощное пюре?",
+    "a": "второе"
+  },
+  {
+    "id": 210,
+    "q": "Укажите количество прикорма на одно кормление ребенку в 6-7 месяцев по ВОЗ (мл.):",
+    "a": "150"
+  },
+  {
+    "id": 211,
+    "q": "Назовите, основное правило введения прикорма привсех видах вскармливания:",
+    "a": "перед кормлением"
+  },
+  {
+    "id": 212,
+    "q": "Укажите количество прикорма на одно кормление ребенку в 8-10 месяцев по ВОЗ (мл):",
+    "a": "180"
+  },
+  {
+    "id": 213,
+    "q": "Укажите количество прикорма на одно кормление ребенку в 11-12 месяцев жизни по ВОЗ (мл):",
+    "a": "225"
+  },
+  {
+    "id": 214,
+    "q": "Укажите количество прикорма на одно кормление ребенку в 12мес.-2 года по ВОЗ (мл):",
+    "a": "300"
+  },
+  {
+    "id": 215,
+    "q": "Укажите количество прикорма на одно кормление ребенку в 2 года и старше по ВОЗ (мл):",
+    "a": "350"
+  },
+  {
+    "id": 216,
+    "q": "Укажите, сколько должен составлять картофель при приготовлении овощного пюре ребенку грудного возраста на всех видах вскармливания(часть):",
+    "a": "1/2"
+  },
+  {
+    "id": 217,
+    "q": "Назовите, второй прикорм у грудного ребенка на всех видах вскармливания:",
+    "a": "молочная каша"
+  },
+  {
+    "id": 218,
+    "q": "Назовите, в каком возрасте вводится второй прикорм ребенку на грудном вскармливании (месяцы):",
+    "a": "6"
+  },
+  {
+    "id": 219,
+    "q": "Выделите, какой молочной каше отдают предпочтение детям грудного возраста:",
+    "a": "рисовой"
+  },
+  {
+    "id": 220,
+    "q": "Укажите, в каком возрасте рекомендуется вводить мясной фарш грудному ребенку (месяцы):",
+    "a": "6"
+  },
+  {
+    "id": 221,
+    "q": "Укажите, в каком возрасте следует вводить творог 9% жирности ребенку грудного возраста (месяцы):",
+    "a": "6"
+  },
+  {
+    "id": 222,
+    "q": "Назовите, в каком возрасте следует ввести грудному ребенку яйцо, сваренное вкрутую(месяцы):",
+    "a": "6"
+  },
+  {
+    "id": 223,
+    "q": "Выделите, какой молочной каше следует дать предпочтение детям на грудном вскармливании:",
+    "a": "кукурузной"
+  },
+  {
+    "id": 224,
+    "q": "Укажите, какой третий прикорм должен получать ребенок грудного возраста:",
+    "a": "биолакт"
+  },
+  {
+    "id": 225,
+    "q": "Назовите, в каком возрасте вводится третий прикорм грудному ребенку (месяцы):",
+    "a": "6"
+  },
+  {
+    "id": 226,
+    "q": "Назовите первый обучающий прикорм у ребенка на грудном вскармливании:",
+    "a": "фруктовые соки"
+  },
+  {
+    "id": 227,
+    "q": "Укажите, в каком возрасте начинать давать ребенку на грудном вскармливании фруктовые соки (месяцы):",
+    "a": "6"
+  },
+  {
+    "id": 228,
+    "q": "Назовите, какой первый сок следует дать ребенку грудного возраста:",
+    "a": "зеленый яблочный"
+  },
+  {
+    "id": 229,
+    "q": "Назовите, через какое время после назначения соков в рацион вводят фруктовое пюре (дни)?",
+    "a": "18-20"
+  },
+  {
+    "id": 230,
+    "q": "Укажите формулу расчета фруктовых соков ребенку на всех видах вскармливания:",
+    "a": "n x 10"
+  },
+  {
+    "id": 231,
+    "q": "Укажите, в какое время в течение дня необходимо ребенку давать фруктовые соки:",
+    "a": "между кормлениями"
+  },
+  {
+    "id": 232,
+    "q": "Назовите, какой лучше сок дать ребенку при склонности к запорам:",
+    "a": "сливовый"
+  },
+  {
+    "id": 233,
+    "q": "Назовите, какой лучше сок дать ребенку при неустойчивом стуле?",
+    "a": "гранатовый"
+  },
+  {
+    "id": 234,
+    "q": "Укажите, какой сок не давать ребенку грудного возраста:",
+    "a": "апельсиновый"
+  },
+  {
+    "id": 235,
+    "q": "Укажите, какой сок не рекомендуется давать ребенку грудного возраста:",
+    "a": "виноградный"
+  },
+  {
+    "id": 236,
+    "q": "Назовите, какую пищу кроме прикормов, должен получать ребенок грудного возраста:",
+    "a": "“перекусы”"
+  },
+  {
+    "id": 237,
+    "q": "Укажите, в какое время следует давать грудному ребенку “перекусы” на всех видах вскармливания:",
+    "a": "между кормлениями"
+  },
+  {
+    "id": 238,
+    "q": "Назовите, какие блюда не рекомендуется давать ребенку грудного возраста:",
+    "a": "бульоны и супы"
+  },
+  {
+    "id": 239,
+    "q": "Укажите потребность в белках у ребенка до 6 месяцев до введения прикорма на естественном вскармливании (г/кг):",
+    "a": "2,0-2,5"
+  },
+  {
+    "id": 240,
+    "q": "Укажите потребность в белках у ребенка в 6-12 месяцев после введения прикорма на естественном вскармливании (г/кг):",
+    "a": "3,0"
+  },
+  {
+    "id": 241,
+    "q": "Укажите потребность в жирах у ребенка в 1 четверти жизни на всех видах вскармливания(г/кг):",
+    "a": "6,5"
+  },
+  {
+    "id": 242,
+    "q": "Укажите достоверный признак недостаточности молока у матери:",
+    "a": "прибавка массы ребенка за месяц менее 500 грамм"
+  },
+  {
+    "id": 243,
+    "q": "Назовите абсолютное противопоказание к кормлению ребенка грудью со стороны ребенка:",
+    "a": "отсутствие лактазы"
+  },
+  {
+    "id": 244,
+    "q": "Назовите относительное противопоказание к кормлению ребенка:",
+    "a": "воспаление молочной железы"
+  },
+  {
+    "id": 245,
+    "q": "Назовите абсолютное противопоказание к грудному вскармливанию со стороны матери:",
+    "a": "ВИЧ-инфекция"
+  },
+  {
+    "id": 246,
+    "q": "Назовите гормон, регулирующий функцию щитовидной железы:",
+    "a": "тиреотропный"
+  },
+  {
+    "id": 247,
+	"q": "На приеме у педиатра мальчик 5 месяцев. Жалоб нет. Находится на исключительно грудном вскармливании. При осмотре кожа и видимые слизистые чистые, бледно-розовые. Голова округлой формы, большой родничок 1,5*1,5см. Нервно-психическое развитие соответствует возрасту. Вес на данный момент 6550гр, рост -68см., окружность головы-39см, окружность грудной клетки-40см. Показатели «рост/возраст», «вес/возраст», «вес/рост» в зеленой зоне. Оцените физическое развитие ребенка.",
+    "a": "развитие соответствует возрасту"
+  },
+  {
+	"id": 495,
+	"q": "Укажите гормон, регулирующий секрецию тиреотропного гормона",
+	"a": "тиреотропин-рилизинг"
+  },  
+  {
+	"id": 496,
+	"q": "Выделите постоянный симптом на коже при гипотиреозе у детей",
+	"a": "слизистый отек"
+  },  
+  {
+	"id": 497,
+	"q": "Основной лабораторный признак, указывающий на гипотиреоз - это",
+	"a": "высокий тиреотропный"
+  },  
+  {
+	"id": 498,
+	"q": "Определите, какой из перечисленных - основной гормон щитовидной железы",
+	"a": "тироксин"
+  },
+  {
+    "id": 248,
+    "q": "На приеме у педиатра девочка, 4 месяца. Жалоб нет. При осмотре кожа бледно-розовой окраски, видимые слизистые розовые, чистые. Голова округлой формы, большой родничок 1,5*1,5 см. Вес на данный момент 5кг., рост -59см, окружность головы 39см, окружность грудной клетки -40см «рост/возраст» - голубая зона, «вес/возраст» - голубая зона, «вес /рост» - голубая зона. Оцените физическое развитие ребенка:",
+    "a": "умеренное нарушение питания"
+  },
+  {
+    "id": 249,
+    "q": "На приеме у педиатра девочка, 7 месяцев. Находится на грудном вскармливании и получает прикорм: овощное пюре. Кожные покровы бледные, подкожно-жировая клетчатка развита слабо. Вес на данный момент 6 кг, рост -62см, окружность головы-40см, окружность грудной клетки-40см «рост/возраст», «вес/возраст», «вес /рост» - все показатели в красной зоне. Оцените физическое развитие данного ребенка:",
+    "a": "хроническое тяжелое нарушение питания"
+  },
+  {
+    "id": 250,
+    "q": "На приеме у педиатра мальчик, 10 месяцев. Жалобы: плохой сон, вялость. Ребенок находится на грудном вскармливании и получает прикорм. Кожа и видимые слизистые бледно-розовой окраски. Подкожно-жировая клетчатка развита слабо. Вес на данный момент 6500гр, рост -67см, окружность головы-41см, окружность грудной клетки-42см. «Рост/возраст», «вес/возраст», «вес /рост» - все показатели в красной зоне. Оцените физическое развитие ребенка:",
+    "a": "хроническое тяжелое нарушение питания"
+  },
+  {
+    "id": 251,
+    "q": "На приеме у педиатра девочка 12 месяцев. Жалобы: беспокойство, плохой сон, аппетит снижен. Из анамнеза: в течение недели у ребенка отмечается частый жидкий стул. При осмотре: кожные покровы бледные, подкожно-жировая клетчатка развита слабо, тургор тканей снижен. Вес на данный момент 7,9кг. (-1СО), рост -74см (средний показатель), окружность головы-46см, окружность грудной клетки-45см.Оцените физическое развитие ребенка:",
+    "a": "острое нарушение питания"
+  },
+  {
+    "id": 252,
+    "q": "На профилактическом приеме у педиатра девочка, 10 месяцев. Жалоб нет. Находится на грудном вскармливании и получает 3 прикорма: молочная каша, овощное пюре с мясом, творог с биолактом. Вес на данный момент 10кг., рост -72см, окружность головы-44см, окружность грудной клетки-46,5см. «Рост/возраст», «вес/возраст», «вес /рост» - все показатели в зеленой зоне. Оцените физическое развитие данного ребенка:",
+    "a": "развитие соответствует возрасту"
+  },
+  {
+    "id": 253,
+    "q": "На приеме девочка 11 месяцев. Жалоб нет. Находится с рождения на искусственном вскармливании. Сейчас получает смесь 2 раза, 3прикорма и 2 перекуса в течение суток. Аппетит хороший. Кожные покровы розовые, чистые. Подкожно-жировая клетчатка развита очень хорошо. Вес -14 кг., рост- 75см., окружность головы 46см., окружность грудной клетки- 49см. Все показатели: «вес/возраст», «рост/возраст», «вес/рост» находятся в зеленой зоне. Оцените физическое развитие данного ребенка:",
+    "a": "физическое развитие выше нормы"
+  },
+  {
+    "id": 254,
+    "q": "На приеме мальчик, 9лет. Жалоб нет. При проведении антропометрии: масса-34кг., рост-137см., окружность головы-53см, окружность грудной клетки-63см. Выберите, какую массу тела должен иметь мальчик в данном возрасте(кг.):",
+    "a": "28,0-28,5"
+  },
+  {
+    "id": 255,
+    "q": "На приеме девочка, 12 лет. Жалобы на утомляемость, тяжесть в ногах. При осмотре: кожные покровы чистые, подкожно-жировая клетчатка развита чрезмерно, масса-55кг., рост-150см., окружность головы- 55см., окружность грудной клетки- 73см. ЧД- 24 в минуту. ЧСС-90 в минуту. Оцените физическое развитие девочки:",
+    "a": "ожирение"
+  },
+  {
+    "id": 256,
+    "q": "На приеме мальчик, 5 лет. Жалобы на плохой аппетит, слабость. При осмотре: кожные покровы бледные, подкожно-жировая клетчатка развита слабо, масса-15кг., рост-104см., окружность головы- 49см., окружность грудной клетки-53см. Выберите, какую массу тела должен иметь ребенок в этом возрасте(кг.):",
+    "a": "19-20"
+  },
+  {
+    "id": 257,
+    "q": "На приеме мальчик, 7 лет. Жалобы на плохую прибавку роста. При осмотре: кожа бледная, подкожно-жировая клетчатка развита хорошо, масса-25кг., рост-115см., окружность головы -51см., окружность грудной клетки- 67см. Оцените физическое развитие ребенка:",
+    "a": "низкорослость"
+  },
+  {
+    "id": 258,
+    "q": "Девочка, 2 года на приеме с мамой. При осмотре отмечается повышение температуры тела до 39С, беспокойство, плач, рвота, ригидность мышц затылка, выраженная пульсация большого родничка, положительный рефлекс Брудзинского. Поражение какой системы, вы можете предположить?",
+    "a": "нервной"
+  },
+  {
+    "id": 259,
+    "q": "Мальчик, 3 месяца. Жалобы мамы на беспокойство, плохой сон, вздрагивает во время сна. При осмотре: физиологические рефлексы активные, тонус мышц повышен, взгляд фиксирует, размер головы в норме. Объясните, на основании какого симптома можно предположить повышение тонуса мышц.",
+    "a": "сжатие пальцев кисти в кулак"
+  },
+  {
+    "id": 260,
+    "q": "На приеме мама с ребенком 6ти месяцев. При осмотре отмечается беспокойство, кожные покровы бледные, на коже головы выражен венозный рисунок, размеры большого родничка 4,0х4,0см., расхождение костей черепа. Какой синдром вы можете предположить?",
+    "a": "гидроцефальный"
+  },
+  {
+    "id": 261,
+    "q": "Девочка, 3 года. Жалобы на повышение температуры до 39,5С, рвоту, не связанную с приемом пищи. При осмотре: кожные покровы бледные, конечности прижаты к туловищу, голова запрокинута, тонус мышц повышен, при сгибании головы отмечается сопротивление. Какой синдром вы можете предположить?",
+    "a": "менингеальный"
+  },
+  {
+    "id": 262,
+    "q": "Мальчик, 10 лет. При осмотре: кожные покровы бледные, температура тела 36,5С; непроизвольные подергивания мышц конечностей, тонус мышц повышен, сухожильные рефлексы повышены. Какой синдром вы можете предположить?",
+    "a": "судорожный"
+  },
+  {
+    "id": 263,
+    "q": "Девочка, 4 месяца. Жалобы со слов мамы на беспокойство, тремор подбородка и верхних конечностей, прерывистый короткий сон, вздрагивание. На осмотр реагирует плачем, повышен тонус мышц и повышены рефлексы. Голова округлой формы, большой родничок-2,5х2,5см. Отмечается выбухание и выраженная пульсация большого родничка. Какой синдром у данного ребенка вы предполагаете?",
+    "a": "гипертензионный синдром"
+  },
+  {
+    "id": 264,
+    "q": "Мама с ребенком 3х лет на приеме. При осмотре: кожные покровы бледные, горячие на ощупь, температура тела 39,5С; непроизвольные подергивания мышц конечностей с потерей сознания, пеной изо рта, тонус мышц повышен. Какой синдром к данного ребенка вы предполагаете?",
+    "a": "судорожный"
+  },
+  {
+    "id": 265,
+    "q": "На приеме девочка 5ти лет. На основании клинического обследования предполагается менингеальный синдром. Что из перечисленного характерно для данного синдрома?",
+    "a": "ригидность мышц затылка"
+  },
+  {
+    "id": 266,
+    "q": "Ребенок хорошо сидит, переворачиваеися с живота на спину, реагирует на своё имя, появляется лепет, тянется и хватает рукой, держит в руках игрушки и рассматривает их. Узнайте по описанию возраст ребенка(месяц):",
+    "a": "6"
+  },
+  {
+    "id": 267,
+    "q": "Ребенок ползает, сам ложится, узнает знакомые лица, по просьбе выполняет “ладушки”, “дай ручку”, “как собака лает” и т.д. Узнайте по описанию возраст ребенка(месяц):",
+    "a": "8"
+  },
+  {
+    "id": 268,
+    "q": "Ребенок хорошо держит голову, длительно удерживает предмет в поле зрения, быстро отвечает улыбкой при общении, “ответное гуление”, хватает предметы, которые ему кладут в руку. Узнайте по описанию возраст ребенка(месяц):",
+    "a": "3"
+  },
+  {
+    "id": 269,
+    "q": "В приемное отделение областной больницы поступил ребенок 4лет. Заболел остро с подъема температуры тела до 38,8 С. На 2й день болезни появилась сыпь на туловище, новые высыпания появлялись еще в течение 2х дней по всему телу. При осмотре на коже выявлены элементы пятнисто- папулезной сыпи на волосистой части головы и на туловище, отмечаются единичные элементы сыпи на слизистой полости рта. Был выставлен диагноз ветряная оспа. Выберите, какой элемент сыпи характерен для данного заболевания:",
+    "a": "везикула"
+  },
+  {
+    "id": 270,
+    "q": "На прием к педиатру обратилась женщина с ребенком, 6лет, с жалобами на появление небольших очагов белого цвета неправильной формы на коже шеи и левой кисти руки. При опросе выяснилось, что в летнее время после пребывания на солнце контрастность измененных участков кожи усиливается по сравнению со здоровой кожей. О каком морфологическом элементе идет речь:",
+    "a": "витилиго"
+  },
+  {
+    "id": 271,
+    "q": "Мальчик 13 лет, поступил в приемное отделение городской детской больницы с жалобами: на появление изменений в коже, на правой кисти руки в виде плотных образований, которые выступают над уровнем кожи размером 13,5мм. Предположите, какой элемент кожи:",
+    "a": "узел"
+  },
+  {
+    "id": 272,
+    "q": "Мальчик 14лет. Жалобы на очаг высыпаний в области левого предплечья. Со слов мальчика, размер очага поражения в размере увеличился. На момент осмотра на внутренней поверхности левого предплечья имеется глубокое нарушение целостности кожи, дно покрылось желтоватым отделяемым. Размер очага поражения 6,2см. Края подрытые, плотноватой консистенции. Какой элемент кожи описывается в данном случае?",
+    "a": "язва"
+  },
+  {
+    "id": 273,
+    "q": "На приеме у педиатра мальчик, 8 лет. При осмотре на коже лица и верхних конечностей отмечаются мелкие темно-коричневого цвета высыпания на коже, не выступают над уровнем кожи. Кожные покровы вокруг высыпаний не изменены. Субъективные ощущения отсутствуют. Появление высыпаний ни с чем не связывает. Выберите, какой элемент кожи у данного больного:",
+    "a": "пятно"
+  },
+  {
+    "id": 274,
+    "q": "Девочка, 12 лет, предъявляет жалобы на высыпания верхних конечностей, груди и спине. Высыпания представлены полостными элементами, содержащими прозрачную жидкость, поверхность элементов дряблая, тонкая, диаметр высыпаний от 0,5 см до 1 см. Элементы, расположены на видимо неизмененной коже. Предположите какой элемент кожи у данного ребенка:",
+    "a": "пузырь"
+  },
+  {
+    "id": 275,
+    "q": "На приеме у педиатра мальчик 8 лет. При осмотре на коже лица и верхних конечностей отмечаются мелкие темно-коричневого цвета высыпания на коже, не выступают над уровнем кожи. Кожные покровы вокруг высыпаний не изменены. Субъективные ощущения отсутствуют. Появление высыпаний ни с чем не связывает. Выберите, какой элемент кожи у данного больного:",
+    "a": "пятно"
+  },
+  {
+    "id": 276,
+    "q": "Девочка, 12 лет, предъявляет жалобы на высыпания верхних конечностей, груди и спине. Высыпания представлены полостными элементами, содержащими прозрачную жидкость, поверхность элементов дряблая, тонкая, диаметр высыпаний от 0,5 см до 1 см. Элементы, расположены на видимо неизмененной коже. Предположите какой элемент кожи у данного ребенка:",
+    "a": "пузырь"
+  },
+  {
+    "id": 277,
+    "q": "Девочка, 12лет. На тыльной поверхности кисти левой руки скопление отторгающихся роговых пластинок эпидермиса, размером 3см. О каком элементе кожи идет речь?",
+    "a": "чешуйка"
+  },
+  {
+    "id": 278,
+    "q": "При осмотре головы у детей раннего возраста, сравнивают соотношение мозговой и лицевой частей черепа, это соотношение отражает уровень биологического созревания ребенка. Какое соотношение лицевой, и мозговой частей черепа, должно быть у ребенка?",
+    "a": "2:1"
+  },
+  {
+    "id": 279,
+    "q": "Ребенку 3 года, живот увеличен, резко выражен лордоз поясничного отдела, крыловидные лопатки, нарушение осанки. Оцените, какой тонус мышц у данного ребенка:",
+    "a": "понижен"
+  },
+  {
+    "id": 280,
+    "q": "Выберите, какой клинический признак характерен для рахита?",
+    "a": "выраженные лобные бугры"
+  },
+  {
+    "id": 281,
+    "q": "У ребенка 5 лет при поступлении в травматологию выявлен перелом лучевой кости по типу “зеленой веточки”. Объясните, с чем это связано?",
+    "a": "большой толщиной надкостницы"
+  },
+  {
+    "id": 282,
+    "q": "На приеме грудной ребенок. При осмотре: имеет 4 зуба– 2 нижних и 2 верхних резца, большой родничок 1,0*1,0см., хорошо сидит, ползает, переворачивается, знает близких, произносит слоги. Узнайте по описанию возраст ребенка (месяц):",
+    "a": "8"
+  },
+  {
+    "id": 283,
+    "q": "Ребенку 8 месяцев. Мама жалуется, что ребенок вялый, плохой аппетит, потливость головы. При осмотре – сознание ясное, положение пассивное, цвет кожных покровов бледно-розовый, зубов нет, скошенный затылок, и облысение волосистой части головы, мышечная гипотония. Поражение какой системы вы предполагаете?",
+    "a": "костной"
+  },
+  {
+    "id": 284,
+    "q": "Определите, какой признак характерен для мышечного гипертонуса:",
+    "a": "положение опистотонуса"
+  },
+  {
+    "id": 285,
+    "q": "Ребенку 1,5 года. Мама жалуется, что ребенок самостоятельно не ходит, не стоит. При осмотре: мышечный тонус снижен, большой родничок – 1,5 × 1,5 см, с 5-го по 8-е ребро пальпируются уплотнения в месте перехода хрящевой ткани в костную, вальгусное искривление ног, зубов всего 2. Поражение какой системы вы предполагаете?",
+    "a": "костной"
+  },
+  {
+    "id": 286,
+    "q": "На приеме грудной ребенок. При осмотре: имеет 2 зуба– 2 нижних, и 4 врехних – 2 большой родничок 1,5*1,5см., сидит с минимальной поддержкой, переворачивается, знает близких, перекладывает предмет с одной руки в другую и кладет его в рот, говорит слоги. Любит играть. Предположите возраст ребенка (месяц):",
+    "a": "6"
+  },
+  {
+    "id": 287,
+    "q": "На приеме грудной ребенок. При осмотре: имеет 6 зубов– 2 нижних и 4 верхних  резца,  большой  родничок  0,5*0,5см.,  стоит  и  делает  шаги  с поддержкой. Выговаривает «мама», «баба». Действует с предметами по-разному. Предположите возраст ребенка (месяц):",
+    "a": "10"
+  },
+  {
+    "id": 288,
+    "q": "Ребенок, 11 месяцев. Поступил в отделение с жалобами на повышение температуры тела до 39,50 С, непродуктивный кашель, одышку, снижение аппетита. Объективно: отмечается цианоз губ и носогубного треугольника. Одышка смешанная. Голосовое дрожание усилено справа. При перкуссии отмечается притуплениесзади, в нижних отделах справа. При аускультации: дыхание ослаблено, мелкопузырчатые влажные хрипы в нижних отделах справа. Предположите, какой синдром отмечается у ребенка?",
+    "a": "уплотнения легочной ткани"
+  },
+  {
+    "id": 289,
+    "q": "Ребенок, 10 месяцев. Поступил с жалобами на одышку, приступообразный кашель, преимущественно ночью. При осмотре: кожные покровы бледные, ЧД – 47 в мин. Дыхание частое, поверхностное, с участием мышц живота и грудной клетки. Голосовое дрожание симметрично с обеих сторон. При перкуссии: ясный легочной звук. При аускультации: жесткое дыхание, сухие свистящие хрипы с обеих сторон. Определите, какой синдром имеется у данного ребенка?",
+    "a": "обструкции бронхов"
+  },
+  {
+    "id": 290,
+    "q": "На приеме ребенок, 3года. Жалобы: повышение температуры тела до 38,5 0С, лающий кашель, одышка, осиплость голоса. Объективно: дыхание частое, ЧД-40 в мин поверхностное, аритмичное, отмечается втяжение яремной, и надключичных ямок и межреберий, участие верхнего плечевого пояса в акте дыхания. Определите, какой тип одышки у данного ребенка?",
+    "a": "инспираторная"
+  },
+  {
+    "id": 291,
+    "q": "На приеме у педиатра девочка, 7 лет. Из анамнеза: болеет 7 дней. 2 дня назад появились боли в грудной клетке справа. Жалобы: на повышение температуры тела 38С, кашель, слабость, потливость. Объективно: вынужденное положение. При пальпации: правая половина отстает в акте дыхания, болезненность в нижних отделах грудной клетки справа, здесь же-голосовое дыхание ослаблено. При перкуссии: справа притупление легочного звука, ограничивается линией. При аускультации: дыхание ослаблено. Предположите, о каком синдроме говориться в данной задаче?",
+    "a": "наличия жидкости в плевральной полости"
+  },
+  {
+    "id": 292,
+    "q": "На приеме у педиатра ребенок, 8 месяцев. При обследовании: кожные покровы бледные, цианоз носогубного треугольника. Дыхание частое, поверхностное, аритмичное, ЧД-50в мин. Раздувание крыльев носа, западение под- и надключичных ямок, втягивание межреберных промежутков и грудины. В акте дыхания участвуют мышцы верхнего плечевого пояса и живота. Определите, какая одышка у ребенка:",
+    "a": "инспираторная"
+  },
+  {
+    "id": 293,
+    "q": "На приеме мальчик, 6 лет. Отмечается: повышение температуры тела до 38С, кашель, одышка смешанного характера. Объективно: голосовое дрожание усиленно в нижних отделах справа. При перкуссии: притупление легочного зыука справа в нижних отделах грудной клетки. При аускультации: дыхание ослабленно в нижних отделах справа. На рентгенограмме отмечается участок затемнения в нижних отделах легкого справа. Укажите, для какого синдрома характерны вышеперечисленные данные?",
+    "a": "уплотнения легочной ткани"
+  },
+  {
+    "id": 294,
+    "q": "Девочка, 6 лет. Поступила на осмотр к педиатру с жалобами на сухой кашель, повышение температуры тела до 37,6С в течение 3-х месяцев, похудание. Из социально неблагополучной семьи. Объективно: кожа и видимые слизистые бледные. Симптом Кораньи положительный. Укажите, поражению каких лимфоузлов соответствует указанный случай?",
+    "a": "трахеальных, бифуркационных"
+  },
+  {
+    "id": 295,
+    "q": "Ребенок, 12 лет. Поступил с жалобами на затруднение дыхания. Из анамнеза: болен 1 день. начало острое, после контакта с пылью во время субботника. Обьективно: кожа бледная, цианоз носогубного треугольника, ЧД - 32 в минуту. Spo 2 89 %, при аускультации-жесткое дыхание, сухие свистящие хрипы с обеих сторон. На рентгенограмме признаки синдрома повышенной воздушности легких. Определите, какой звук выслушивается при перкуссии грудной клетки в данном случае?",
+    "a": "тимпанический"
+  },
+  {
+    "id": 296,
+    "q": "На приеме девочка, 8 лет. Отмечается: повышение температуры тела до 38С, одышка, потливость, вынужденное положение. Объективно: при глубокой пальпации болезненность справа, отставание в акте дыхания правой стороны грудной клетки; при перкуссии: тупой звук справа, очерчен линией; при аускультации: над легкими дыхание ослаблено. Определите, какой синдром у данной девочки:",
+    "a": "наличия жидкости в плевральной полости"
+  },
+  {
+    "id": 297,
+    "q": "Ребенок 3,5года. Поступил с жалобами на повышение температуры тела до 38, 0С, кашель, одышку, снижение аппетита. Объективно: кожные покровы бледно-серой окраски. ЧД 46 в минуту, дыхание поверхностное. При пальпации: грудная клетка ригидная, болезненна; при перкуссии определяется линия Эллиса-Дамуазо, справа - тимпанический, слева -тупой звук, на уровне 3 ребра. Какой синдром имеется у данного ребенка?",
+    "a": "наличия жидкости в плевральной полости"
+  },
+  {
+    "id": 298,
+    "q": "Ребенок, 10 месяцев. Поступил в отделение с жалобами на повышение температуры тела до 39,50 С, непродуктивный кашель, одышку, снижение аппетита. Обьективно: отмечается цианоз губ и носогубного треугольника. Одышка смешанная. Голосовое дрожание усилено справа. При перкуссии отмечается притуплениесзади, в нижних отделах справа. При аускультации: дыхание ослаблено, мелкопузырчатые влажные хрипы в нижних отделах справа. Предположите, какой синдром отмечается у ребенка?",
+    "a": "уплотнения легочной ткани"
+  },
+  {
+    "id": 299,
+    "q": "Ребенок, 8месяцев. Поступил с жалобами на одышку ; мучительный приступообразный кашель, преимущественно ночью . При осмотре : кожные покровы бледные, ЧД – 48 в мин. Дыхание частое, п оверхностное, с участием мышц живота и грудной клетки . Голосовое дрожание симметрично с обеих сторон. При перкуссии: ясный легочной звук. При аускультации: жесткое дыхание, сухие свистящие хрипы с обеих сторон. Какой синдром имеется у данного ребенка?",
+    "a": "обструкции бронхов"
+  },
+  {
+    "id": 300,
+    "q": "Ребенок , 7 лет. Поступил с жалобами на повышение температуры тела до 39, 0С, кашель, одышку, боль в грудной клетке, снижение аппетита. Объективно: кожные покровы бледно-серой окраски. ЧД 48 в минуту, дыхание поверхностное,. При пальпации: грудная клетка ригидная, болезненна ; голосовое дрожание ослаблено справа; при перкуссии определяется линия Эллиса-Дамуазо, справа - тимпанический,слева –ту пой, на уровне 3 ребра. Какой синдром имеется у данного ребенка?",
+    "a": "наличия жидкости в плевральной полости"
+  },
+  {
+    "id": 301,
+    "q": "На приеме ребенок, 2 года. Жалобы: повышение температуры тела до 37,5 0С, лающий кашель, одышка, осиплость голоса. Обьективно: дыхание частое, ЧД-42в мин поверхностное, аритмичное, отмечается втяжение яремной и надключичных ямок и межреберий, участие верхнего плечевого пояса в акте дыхания. Какой тип одышки у данного ребенка?",
+    "a": "инспираторная"
+  },
+  {
+    "id": 302,
+    "q": "Ребенок, 11 месяцев. Поступил, с жалобами на одышку ; мучительный приступообразный кашель . При осмотре : кожные покровы бледные, цианоз носогубного треугольника, ЧД – 46 в мин. Дыхание частое, поверхностное, с участием мышц живота и грудной клетки . Голосовое дрожание ослаблено с обеих сторон. При перкуссии: коробочный звук. При аускультации : жесткое дыхание, сухие свистящие хрипы с обеих сторон. Какой синдром имеется у данного ребенка?",
+    "a": "повышенной воздушности легких"
+  },
+  {
+    "id": 303,
+    "q": "Ребенок, 10 месяцев. Поступил, с жалобами на одышку , лающий кашель, повышение температуры тела до 38,50С. При осмотре : кожные покровы бледные, ЧД – 48 в мин. Дыхание частое, с удлиненным шумным вдохом, отмечается втяжение надключичных и яремной ямок . Голосовое дрожание симметрично с обеих сторон. При перкуссии: ясный легочной звук. При аускультации : жесткое дыхание, сухие свистящие хрипы . Какой синдром имеется у данного ребенка?",
+    "a": "обструкции бронхов"
+  },
+  {
+    "id": 304,
+    "q": "Почему, при синдроме уплотнения легочной ткани, при аускультации выслушивается ослабление везикулярного дыхания:",
+    "a": "уменьшается экскурсия воздуха"
+  },
+  {
+    "id": 305,
+    "q": "Ребенок, 4года. Поступил с жалобами на одышку ; мучительный приступообразный кашель, преимущественно ночью . При осмотре : кожные покровы бледные, ЧД – 43 в мин. Дыхание частое, поверхностное, аритмичное, межреберья расширены и сглажены , плечи приподняты . Голосовое дрожание ослаблено с обеих сторон. При перкуссии: коробочный звук. При аускультации: жесткое дыхание, сухие свистящие хрипы с обеих сторон. Какая одышка имеется у данного ребенка?",
+    "a": "экспираторная"
+  },
+  {
+    "id": 306,
+    "q": "У ребенка 8 лет при поступлении в стационар отмечаются периферические отеки, преимущественно на нижних конечностях, умеренная гепатомегалия. Какой вариант сердечной недостаточности вы предполагаете?",
+    "a": "правожелудочковая"
+  },
+  {
+    "id": 307,
+    "q": "У ребенка 3-лет при поступлении в стационар выраженная одышка смешанного типа, тахикардия, частый кашель, при аускультации легких выслушиваются влажные хрипы. Какой вариант сердечной недостаточности вы предполагаете?",
+    "a": "левожелудочковая"
+  },
+  {
+    "id": 308,
+    "q": "У ребенка 6 лет при поступлении в стационар отмечаются выраженные периферические отеки, одышка смешанного типа, кашель частый, тахикардия, печень выступает более 5 см из-под правого подреберья, спленомегалия, олигурия. Учитывая вышеизложенное, какую степень сердечной недостаточности вы предполагаете?",
+    "a": "III"
+  },
+  {
+    "id": 309,
+    "q": "У ребенка 12 лет при поступлении в стационар отмечаются умеренные отеки на ногах, печень выступает более 3 см из-под правого подреберья, одышка, тахикардия, кашель, олигурия. Учитывая вышеизложенное, какую степень сердечной недостаточности вы предполагаете?",
+    "a": "II Б"
+  },
+  {
+    "id": 310,
+    "q": "При поступлении в стационар ребенок, 7 лет, не отстает в физическом развитии, кожные покровы бледно-розовые, одышка появляется только при физической активности, область сердца не изменена, однако тоны сердца слегка приглушены, умеренная тахикардия. Отеков нет. Со стороны органов брюшной полости изменений нет. О какой степени сердечной недостаточности идет речь?",
+    "a": "I"
+  },
+  {
+    "id": 311,
+    "q": "В грудном возрасте происходит относительное уменьшение размеров сердца. Чем объясняется значительное смещение левой границы сердца внутрь?",
+    "a": "рост левого легкого"
+  },
+  {
+    "id": 312,
+    "q": "При проведении пробы Шалкова ребенку 12 лет, после физической нагрузки пульс участился на 45%, артериальное давление повысилось на 15 мм.рт.ст, состояние ребенка восстановилось через 7 минут. Какой вывод можно сделать по состоянию сердечно-сосудистой системы данного ребенка?",
+    "a": "признаки сердечно-сосудистой патологии есть"
+  },
+  {
+    "id": 313,
+    "q": "На приеме у педиатра мальчик 15 лет, ранее диагностировали врожденный стеноз аорты. Физическое развитие хорошее. Однако в последнее время наросла бледность, одышка, участились обмороки после физической нагрузки. Чем обусловлено ухудшение состояния?",
+    "a": "снижение систолического давления"
+  },
+  {
+    "id": 314,
+    "q": "Мальчик, 12 лет, на приеме у кардиолога сидит в вынужденном коленно-локтевом положении. Ему диагностировали экссудативный перикардит. Почему он принял такое положение?",
+    "a": "уменьшает боль в области сердца"
+  },
+  {
+    "id": 315,
+    "q": "О каком нарушении ритма сердца идет речь, если все элементы ЭКГ сохранены и правильные, но отмечается укорочение интервалов Р-Q, T-P, R-R?",
+    "a": "синусовая тахикардия"
+  },
+  {
+    "id": 316,
+    "q": "В отделение реанимации поступила девочка 15 лет, с приступом, который начался внезапно в школе после конфликта со сверстниками. Отмечается беспокойство, плач, одышка, была однократная рвота пищей. Девочка отказывается от еды, жалуется на болезненность грудной клетки, чувство стеснения в груди и затруднения дыхания. Во время приступа частота сердечных сокращений достигает до 200 ударов в минуту, наблюдается предобморочное состояние. Учитывая вышеизложенное, какое нарушение ритма сердца вы предполагаете?",
+    "a": "пароксизмальная тахикардия"
+  },
+  {
+    "id": 317,
+    "q": "По вызову скорой медицинской помощи был осмотрен мальчик 4-х лет. При осмотре ребенок без сознания, отмечается остановка дыхания, на крупных артериях отсутствует пульс, судороги генерализованные, кожные покровы бледные. На ЭКГ отсутствуют зубцы и комплексы, нет изолинии, вместо них небольшие по величине волны. Учитывая вышеизложенное, какое нарушение ритма вы предполагаете?",
+    "a": "мерцательная аритмия желудочков"
+  },
+  {
+    "id": 318,
+    "q": "В кардиологическое отделение поступил ребенок 6 лет. Из анамнеза: рос и развивался хорошо. Перенес тяжелую форму вирусной инфекции 2 недели назад. При поступлении сознание ребенка сопорозное, на вопросы не отвечает, отмечается диффузный цианоз кожных покровов, одышка. Перкуторно границы относительной сердечной тупости расширены во все стороны, аускультативно сердечные тоны глухие, умеренная гепатомегалия. Учитывая вышеизложенное, какой синдром предполагаете у данного ребенка?",
+    "a": "миокардит"
+  },
+  {
+    "id": 319,
+    "q": "По линии скорой медицинской помощи в отделение реанимации поступил мальчик 13 лет, в сопровождении матери. Из анамнеза: со слов матери мальчик родился с врожденным пороком сердца. Наблюдались по месту жительства, от оперативного лечения отказались. При осмотре состояние мальчика оценивается как крайне тяжелое, сознание спутанное, одышка, отмечается многократная рвота кровью, астеничный, диффузный цианоз кожных покровов, пальцы кистей рук и ног деформированы по типу «барабанных палочек и часовых стекол». Сформирован сердечный горб по центру грудины, при аускультации грубый систолический шум во 2-межреберье, с иррадиацией в спину, гепатомегалия. Учитывая вышеизложенное, какой врожденный порок сердца предполагаете?",
+    "a": "тетрада Фалло"
+  },
+  {
+    "id": 320,
+    "q": "У большинства новорожденных к 6-месяцу после рождения происходит полное закрытие открытого артериального протока и открытого овального окна. Однако у некоторых детей позже выслушивается грубый дующий систолический шум во II межреберье, с иррадиацией в спину. Какой врожденный порок сердца предполагаете?",
+    "a": "открытый артериальный проток"
+  },
+  {
+    "id": 321,
+    "q": "На приеме у педиатра подросток 14 лет, атлетического типа телосложения, беспокоит головная боль, головокружение, преобладают размеры верхней половины туловища, и высокое артериальное давление. На ЭКГ: признаки гипертрофии левых отделов сердца. Какой врожденный порок сердца вы предполагаете?",
+    "a": "коарктация аорты"
+  },
+  {
+    "id": 322,
+    "q": "На приеме у педиатра девочка 11 лет, часто беспокоит обострение носоглоточной инфекции, артралгии периферических суставов. Область сердца грудной клетки не изменена. Границы относительной сердечной тупости в норме. При аускультации дыхание свободное, сердечные тоны ритмичные, однако отмечается ослабление 1-тона на верхушке сердца и выслушивается нежный систолический шум на верхушке сердца. Учитывая выше изложенное, недостаточность какого клапана вы предполагаете?",
+    "a": "митрального"
+  },
+  {
+    "id": 323,
+    "q": "На приеме у педиатра мальчик 11 лет, после перенесенной острой вирусной инфекции, наросла слабость, быстрая утомляемость, одышка при ходьбе, форма грудной клетки не изменена. При перкуссии границы относительной сердечной тупости расширены в поперечнике. При аускультации сердечные тоны приглушены, брадикардия. Учитывая вышеизложенное, какую патологию вы предполагаете у данного ребенка?",
+    "a": "миокардит"
+  },
+  {
+    "id": 324,
+    "q": "О каком нарушении ритма сердца идет речь, если на ЭКГ появляется внеочередной зубец Р, а за ним комплекс QRST, c неполной компенсаторной паузой?",
+    "a": "предсердная экстрасистолия"
+  },
+  {
+    "id": 325,
+    "q": "Девочка,7 лет. Поступила с жалобами на боли в правом подреберье, ахоличный кал. При объективном обследовании: кожные покровы желтого цвета с зеленоватым оттенком. В анализе крови: резкое повышение уровня прямого билирубина; наличие билирубина в моче. Предположите, какая желтуха у данного ребенка?",
+    "a": "механическая"
+  },
+  {
+    "id": 326,
+    "q": "Мальчик, 1 день. На приеме, жалобы на отсутствие мекония, рвоту после каждого кормления. Живот при осмотре резко вздут. Предположите, какой синдром у данного ребенка?",
+    "a": "пилоростеноз"
+  },
+  {
+    "id": 327,
+    "q": "Девочка, 3,5 года. Мама жалуется на снижение аппетита у ребенка, вздутый живот, частый жидкий стул, повторную рвоту. При обьективном обследовании: живот вздут, стул жидкий, желтый. В анализе кала: консистенция- жидкий, цвет- желтый, лейкоциты 5- 10- 15, слизь++. Предположите, какой синдром у данного ребенка?",
+    "a": "гастроэнтероколит"
+  },
+  {
+    "id": 328,
+    "q": "Мальчик, 7 лет. Жалобы на многократную необильную рвоту, не приносящую облегчения. Из анамнеза заболевания: ребенок с матерью попали в дорожно- транспортное происшествие, ребенок ударился головой об лобовое стекло автомобиля. Рвота какого генеза у данного ребенка?",
+    "a": "мозговая"
+  },
+  {
+    "id": 329,
+    "q": "Мальчик, 9 лет. Поступил с жалобами на потемнение цвета мочи и кала. При объективном обследовании: кожа лимонно- желтого цвета, размеры селезенки увеличены. В анализе крови: снижение уровня эритроцитов, повышение уровня непрямого и прямого билирубина. Предположите, какая желтуха у данного ребенка?",
+    "a": "гемолитическая"
+  },
+  {
+    "id": 330,
+    "q": "Девочка, 2 года. Мама жалуется на отставание в физическом развитии. При объективном обследовании: масса – 12кг., рост – 77см., подкожно-жировая клетчатка развита слабо. В анализе кала наличие нейтрального жира, мышечных волокон, крахмала. Предположите, какой синдром у данного ребенка?",
+    "a": "мальабсорбция"
+  },
+  {
+    "id": 331,
+    "q": "Девочка, 11 лет. Жалуется на зуд кожи, светлый кал. При объективном обследовании: кожа желтого цвета с серо- зеленым оттенком. В биохимическом анализе крови отмечается повышение уровня прямого билирубина и холестерина. Предположите, какой синдром у данного ребенка?",
+    "a": "холестаз"
+  },
+  {
+    "id": 332,
+    "q": "Ребенок, 10 лет. Жалобы на боли в животе, возникают в течение 30 минутпослеприемапищи,ноющегохарактера,тошноту,рвоту. Предположите, поражение какого отдела, желудочно-кишечного тракта у данного ребенка?",
+    "a": "желудок"
+  },
+  {
+    "id": 333,
+    "q": "Мальчик, 12 дней. Мама предъявляет жалобы на рвоту створоженным молоком, до 2х раз в день, запоры. Данные рентгенологических исследований: сокращение желудка по типу «песочных часов». Какой синдром у данного ребенка?",
+    "a": "пилоростеноз"
+  },
+  {
+    "id": 334,
+    "q": "Мальчик, 3 месяца. Мама предъявляет жалобы на беспокойство, увеличение живота, при кормлении ребенок подтягивает ноги к животу. При пальпации живот болезненный, вздут, ощущается урчание. Какой синдром у данного ребенка?",
+    "a": "метеоризм"
+  },
+  {
+    "id": 335,
+    "q": "Девочка, 5 лет. Мама жалуется на отсутствие стула у ребенка в течении 3х суток. Из анамнеза: аппетит сохранен, пьет мало жидкости. Объективно: общее состояние ребенка удовлетворительное, ребенок играет, бегает. При пальпации: живот умеренно напряженный, безболезненный. Укажите, какое состояние отмечается у ребенка?",
+    "a": "запор"
+  },
+  {
+    "id": 336,
+    "q": "Мальчик, 12лет. Поступил в стационар с жалобами на боль в животе, отеки на лице по утрам, повышение температуры тела до 38,5С, головную боль. При обследовании: в общем анализе мочи: количество мочи – мало, мутная, плотность 1045, белок 1,2г/л, эритроцитов -20-24-28 в поле зрения, лейкоцитов- 1-4-3 в поле зрения, слизь ++. Какой синдром вы предполагаете?",
+    "a": "мочевой"
+  },
+  {
+    "id": 337,
+    "q": "Девочка, 11 лет, поступила в стационар. Жалобы: на отечность лица по утрам, малое выделение мочи. Из анамнеза: 2 недели назад перенесла ОРВИ. Объективно: бледная, имеется отечность лица. Диурез за сутки - 220 мл. В анализе мочи: количество мочи- мало, мутная, относительная плотность 1045, белок- 2,9г/л. Проба Зимницкого: дневной диурез -140 мл, ночной - 80мл. Какой синдром у данного ребенка?",
+    "a": "отечный"
+  },
+  {
+    "id": 338,
+    "q": "Девочке, 7 лет. Поступила в стационар, жалобы со слов мамы на боли в животе, и в поясничной области. При пальпации почек отмечается болезненность в поясничной области, симптом поколачивания положительный с обеих сторон. Предположите, какой синдром у данного ребенка?",
+    "a": "болевой"
+  },
+  {
+    "id": 339,
+    "q": "Мальчик, 11 лет, поступил с жалобами на слабость, головную боль. Из анамнеза: 2 недели назад перенес ОРВИ. Объективно: бледный, АД-150/90 мм.рт.ст, ЧСС-90 ударов в минуту. Учитывая вышеуказанное, какой синдром вы предполагаете?",
+    "a": "гипертензионный"
+  },
+  {
+    "id": 340,
+    "q": "Мальчик 9 лет. Поступил в стационар с жалобами на повышение температуры тела, болезненные и частые мочеиспускания. При обследовании: в общем анализе мочи: количество мочи- мало, мутная, лейкоцитов – 14-16-18 в поле зрения, бактерии +++. Какой синдром вы предпологаете?",
+    "a": "дизурический"
+  },
+  {
+    "id": 341,
+    "q": "Девочка 11 лет, поступила с жалобами на частые мочеиспускания в ночное время. В анализе мочи по Зимницкому: дневной диурез- 190мл, ночной диурез – 600мл. О каком симптоме идет речь?",
+    "a": "никтурия"
+  },
+  {
+    "id": 342,
+    "q": "Мальчик, 12 лет, на приеме у педиатра. Жалобы на появление отеков на лице, нижних конечностях, повышение температуры тела до 37,2С, уменьшение количества мочи. Из анамнеза: 2 недели назад перенес ангину. В общем анализе мочи: белок-3,8г/л, эритроциты-10-12 в поле зрения, лейкоциты-2-3 в поле зрения, цилиндры-1-2, бактерии+. Объясните, с чем связано появление отеков у ребенка?",
+    "a": "протеинурией"
+  },
+  {
+    "id": 343,
+    "q": "Девочка, 6 лет, обратились к педиатру. Жалобы со слов мамы на отечность лица по утрам, мало мочится. Проба Мак-Клюра-Олдрича – положительная. Какой вид отеков у данного ребенка?",
+    "a": "скрытые отеки"
+  },
+  {
+    "id": 344,
+    "q": "Мальчик ,3 года, на приеме у педиатра. Жалобы со слов мамы: ребенок мало пьет жидкости, тошнота, многократная рвота, мало мочится. В общем анализе мочи: количество мочи- мало, цвет- насыщено-желтый, относительная плотность-1035, белок- 0,033, эритроциты-1-2-3 в поле зрения, лейкоциты – 2-3-4 в поле зрения. Какой симптом у данного ребенка?",
+    "a": "гиперстенурия"
+  },
+  {
+    "id": 345,
+    "q": "Девочка, 10 лет, поступила в стационар с жалобами на боль в животе, отеки на лице по утрам, повышение температуры тела до 38,5С. При обследовании: в общем анализе мочи: количество мочи – мало, мутная, плотность 1025, белок- 0,033г/л, эритроцитов -2-4-6 в поле зрения, лейкоцитов- 20-25-30 в поле зрения, слизь ++. Предположите какой симптом у данного ребенка?",
+    "a": "лейкоцитурия"
+  },
+  {
+    "id": 346,
+    "q": "Мальчик 8 лет, на приеме в стационаре. Жалобы со слов мамы: у ребенка отмечаются частые позывы к мочеиспусканию, однако со вчерашнего вечера не мочился, боли внизу живота. Мать ни с чем не связывает. Симптом поколачивания – отрицательный. Предположите, какой симптом у данного ребенка?",
+    "a": "ишурия"
+  },
+  {
+    "id": 347,
+    "q": "Девочка 11 лет, на приеме у педиатра. Жалобы: пьет большое количество жидкости, частое мочеиспускание. Мать связывает с тем, что ребенок гиперактивный. Предположите, какой симптом у данного ребенка?",
+    "a": "полиурия"
+  },
+  {
+    "id": 348,
+    "q": "На приеме у педиатра мама с девочкой 2 лет. Жалобы на частые простудные заболевания. Неоднократно получала стационарное лечение по поводу пневмонии, кишечной инфекции, перенесла корь, коклюш, ветряную оспу. Предположите, что мы можем увидеть в лейкоцитарной формуле крови у ребенка?",
+    "a": "лимфопению"
+  },
+  {
+    "id": 349,
+    "q": "На амбулаторном приеме девочка 5лет, с жалобами на затяжной кашель в течении года, периодическое повышение температуры тела, сниженный аппетит. Обращает на себя внимание бледность кожных покровов, снижение массы тела. При пальпации обнаружено увеличение надключичных, подмышечных, шейных лимфоузлов. Установлен туберкулез легких. Какие изменения в крови вы ожидаете?",
+    "a": "лимфоцитоз"
+  },
+  {
+    "id": 350,
+    "q": "Ребенок 7 лет госпитализирован на обследование, в результате чего установлена гемофилия. Наследственный дефицит какого из плазменных факторов свертывания крови наблюдается при данном заболевании?",
+    "a": "VIII"
+  },
+  {
+    "id": 351,
+    "q": "На приеме у педиатра, девочка 2лет. Жалобы на повышение температуры тела в течение 7 дней, кашель, затрудненное дыхание. Объективно: одышка смешанного характера, в легких справа ниже угла лопатки укорочение перкуторного звука, там же ослабленное дыхание, крепитация. Какое изменение в крови, можем ожидать у ребенка?",
+    "a": "нейтрофилез"
+  },
+  {
+    "id": 352,
+    "q": "На приеме у педиатра мама с девочкой 5 лет. В общем анализе крови обнаружено значительное увеличение количества незрелых клеток (лимфобластов, миелобластов). Для какого синдрома характерны такие изменения в крови?",
+    "a": "лейкемического"
+  },
+  {
+    "id": 353,
+    "q": "На приеме у педиатра ребенок 3 лет. Жалобы на частые кровотечения из носа. При обследовании -длительность кровотечения по Дюке10 минут. Проба жгута дает 15-20 петехий. Какие изменения в общем анализе крови мы увидим?",
+    "a": "тромбоцитопению"
+  },
+  {
+    "id": 354,
+    "q": "На приеме у педиатра ребенок 2 лет. Жалобы на частые кровотечения из носа. При обследовании - длительность кровотечения по Дюке 3 минуты. Время свертывания по Бюркеру начало-15мин., конец-60 минут. Для какой патологии характерны такие лабораторные изменения?",
+    "a": "коагулопатии"
+  },
+  {
+    "id": 355,
+    "q": "На приеме у педиатра ребенок 4 лет. Жалобы на частые, трудно останавливающиеся кровотечения из носа. При обследовании длительность кровотечения по Дьюке-2 минуты. Время свертывания крови по Ли -Уайту начало-15мин., конец-120 минут. Какой тип кровоизлияний характерен в указанном случае?",
+    "a": "гематомный"
+  },
+  {
+    "id": 356,
+    "q": "На приеме у педиатра девочка 12 лет. Жалобы на появление симметричной мелкоточечной сыпи геморрагического характера вокруг суставов, на разгибательных поверхностях конечностей и ягодицах. В анализах крови количество тромбоцитов, эритроцитов в пределах нормы. Проба жгута 10 петехий, длительность кровотечения по Дюке 2 минуты. Время свертывания по Ли-Уайту начало-5мин, конец-10минут. О каком типе кровоточивости следует думать?",
+    "a": "васкулитно-пурпурном"
+  },
+  {
+    "id": 357,
+    "q": "На приеме у педиатра девочка 10 лет. Жалобы на появление точечной геморрагической сыпи вокруг суставов, на разгибательных поверхностях конечностей и ягодицах. Заболела впервые. В анамнезе кровотечений не отмечалось. При обследовании длительность кровотечения по Дюке 2 минуты. Проба жгута положительная. Какие изменения в анализах крови можем ожидать?",
+    "a": "нет существенных изменений"
+  },
+  {
+    "id": 358,
+    "q": "На приеме мама с ребенком 2 лет. Жалобы на снижение аппетита, искажение вкуса (ест мел и песок) При осмотре бледен, волосы тусклые, ломкие, в физическом развитии отстает от сверстников. Какие изменения в общем анализе крови предполагаем увидеть?",
+    "a": "эритропению"
+  },
+  {
+    "id": 359,
+    "q": "В общем анализе крови обследуемого ребенка 3 лет обнаружены: эритропения, снижение уровня гемоглобина, пойкилоцитоз, анизоцитоз, микроцитоз, ретикулоцитоз. Для какого синдрома характерны такие изменения в крови?",
+    "a": "анемического"
+  },
+  {
+    "id": 360,
+    "q": "На приеме у педиатра мама с мальчиком 6 лет. Жалобы на снижение аппетита, тошноту, высыпания на коже, зуд кожи. В кале выявлены яйца аскариды. Какие изменения в общем анализе крови мы ожидаем увидеть?",
+    "a": "эозинофилию"
+  },
+  {
+    "id": 361,
+    "q": "Мальчику 8 лет. На коже нижних конечностей, в области голеностопных суставов петехиально-пурпурная сыпь, суставы отечны. В общем анализе крови: эр.4,5х 1012/л,Hb-128 г/л, лейкоциты 8,2х 10 9/л., тромб.-170 х10 9/л ., СОЭ 12 мм в час. Проба щипка-положительная, время кровотечения по Дюке-3мин. Ретракция кровяного сгустка 21 час. Тесты вторичного гемостаза в пределах нормы. Что из нижеперечисленного наиболее вероятно в данном случае?",
+    "a": "геморрагический васкулит"
+  },
+  {
+    "id": 362,
+    "q": "На приеме мама с девочкой 5 лет. Жалобы на зуд кожи, слезотечение при контакте с собаками, попугаями, кошками. Девочка больна в течение 3-х месяцев. Увеличение каких форменных элементов крови предполагаем увидеть в общем анализе крови?",
+    "a": "эозинофилов"
+  },
+  {
+    "id": 363,
+    "q": "На профилактическом приеме у педиатра мама с девочкой 13 лет. При осмотре обращает на себя внимание полнокровный вишнево – красный цвет кожи лица, шеи и кистей рук. Объясните признаком какого синдрома могут быть указанные симптомы?",
+    "a": "эритремии"
+  },
+  {
+    "id": 364,
+    "q": "На профилактическом осмотре мама с мальчиком 5 месяцев. Вскармливание грудное. Вес, рост и нервно-психическое развитие соответствуют возрасту. В общем анализе крови: эритроциты 4,2 х1012 /л., Hb-102 г/л, ЦП-0,8 ретикулоциты-19%0, лейкоциты- 7,4 х 109/л., п/я- 2%, с-20%, э-4%, л-64%, м-10%, СОЭ-4мм/час. Длительность кровотечения по Дьюке 3 мин. Время свертывания по Бюркеру начало-4 мин., конец-5 мин. Определите какой синдром имеется у ребенка?",
+    "a": "физиологической анемии"
+  },
+  {
+    "id": 365,
+    "q": "На приеме мама с девочкой, 5 лет. Больна 4-й день. При осмотре бледная, на груди и спине экхимозы разной величины. Печень и селезенка не увеличены. В анализе крови: эритроциты-2,2х1012/л., Hb-77 г/л, ЦП-0,8, ретикулоциты25%0, лейкоциты- 81,4х109/л., бластные клетки-20%, п/я- 6%, с-38%, э-0%, л-28%, м-8%, тромбоциты-14х109/л.,СОЭ-54мм/час. Длительность кровотечения по Дьюке-13 мин. Время свертывания крови по Бюркеру начало-4 мин., конец-5 минут. О какой патологии следует думать?",
+    "a": "остром лейкозе"
+  },
+  {
+    "id": 366,
+    "q": "На приеме мама с девочкой, 5 лет. Жалобы па периодически возникающие приступы в виде слабости, мышечных болей и черного цвета мочи. При осмотре кожа бледная с лимонного цвета желтушностью, печень и селезенка увеличены, лимфатические узлы не увеличены. Какие изменения в анализах крови можем ожидать?",
+    "a": "снижение осмотической резистентности эритроцитов"
+  },
+  {
+    "id": 367,
+    "q": "На амбулаторном приеме мама с ребенком, 3 месяцев. Жалобы на приступообразный кашель в течение 10 дней. Кашель усиливается в ночное время, с апноэ. Из анамнеза: ребенок не привит. Врач предполагает, что у ребенка коклюш. Какие изменения в лейкоцитарной формуле крови предполагаем увидеть?",
+    "a": "лимфоцитоз"
+  },
+  {
+    "id": 368,
+    "q": "На амбулаторном приеме у педиатра мама с девочкой 5лет. Жалобы на высыпания на коже туловища и рук, зуд кожи. Из анамнеза: высыпания на коже появляются у нее после приема сладостей. В общем анализе крови: эритроциты 5,0млн., гемоглобин 140г/л., тромбоциты 300,0тыс., лейкоциты 6,0тыс., базофилы 1%, эозинофилы 10%, нейтрофилы 43%, лимфоциты 43%,моноциты3%. СОЭ 5мм/ч. Укажите, какое изменение в данном анализе крови имеется?",
+    "a": "эозинофилия"
+  },
+  {
+    "id": 369,
+    "q": "На приеме мать с ребенком, 6-ти месяцев. Жалоб нет. Ребенок находится на грудном вскармливании. Доктор рекомендует начать вводить прикорм. Объясните, с какой целью вводится прикорм ребенку со второго полугодия, на грудном вскармливании?",
+    "a": "коррекция пищевых ингредиентов"
+  },
+  {
+    "id": 370,
+    "q": "На приеме у педиатра, мать с ребенком в возрасте 2 месяца. Жалоб нет. Масса ребенка 4800гр.(при рождении 3300гр.), длина тела 59см. Находится на грудном вскармливании. Какая рекомендация необходима в даной ситуации по кормлению ребенка?",
+    "a": "кормить грудным молоком"
+  },
+  {
+    "id": 371,
+    "q": "На приеме у педиатра, ребенок в возрасте 3 месяца. Переведен на вскармливание адаптированной молочной смесью. Какая рекомендация необходима в данной ситуации по кормлению ребенка?",
+    "a": "уменьшить число кормлений"
+  },
+  {
+    "id": 372,
+    "q": "На приеме у педиатра, мать с ребенком в возрасте 1 месяц. Жалоб нет. Ребенок получает грудное молоко. Доктор рекомендовал кормить ребенка только грудным молоком и после кормления сцеживать остатки молока. Объясните,почему мама должна сцеживать остатки молока после кормления?",
+    "a": "сохранить лактацию"
+  },
+  {
+    "id": 373,
+    "q": "На приеме ребенок, 7 месяцев. Находится на грудном вскармливании и получает прикорм в виде овощного пюре. Доктор рекомендует ввести второй прикорм - молочную кашу, но исключить каши из пшена, овса, ячменя. Объясните, какое осложнение может развиться у грудного ребенка при употреблении этих каш?",
+    "a": "глютеновая энтеропатия"
+  },
+  {
+    "id": 374,
+    "q": "На приеме ребенок, 7 месяцев. Жалоб нет. Находится на грудном вскармливании и получает прикорм в виде овощного пюре. Доктор рекомендует ввести второй прикорм- молочную кашу промышленного производства. Объясните, в чем преимущество состава «сухих каш» промышленного производства для грудных детей?",
+    "a": "обогащены витаминами"
+  },
+  {
+    "id": 375,
+    "q": "Доношенный новорожденный в возрасте 14 дней, переводится на вскармливание адаптированной молочной смесью. Определите, режим кормления данному ребенку :",
+    "a": "по требованию ребенка"
+  },
+  {
+    "id": 376,
+    "q": "На приеме, мать с ребенком в возрасте 3 месяца. Жалобы: ребенок беспокойный, прерывистый сон. Масса тела 5000гр.(при рождении 3000гр.), длина тела 56см. После кормления , при сцеживании нет молока. Доктор предполагает, что у матери мало молока. Какие рекомендации нужны матери для улучшения лактации?",
+    "a": "прием жидкости за 20 минут до кормления"
+  },
+  {
+    "id": 377,
+    "q": "На приеме ребенок, 6 месяцев. Здоров. Находится на грудном вскармливании. Доктор рекомендует начать вводить прикорм, в виде овощного пюре. Объясните матери, какое правило надо соблюдать при введении прикорма:",
+    "a": "даем малый объем, постепенно увеличивая"
+  },
+  {
+    "id": 378,
+    "q": "Ребенок, в возрасте1месяц. Находится на грудном вскармливании. Мать кормит его по требованию и ночью. Но она хочет исключить ночные кормления. Объясните матери, значение ночных кормлений:",
+    "a": "не наступает овуляция у матери"
+  },
+  {
+    "id": 379,
+    "q": "Ребенок, в возрасте 15 дней. Здоров. Находится на грудном вскармливании. При консультировании матери , доктор рекомендовал соблюдать принцип «частое прикладывание к груди». Объясните матери значение соблюдения этого принципа:",
+    "a": "обеспечение устойчивой лактации"
+  },
+  {
+    "id": 380,
+    "q": "Ребенок, 2 месяца. Здоров. Находится на грудном вскармливании. Мама хочет давать ребенку между кормлениями воду. Объясните, почему у грудного ребенка исключается дополнительное отпаивание водой?",
+    "a": "жидкость молока покрывает потребность в воде"
+  },
+  {
+    "id": 381,
+    "q": "В родильном зале новорожденный. Оценка по шкале Апгар 8-9 баллов. Ребенок приложен к груди матери. Объясните значение раннего прикладывания ребенка к груди:",
+    "a": "сокращается миометрий матки"
+  },
+  {
+    "id": 382,
+    "q": "Ребенок,2 дня. Здоров. Находится на грудном вскармливании. Доктор консультирует мать по правилам «положение ребенка» . Определите, какое правило должна соблюдать мать ребенка?",
+    "a": "тело и голова ребенка находятся в одной плоскости"
+  },
+  {
+    "id": 383,
+    "q": "Новорожденный ребенок находится в родовом зале. После осмотра неонатологом, по шкале Апгар выставлено 8/9 баллов. Ребенка укладывают на живот мамы мокреньким. Объясните, почему нельзя обтирать ребенка?",
+    "a": "улучшается теплопроводность кожи"
+  },
+  {
+    "id": 384,
+    "q": "Мальчик, 10 месяцев. Находится на грудном вскармливании и получает 3 прикорма. Объясните маме, какой режим кормления она должна соблюдать?",
+    "a": "3 прикорма чередовать с кормлением грудным молоком"
+  },
+  {
+    "id": 385,
+    "q": "Девочка, 2 месяца. Находится на искусственном вскармливании. Мама кормит ребенка адаптированной молочной смесью. Обьясните, почему нужно отдать предпочтение адаптированной молочной смеси?",
+    "a": "по составу приближена к женскому молоку"
+  },
+  {
+    "id": 386,
+    "q": "Мальчик, 5 месяцев. Находится на искусственном вскармливании. Мама собирается начать прикорм с 6 месяцев. Обьясните, почему прикорм вводится на 1 месяц раньше, чем на грудном?",
+    "a": "высокая потребность в белке"
+  },
+  {
+    "id": 387,
+    "q": "Мальчик, 1 месяц. Находится на смешанном вскармливании. Объясните маме в какое время следует дать докорм ребенку в течение дня?",
+    "a": "после кормления грудью"
+  },
+  {
+    "id": 388,
+    "q": "Объясните, благодаря какому веществу женского молока не развивается кишечная инфекция, происходит стимуляция молочнокислых бактерий в кишечнике?",
+    "a": "бифидум-фактор"
+  },
+  {
+    "id": 389,
+    "q": "Объясните, дефицит какой аминокислоты женского молока у грудного ребенка приводит к нарушению дифференцировки центральной нервной системы?",
+    "a": "таурин"
+  },
+  {
+    "id": 390,
+    "q": "На приеме у педиатра ребенок 8 месяцев. Находится исключительно на грудном вскармливании. Какие риски возникают у ребенка в связи с поздним началом введения прикорма?",
+    "a": "отставание в развитии"
+  },
+  {
+    "id": 391,
+    "q": "Объясните, вследствие чего развивается избыточная масса тела и слизистый отек подкожно-жировой клетчатки у детей с гипотиреозом?",
+    "a": "снижен синтез тиреоидных гормонов"
+  },
+  {
+    "id": 392,
+    "q": "Объясните, вследствие чего развивается экзофтальм у больных при синдроме гиперфункции щитовидной железы?",
+    "a": "давление железы на симпатический нерв"
+  },
+  {
+    "id": 393,
+    "q": "Объясните, какое основное нарушение приводит к развитию синдрома гипофункции щитовидной железы у детей – гипотиреоз?",
+    "a": "снижение синтеза тиреоидных гормонов"
+  },
+  {
+    "id": 394,
+    "q": "На приеме у педиатра девочка, 11 лет. Жалобы на похудание, повышенный аппетит, плаксивость, раздражительность, опухолевидное образование на передней поверхности шеи. При осмотре кожа влажная, тремор пальцев вытянутых рук, экзофтальм, тахикардия. Предположите, о каком синдроме идет речь?",
+    "a": "гипертиреоз"
+  },
+  {
+    "id": 395,
+    "q": "На приеме у педиатра девочка, 7 лет. Жалобы на учащенное мочеиспускание, ночной энурез, запах ацетона изо рта, жажду, выпивает до 3 литров жидкости. Мама отмечает, что моча у девочки соломенно-желтого цвета, липкая, при попадании на пол. Указанные жалобы появилисьпосле перенесенной ОРВИ. Для какого синдрома характерны указанные признаки?",
+    "a": "гипергликемии"
+  },
+  {
+    "id": 396,
+    "q": "На профилактическом приеме у педиатра ребенок, 1 мес. Жалобы на вялое сосание, запоры. Из анамнеза: родился доношенным в срок, с массой – 3800,0. Объективно: масса – 4200,0, лицо одутловатое, язык большой, высунут постоянно. Голоснизкий. Кожа желтушная, сухая, переносица запавшая. Тоны сердца приглушены, брадикардия, ЧСС -106 в мин. Для какого синдрома характерны указанные признаки?",
+    "a": "гипотиреоза"
+  },
+  {
+    "id": 397,
+    "q": "На приеме у педиатра ребенок, 11 мес. Жалобами на отставание в развитии, вялость, запоры. Из анамнеза: родился доношенным в срок, с массой – 3700, сосал вяло, пупочный остаток отпал поздно, длительно держалась желтуха, головку начал держать в 6 месяцев, страдает запорами с рождения. Объективно: масса – 6800,0, лицо одутловатое, язык большой, высунут постоянно, голоснизкий. Кожные покровы сухие, волосы редкие тусклые. Ребенок не сидит. Эмоционально слабо реагирует на мать, не произносит слогов, не гулит. Тоны сердца приглушены, брадикардия, ЧСС - 96 в мин. Определите какой синдром у ребенка?",
+    "a": "гипотиреоза"
+  },
+  {
+    "id": 398,
+    "q": "ПРИМЕНЕНИЕ В средней школе № 3, ежегодно школьники проходят медицинский осмотр. Выберите, для оценки физического развития, какой метод обследования необходимо использовать:",
+    "a": "антропометрию"
+  },
+  {
+    "id": 399,
+    "q": "На приеме девочка, 8 лет. При осмотре: вес-27кг., роост-124см., окружность головы-52см., окружность грудной клетки-60см. Для определения массы тела у девочки, какую формулу можно использовать?",
+    "a": "10,5+2n"
+  },
+  {
+    "id": 400,
+    "q": "При измерении окружности головы ребенка, на каком уровне, спереди, накладываютсантиметровую ленту?",
+    "a": "надбровных дуг"
+  },
+  {
+    "id": 401,
+    "q": "На приеме ребенок, 10 месяцев. Жалобы на беспокойство, плохой аппетит. При осмотре: кожные покровы бледные, подкожно-жировая клетчатка развита слабо, масса-6,5кг(-2СО), рост-69см.(-1СО), окружность головы- 43см., окружность грудной клетки-42см. Используя, карту прибавки веса, определите, какой зоне(полосе) соответствует вес данного ребенка:",
+    "a": "желтая"
+  },
+  {
+    "id": 402,
+    "q": "На приеме ребенок, 2года 10 месяцев. Жалобы на слабость, плохой аппетит. При осмотре: кожные покровы бледные, подкожно-жировая клетчатка развита слабо, тургор тканей снижен, масса-9,5кг.(-3СО), рост-81см.(-3СО), окружность головы- 48см., окружность грудной клетки- 50см. Используя, карту прибавки веса, определите, какой зоне(полосе) соответствует вес данного ребенка:",
+    "a": "красная"
+  },
+  {
+    "id": 403,
+    "q": "На приеме ребенок, 12 месяцев. Жалоб нет. При осмотре: активный, кожные покровы бледно-розовые, чистые; подкожно-жировая клетчатка развита умеренно, масса- 11кг.(2СО), рост-75см.(1СО), окружность головы-46см., окружность грудной клетки- 47см. Используя, карту прибавки веса, определите, какой зоне(полосе) соответствует вес данного ребенка:",
+    "a": "зеленая"
+  },
+  {
+    "id": 404,
+    "q": "Ребенок, 5 месяцев. При осмотре отмечаются подергивания мышц лица, конечностей, повышен тонус мышц, повышены рефлексы. Предполагается наличие, судорожного синдрома. Какой инструментальный метод исследования рекомендуется применить, для уточнения локализации очага поражения?",
+    "a": "эхоэнцефалография"
+  },
+  {
+    "id": 405,
+    "q": "Ребенку, 1 год. При осмотре: беспокойный, температура тела 39С, рвота, тонус мышц повышен, ригидность мышц затылка, положительные рефлексы Кернига, Брудзинского; выраженная пульсация большого родничка. Доктор предполагает, что у ребенка менингеальный синдром. Какой лабораторный анализ необходимо назначить, для уточнения наличия этого синдрома?",
+    "a": "анализ ликвора"
+  },
+  {
+    "id": 406,
+    "q": "Ребенок, 8 месяцев. При осмотре отмечается повышение температуры 39,50С; беспокойство, рвота, ригидность мышц затылка, повышен тонус мышц, большой родничок пульсирует. Доктор предполагает, наличие менингеального синдрома. Для уточнения синдрома наличие какого симптома надо определить?",
+    "a": "Брудзинского"
+  },
+  {
+    "id": 407,
+    "q": "Ребенок, 2-х лет, заболел остро – с подъема температуры до 39С, повторной рвоты, головной боли, кратковременных клонических судорог. При осмотре: состояние тяжелое – t 39,5С, сонлив, голова запрокинута назад, стонет. Положительные симптом Кернинга, Брудзинского, ригидность мышц затылка. Доктор предполагает наличие менингеального синдрома. Какой показатель в анализе спинномозговой жидкости мы увидим при данном синдроме?",
+    "a": "нейтрофилы 30клеток"
+  },
+  {
+    "id": 408,
+    "q": "Мальчик, 3 мес. Заболел остро, когда повысилась t до 39,5оС, стал вялым, периодически беспокойным, плач при прикосновении или ярком свете, частая рвота, брадикардия. Отмечается резкое выбухание большого родничка. Какой из симптомов надо определить для уточнения синдрома?",
+    "a": "Лесажа"
+  },
+  {
+    "id": 409,
+    "q": "Ребенку 10 лет, заболел остро – с повышения t до 39,5оС, повторной рвоты. Ребенок сонлив, заторможен, отмечается общая гиперестезия, ригидность затылочных мышц, положительные симптомы Брудзинского, Кернига. Предполагается наличие менингеального синдрома. Какой показатель в анализе спинномозговой жидкости отмечается при данном синдроме?",
+    "a": "нейтрофилы 40кл"
+  },
+  {
+    "id": 410,
+    "q": "Ребенок, 3 года. При осмотре ребенок в сознании, отмечаются подергивания мышц лица, конечностей, повышен тонус мышц, повышены рефлексы, температура тела 36,6С. Какой инструментальный метод исследования рекомендуется применить для уточнения локализации очага поражения?",
+    "a": "эхоэнцефалография"
+  },
+  {
+    "id": 411,
+    "q": "Мальчик,11лет поступил в приемное отделение областной больницы. Со слов мамы на кожных покровах нижних конечностей появились высыпания, после игры в футбол. Объективно: кожные покровы бледно-розовой окраски на нижних конечностях, области голеностопных суставов мелкоточечные высыпания, при надавливании не исчезают. Выберите, какой из ниже перечисленных симптомов необходимо проверить?",
+    "a": "симптом Кончаловского-Румпеля"
+  },
+  {
+    "id": 412,
+    "q": "Девочка, 10лет. При осмотре на кожных покровах в области коленных суставов, голеней отмечается геморрагическая сыпь, местами сливающаяся; при пальпации безболезненная, не выступает над поверхностью кожи, при надавливании не исчезает. Какое качество кожи необходимо проверить для выявления патологии ?",
+    "a": "проницаемость"
+  },
+  {
+    "id": 413,
+    "q": "На приеме мама с ребенком , 4месяца. Жалобы на жидкий стул в течение 4 дней, неоднократную рвоту, снижение аппетита. Объективно: кожные покровы бледные, сухие, тургор тканей снижен, живот вздут, чувствителен при пальпации. Укажите место, где будете определять тургор мягких тканей данного ребенка :",
+    "a": "на животе"
+  },
+  {
+    "id": 414,
+    "q": "Девочка, 3х лет. Жалобы вялость, жидкий стул до 10раз в день, отсутствие мочи в течение 14 часов. Из анамнеза: ребенок болеет в течение 3х дней. Заболевание началось с появления жидкого стула до 8-10 раз. На момент осмотра ребенок слабый, глаза запавшие, жидкость не пьет, кожа сухая. У ребенка признаки синдрома обезвоживания. Какое качество кожи надо определить, для подтверждения наличия данного синдрома?",
+    "a": "эластичность"
+  },
+  {
+    "id": 415,
+    "q": "На приеме у педиатра мальчик, 10 дней. На момент осмотра: Ребенок активный, на осмотр реагирует беспокойством. Грудь матери сосет слабо. Кожные покровы и склеры желтушной окраски. Какой биохимический показатель крови необходимо проверить у данного ребенка?",
+    "a": "биллирубин"
+  },
+  {
+    "id": 416,
+    "q": "Мальчик,14лет. Жалобы на появление высыпаний, на верхних конечностях. Объективно: кожные покровы бледной окраски, на верхних конечностях, в области лучезапястных суставов с обеих сторон мелкоточечные высыпания, багрового цвета, местами сливающиеся, при надавливании не исчезают. Доктор предполагает наличие васкулитно-пурпурного типа кровоточивости. Какое качество кожи необходимо проверить для подтверждения наличия этого синдрома?",
+    "a": "проницаемость"
+  },
+  {
+    "id": 417,
+    "q": "Ребенку 4 года. При осмотре: голова большая (окружность 55 см), большой родничок закрыт, выражена лобная кость, подкожно-жировая клетчатка истончена, мышечная гипотония, искривления нижних конечностей (Х-образное). Уровень, какого элемента в анализе крови, нужно определить, для уточнения синдрома?",
+    "a": "кальция"
+  },
+  {
+    "id": 418,
+    "q": "Ребенку 2 года. При осмотре: грудная клетка воронкообразная, большой родничок закрыт, выражена лобная кость на голове, подкожно-жировая клетчатка истончена, мышечная гипотония, искривления нижних конечностей (О-образное), имеет 8 зубов. Уровень какого элемента в анализе крови, нужно определить для уточнения синдрома?",
+    "a": "кальция"
+  },
+  {
+    "id": 419,
+    "q": "Ребенку 3,5 года. При осмотре: грудная клетка клиновидная, большой родничок закрыт, выражена лобная кость на голове, подкожно-жировая клетчатка   истончена,   мышечная   гипотония,   искривления  нижних конечностей (О-образное), имеет 8 зубов. Уровень какого элемента в анализе крови, нужно определить для уточнения синдрома?",
+    "a": "кальция"
+  },
+  {
+    "id": 420,
+    "q": "На приеме у педиатра девочка, 14 месяцев. Со слов мамы, девочка самостоятельно не ходит, не стоит и не говорит. При осмотре: отмечается мышечный тонус снижен, большой родничок 1,5*1,5см, грудная клетка воронкообразная, вальгусное искривление ног, зубов всего 4. Уровень, какого элемента в анализе крови, нужно определить для уточнения синдрома?",
+    "a": "фосфора"
+  },
+  {
+    "id": 421,
+    "q": "На приеме у педиатра девочка, 1 год. Со слов мамы, девочка самостоятельно не ходит, не стоит и не говорит. При осмотре: мышечный тонус снижен, большой родничок 1,5*1,5см, грудная клетка воронкообразная, рахитический кифоз, вальгусное искривление ног, зубов всего 3. Уровень, какого элемента в анализе крови, нужно определить для уточнения синдрома?",
+    "a": "фосфора"
+  },
+  {
+    "id": 422,
+    "q": "На приеме у педиатра мальчик 1,5 года. Со слов мамы ребенок самостоятельно не сидит, не ходит, не говорит. При осмотре: отмечается увеличение лобных и теменных бугров, рахитические четки, воронкообразная деформация грудной клетки, варусная деформация нижних конечностей. Уровень какого элемента в крови, нужно определить для уточнения синдрома?",
+    "a": "фосфора"
+  },
+  {
+    "id": 423,
+    "q": "На приеме в центре семейной медицины, ребенок 1,5года. Жалобы: повышение температуры тела до 38,5 0С, кашель малопродуктивный, одышка. Обьективно: кожные покровы бледные, частота дыхания -48 в минуту, Spo2 90 %, при перкуссии –притупление в нижних отделах с обеих сторон, при аускультации – дыхание ослаблено, мелкопузырчатые хрипы с обеих сторон. Какой дополнительный метод исследования, необходимо назначить в центре семейной медицины, для уточнения наличия синдрома?",
+    "a": "рентгенография"
+  },
+  {
+    "id": 424,
+    "q": "На приеме в центре семейной медицины, ребенок ,3,5года. Жалобы на повышение температуры тела до 40, 0С, кашель, одышку, снижение аппетита. Объективно: кожные покровы землистой окраски. Частота дыхания 45 в минуту, дыхание поверхностное. При пальпации грудная клетка ригидная, болезненна; при перкуссии определяется линия Эллиса-Дамуазо, слева -тимпанический звук, справа – тупой на уровне 4 ребра. Какой дополнительный метод исследования необходимо назначить в центре семейной медицины, для уточнения наличия данного синдрома?",
+    "a": "рентгенография"
+  },
+  {
+    "id": 425,
+    "q": "На приеме в центре семейной медицины, ребенок 9 лет. Жалобы на приступообразный кашель, одышку .Из анамнеза: болен в течении 2 дней, ребенок начал кашлять после приема сладостей. Объективно: кожа бледная, цианоз носогубного треугольника. Частота дыхания 35 в минуту. Spo 2 89 %, при перкуссии –коробочный звук над всей поверхностью легких, при аускультации: жесткое дыхание, сухие свистящие хрипы с обеих сторон. Какой дополнительный метод исследования необходимо провести, в первую очередь, для уточнения наличия данного синдрома?",
+    "a": "рентгенография"
+  },
+  {
+    "id": 426,
+    "q": "На приеме ребенок, 1,5года. Жалобы: повышение температуры тела до 38,5 0С, кашель малопродуктивный, одышка. Объективно: кожные покровы бледные, частота дыхания -48 в минуту, Spo2 90 %, при перкуссии – притупление в нижних отделах с обеих сторон, при аускультации – дыхание ослаблено, мелкопузырчатые хрипы с обеих сторон. Какой дополнительный метод исследования необходимо провести, в первую очередь, для уточнения наличия данного синдрома?",
+    "a": "рентгенография"
+  },
+  {
+    "id": 427,
+    "q": "На приеме ребенок, 10 лет. Поступил с жалобами на повышение температуры тела до 40, 0С, кашель, одышку, снижение аппетита, боль в грудной клетке. Объективно: кожные покровы землистой окраски. Частота дыхания 45 в минуту, дыхание поверхностное. При пальпации грудная клетка ригидная, болезненна; при перкуссии определяется линия Эллиса-Дамуазо, слева -тимпанический звук, справа – тупой на уровне 4 ребра. Какой дополнительный метод исследования необходимо назначить в центре семейной медицины, для уточнения наличия данного синдрома?",
+    "a": "рентгенография"
+  },
+  {
+    "id": 428,
+    "q": "Ребенок, 9 лет. Поступил с жалобами на приступообразный кашель, одышка.Из анамнеза: болен в течении 2 дней, ребенок начал кашлять после приема цитрусовых. Объективно: кожа бледная, цианоз носогубного треугольника. ЧД 35 в минуту. Spo 2 89 %, при перкуссии –коробочный звук над всей поверхностью легких, при аускультации: жесткое дыхание, сухие свистящие хрипы с обеих сторон. Какой дополнительный метод исследования необходимо назначить в центре семейной медицины, для уточнения наличия данного синдрома?",
+    "a": "рентгенография"
+  },
+  {
+    "id": 429,
+    "q": "На приеме ребенок, 5 лет. Жалобы на частый, продолжительный сухой кашель, одышку. Болен в течение двух недель. Жалобы появились после приема в пищу семечек. Объективно: цианоз губ и носогубного треугольника, ЧД- 30 в минуту, дыхание частое, поверхностное, с участием мышц плечевого пояса и живота. В легких дыхание жесткое, влажные хрипы. Был выставлен предварительный диагноз: инородное тело. Для уточнения диагноза, какой дополнительный метод исследования рекомендуется провести:",
+    "a": "бронхоскопия"
+  },
+  {
+    "id": 430,
+    "q": "На приеме ребенок, 9лет. Болен в течение одной недели. Жалобы на повышение температуры до 39 0С, слабость, кашель малопродуктивный, одышку при физической нагрузке. Объективно: кожа бледная, частота дыхания-26 в минуту; при перкуссии- справа притупление легочного звука; при аускультации- справа ослабление везикулярного дыхания, крепитация. Доктор предполагает, что у ребенка синдром уплотнения легочной ткани. Для подтверждения наличия данного синдрома у ребенка, какой симптом рекомендуется проверить:",
+    "a": "Домбровской"
+  },
+  {
+    "id": 431,
+    "q": "На приеме ребенок, 10лет. Доктор на основании расспроса и объективного обследования, предполагает наличие у него увеличение бронхопульмональных лимфатических узлов. Для подтверждения наличия данной патологии у ребенка, какой симптом рекомендуется проверить:",
+    "a": "Аркавина"
+  },
+  {
+    "id": 432,
+    "q": "На приеме девочка, 12 лет. Болеет в течение трех недель. Жалобы на малопродуктивный кашель, периодическое повышение температуры тела до 38 0С, слабость, одышку при физической нагрузке. Объективно: кожа бледная, при перкуссии-притупление справа на уровне 3-4 грудных позвонков; при аускультации- дыхание справа ослаблено. Доктор предполагает наличие у ребенка увеличение бифуркационных лимфатических узлов. Для подтверждения данного предположения, какой симптом рекомендуется проверить:",
+    "a": "Кораньи"
+  },
+  {
+    "id": 433,
+    "q": "На приеме мальчик, 9 лет. Жалобы на кашель, слабость, повышение температуры до 38 0С. Болен в течение двух недель. Объективно: кожные покровы бледные, сухие; при перкуссии- притупление легочного звука на уровне 3-4 грудных позвонков с обеих сторон; при аускультации- дыхание ослаблено с обеих сторон на уровне 3-4 грудных позвонков. Доктор предполагает наличие у мальчика увеличение бифуркационных лимфатических узлов. Для подтверждения данного предположения, какой симптом рекомендуется проверить:",
+    "a": "Дэспина"
+  },
+  {
+    "id": 434,
+    "q": "На приеме ребенок, 5 лет. Жалобы на повышение температуры тела до 40 С., одышку, кашель малопродуктивный. Объективно: цианоз лица, ЧД- 30 в минуту, при пальпации: усиление голосового дрожания справа; при перкуссии: притупление легочного звука справа под углом лопатки; при аускультации- ослабление везикулярного дыхания справа. Доктор предполагает наличие синдрома уплотнения легочной ткани. Какой дополнительный симптом можно проверить. для уточнения данной патологии?",
+    "a": "Домбровской"
+  },
+  {
+    "id": 435,
+    "q": "На приеме у педиатра мама с ребенком 9 месяцев. Жалобы со слов матери: на быструю утомляемость во время кормления, слабость. Обьективно: ребенок отстает в физическом развитии, одышка, умеренный диффузный цианоз кожных покровов, в области сердца отмечается деформация в виде горба. Какое инструментальное обследование, наиболее информативно для уточнения диагноза?",
+    "a": "эхокардиография"
+  },
+  {
+    "id": 436,
+    "q": "В приемное отделение детской клинической больницы обратилась мама с ребенком, 3-х лет, с жалобами на частые бронхолегочные заболевания. При осмотре ребенок пониженного питания, отмечается влажный кашель, умеренная одышка и цианоз носогубного треугольника, форма грудной клетки не изменена, однако при аускультации над легкими выслушиваются крепитирующие хрипы, и слева от грудины стойкий систолический шум с иррадиацией в спину. Какое инструментальное обследование, наиболее информативно для уточнения диагноза?",
+    "a": "эхокардиография"
+  },
+  {
+    "id": 437,
+    "q": "В кардиологическое отделение поступил ребенок, 5 лет. Из анамнеза: рос и развивался хорошо. Перенес тяжелую форму вирусной инфекции 2 недели назад. При поступлении сознание ребенка сопорозное, на вопросы не отвечает, отмечается диффузный цианоз кожных покровов, одышка, слабость. При перкуссии расширение границ относительной сердечной тупости во все стороны, при аускультации глухость сердечных тонов, аритмия, умеренная гепатомегалия. Какое инструментальное обследование, наиболее информативно для уточнения диагноза?",
+    "a": "Эхокардиография"
+  },
+  {
+    "id": 438,
+    "q": "На профилактический прием к педиатру пришла группа школьников в возрасте 12 лет. Какую формулу вы используете для расчета систолического артериального давления для данного возраста?",
+    "a": "90+2n"
+  },
+  {
+    "id": 439,
+    "q": "На приеме у педиатра ребенок 6 лет, вялый, отмечается синюшность носогубного треугольника, одышка, кашель, перкуторно расширение границ сердца влево, при аускультации сердечные тоны учащены и глухие. Какой из методов исследования необходимо назначить для уточнения синдрома?",
+    "a": "эхокардиография"
+  },
+  {
+    "id": 440,
+    "q": "На приеме у педиатра девочка 6 лет, в физическом развитии не отстает, однако в последнее время частые обострения бронхита, лечится амбулаторно, должного эффекта нет. При перкуссии границы относительной сердечной тупостисмещенывлево.Приаускультациивыслушиваетсядующий систолодиастолический шум во II межреберье, и между лопатками. Какой из методов исследования необходимо назначить для уточнения синдрома?",
+    "a": "эхокардиография"
+  },
+  {
+    "id": 441,
+    "q": "На приеме у участкового педиатра подросток. Жалуется на частые головные боли, головокружение, покраснение лица. При осмотре физическое развитие асимметричное, преобладают размеры верхней половины туловища, голова большая, пальпаторно верхушечный толчок разлитой, смещен влево и вниз, артериальное давление на руках выше чем на ногах. Аускультативно во II межреберье справа выслушивается систолический шум. Какой из методов исследования необходимо назначить для уточнения синдрома?",
+    "a": "эхокардиография"
+  },
+  {
+    "id": 442,
+    "q": "На приеме у кардиолога девочка, 9-лет. В физическом развитии не отстает, однако стали беспокоить нарастание слабости, кашель на фоне частых обострений носоглоточной инфекции и одышка при физической нагрузке. Какой метод исследования необходимо назначить с целью уточнения синдрома?",
+    "a": "эхокардиография"
+  },
+  {
+    "id": 443,
+    "q": "На приеме у педиатра мама с ребенком 8 лет. Предъявляют жалобы на чувство страха, сильного сердцебиения, нехватки воздуха при эмоциональном возбуждении. Физикальные данные ребенка соответствует возрастным параметрам. Какой метод исследования необходимо назначить с целью уточнения синдрома?",
+    "a": "электрокардиография"
+  },
+  {
+    "id": 444,
+    "q": "У ребенка 12 лет при поступлении в стационар состояние оценивается ближектяжелому,отмечаютсявыраженныеотекинаногах,с распространением на живот, одышка, кашель. Аускультативно над легкими выслушиваются крепитирующие хрипы, сердечные тоны приглушены, ритм учащен, печень выступает более 4 см из-под правого подреберья, спленомегалия. Какой метод исследования необходимо назначить с целью уточнения синдрома?",
+    "a": "эхокардиография"
+  },
+  {
+    "id": 445,
+    "q": "Девочка,11 лет. Предъявляет жалобы на боли в животе через 45мин после еды и в ночное время, отрыжку, изжогу, рвоту «кофейной гущей», слабость, головокружение. Из анамнеза: 9 месяцев назад, получала лечение по поводу язвенной болезни желудка, со вчерашнего дня отмечает черный стул. Какое исследование необходимо использовать для выявления локализации кровотечения?",
+    "a": "эзофагогастродуоденоскопия"
+  },
+  {
+    "id": 446,
+    "q": "Девочка,10 лет. Обратилась с жалобами на рвоту, потемнение мочи, светлый кал, вялость, снижение аппетита. Объективно: кожные покровы и склеры окрашены в желтый цвет, при пальпации край печени выступает из подреберья на 1,5- 2 см., болезнен. Какой лабораторный тест необходим для уточнения диагноза?",
+    "a": "анализ крови на билирубин"
+  },
+  {
+    "id": 447,
+    "q": "Мальчик, 4 года. При объективном обследовании: кожные покровы бледные, подкожно-жировая клетчатка развита слабо. Вес-16 кг., рост-116см. Живот вздут, болезнен. Стул обильный, блестящий. Врачом выставлен предварительный диагноз: Синдром мальабсорбции. Какой лабораторный тест необходимо применить для подтверждения диагноза?",
+    "a": "копрологическое исследование кала"
+  },
+  {
+    "id": 448,
+    "q": "Мальчик, 15 лет. Поступил с жалобами на опоясывающие боли, иррадиирующие в левую руку, лопатку, спину, рвоту, отсутствие аппетита, диарею. Из анамнеза: ребенок часто питается фаст-фудом, пьет газированные напитки. Объективно: у ребенка вынужденная поза. При пальпации резкая болезненность в точке Мейо- Робсона. Какой показатель в биохимическом анализе крови необходимо проверить для уточнения диагноза?",
+    "a": "альфа-амилаза"
+  },
+  {
+    "id": 449,
+    "q": "На приеме в поликлинике ребенок, 9 лет. Жалобы на снижение аппетита, тошноту, рвоту, боль в правом подреберье продолжительную, ноющего характера. При обследовании: языкобложен налетом, живот мягкий   болезнен   в   правом   подреберье,   край   печени   у края реберной дуги, мягкий. Стул темный, моча светло-желтая. Выберите, какой метод исследования необходимо провести для подтверждения диагноза?",
+    "a": "ультразвуковое исследование"
+  },
+  {
+    "id": 450,
+    "q": "Мальчик, 12 лет. Жалобы на затруднение прохождения пищи. Аппетит сохранен. При обследовании: кожные покровы и слизистые оболочки чистые; живот мягкий, безболезнен. Стул темный, моча светло-желтая. Укажите, какой метод исследования необходимо применить для подтверждения диагноза?",
+    "a": "эзофагогастородуоденоскопия"
+  },
+  {
+    "id": 451,
+    "q": "Мальчик, 7 лет. Жалуется на тошноту, рвоту, отсутствие аппетита, головную боль, боль в животе, изменение цвета кала и мочи. Из анамнеза: одноклассник лечился в стационаре с диагнозом: Вирусный гепатит А. Объективно: кожные покровы и склеры окрашены в желтый цвет. При пальпации: печень болезненная, выступает из подреберья на 3 см. Какой показатель в анализе крови поможет в постановке диагноза?",
+    "a": "билирубин"
+  },
+  {
+    "id": 452,
+    "q": "Девочка 7 лет. Поступила в стационар, с жалобами на: массивные отеки туловища. Объективно: кожа бледная, АД-100/60мм.рт. ст., отмечаются выраженные отеки на лице, нижних конечностях, в области живота, пупок сглажен, симптом флюктуации положительный. Какой биохимический показатель крови необходимо проверить для уточнения диагноза?",
+    "a": "альбумин"
+  },
+  {
+    "id": 453,
+    "q": "В стационар поступила девочка 6 лет, со слов мамы жалобы на: изменения цвета мочи в виде «мясных помоев». В общем анализе мочи: белок-0,65г/л, эритроциты-сплошь, лейкоциты-3-4 в поле зрения. Предположите, какой дополнительный метод обследования необходим для уточнения синдрома?",
+    "a": "проба по Нечипоренко"
+  },
+  {
+    "id": 454,
+    "q": "Мальчик 2 месяца. Поступил с мамой в стационар, жалобы со слов матери на раздражительность, потливость, облысение затылка. Из анамнеза: мать в течении месяца дает ребенку по 8 капель витамина Д. Какой дополнительный метод исследования мочи необходимо назначить для уточнения синдрома?",
+    "a": "проба Сулковича"
+  },
+  {
+    "id": 455,
+    "q": "Девочка 9 лет, поступила в стационар.Жалобы: на отечность лица по утрам, малое выделение мочи. Из анамнеза: 2 недели назад перенесла ОРВИ. Объективно: бледная, имеется отечность лица. Диурез за сутки - 220 мл. В анализе мочи: количество мочи- мало, мутная, относительная плотность 1045, белок- 2,9г/л. Какой дополнительный метод обследования необходимо назначить для уточнения синдрома?",
+    "a": "проба по Зимницкому"
+  },
+  {
+    "id": 456,
+    "q": "Мальчик 6 лет. Поступил в стационар, с жалобами на боли в животе, и в поясничной области. При пальпации почек отмечается болезненность в поясничной области. Какой симптом необходимо проверить для уточнения синдрома?",
+    "a": "Пастернацкого"
+  },
+  {
+    "id": 457,
+    "q": "Мальчик 9 лет. Поступил в стационар с жалобами на повышение температуры тела, ноющие боли в пояснице, частые болезненные мочеиспускания. Из анамнеза: неделю назад перенесла ОРВИ. Какой метод обследования необходимо назначить, при поступлении, для уточнения синдрома?",
+    "a": "общий анализ мочи"
+  },
+  {
+    "id": 458,
+    "q": "Девочка 10 лет, обратилась в стационар с массивными отеками на лице, туловище, конечностях, АД-110/60мм.рт.ст. В общем анализе мочи: белок-3,1г/л, лейкоциты-2-3 в поле зрения, эритроциты 5-7 в поле зрения. Какой из нижеперечисленных методов обследования позволяет вам оценить фильтрационную функцию почек?",
+    "a": "проба Реберга"
+  },
+  {
+    "id": 459,
+    "q": "На амбулаторном приеме девочка, 3 месяца. Жалобы на одышку, малопродуктивный кашель в течение 3 дней, повышение температуры. Объективно: в легких дыхание жесткое, сухие хрипы с обеих сторон. Доктор предполагает наличие синдрома обструкции бронхов. Какой показатель в общем анализе крови поможет в обосновании данного предположения?",
+    "a": "количество лейкоцитов"
+  },
+  {
+    "id": 460,
+    "q": "На профилактическом приеме мама с девочкой 8 лет. У ребенка выявлено: в общем анализе крови эритроциты 2.5х10 ², гемоглобин 50г/л, лейкоциты 50х10., в лейкоцитарной формуле бластные клетки 80%, СОЭ 60мм.час, тромбоцитопения. Какой вид исследования следует провести ребенку для подтверждения предполагаемой патологии?",
+    "a": "миелограмма"
+  },
+  {
+    "id": 461,
+    "q": "На приеме у педиатра девочка, 10 лет. Жалобы на высыпания на теле, боли в голеностопном и коленном суставе справа. При осмотре: кожные покровы бледные, отмечается симметрично расположенная геморрагическая сыпь на разгибательных поверхностях кожи нижних конечностей. Длительность кровотечения по Дюке-2 мин., время свертывания крови по Бюркеру начало-2,5 конец-5минут. Какое дополнительное исследование рекомендуется провести девочке, для уточнения описанного синдрома?",
+    "a": "проба Кончаловского-Румпеля-Лееде"
+  },
+  {
+    "id": 462,
+    "q": "На приеме у педиатра мама с девочкой 6 лет. Жалобы на частые, непродолжительные кровотечения из носа, синяки на нижних конечностях. При осмотре: кожные покровы бледные, отмечается единичные экхимозы разной величины на нижних конечностях и кровоизлияния на мягком небе. На приеме определили длительность кровотечения по Дюке 8 мин. Время свертывания крови по Бюркеру начало-2,5мин конец-5мин. Какой показатель общего анализа крови может быть использован для уточнения синдрома?",
+    "a": "тромбоциты"
+  },
+  {
+    "id": 463,
+    "q": "На амбулаторном приеме мама с девочкой 5лет. Жалобы на вялость, сонливость, снижение аппетита, выпадение волос, ломкость ногтей. При осмотре: кожа и видимые слизистые бледные, кожа сухая, ЧД 20 в мин., ЧСС 100 в мин., при аускультации выслушивается нежный систолический шум на верхушке сердца. Для подтверждения описанного синдрома какой показатель в анализе крови необходимо определить?",
+    "a": "гемоглобин"
+  },
+  {
+    "id": 464,
+    "q": "На приеме у педиатра мама с мальчиком 6 лет. Жалобы на частые, продолжительные кровотечения из носа, кровоизлияния в подкожную клетчатку и в суставы. Из анамнеза: у дяди отмечаются частые кровотечения из носа и слизистых оболочек, кровоизлияния в мягкие ткани и суставы. При осмотре: кожные покровы бледные, отмечается кровоизлияние в правый коленный сустав; сустав увеличен в размере, сине-красного цвета, отечный, болезнен при движении. Какой показатель необходимо определить в анализе крови для подтверждения указанной патологии?",
+    "a": "время свертывания крови"
+  },
+  {
+    "id": 465,
+    "q": "На амбулаторном приеме мама с девочкой 8 лет. Жалобы на слабость, головную боль, «мушки» перед глазами, плохой аппетит, тахикардию при физической нагрузке. Кожа и слизистые оболочки очень бледные, сухие, ЧСС-100 в мин, при аускультации сердца, на верхушке тоны ослаблены, нежный систолический шум, АД-90/60 мм. рт. ст. В общем анализе крови: эр.-2,8 млн., Hb-70г/л, ЦП-0,77. Какой показатель необходимо использовать для оценки функционального состояния костного мозга?",
+    "a": "ретикулоциты"
+  },
+  {
+    "id": 466,
+    "q": "На приеме у педиатра мама с мальчиком 12 лет. Жалобы на кровоизлияния в коленный сустав и в мягкие ткани ног, частые кровотечения из носа и десен. Доктор предполагает наличие у него геморрагического синдрома. Какой показатель в анализе крови рекомендуется определить для подтверждения наличия данного синдрома?",
+    "a": "первичный и вторичный гемостаз"
+  },
+  {
+    "id": 467,
+    "q": "На приеме мальчик, 4 года. Жалобы: слабость, повышение температуры тела до субфебрильных цифр, желтушность кожи и изменение цвета мочи. Моча приобретает черный цвет. При обследовании: кожа и слизистые оболочки лимонно-желтого цвета, селезенка плотная, увеличена. Какой показатель в анализе крови рекомендуется определить для уточнения наличия описанной патологии?",
+    "a": "осмотическую резистентность эритроцитов"
+  },
+  {
+    "id": 468,
+    "q": "На прием обратилась мама с девочкой 10 лет, которую в горах укусила змея. После укуса прошло 4 часа. Какой показатель в анализе крови необходимо определить для исключения синдрома гемолиза?",
+    "a": "осмотическую резистентность эритроцитов"
+  },
+  {
+    "id": 469,
+    "q": "На прием в клинику обратилась мама с мальчиком 6 лет. Жалобы на головную боль, боль в мышцах, температура тела 38,1. При осмотре: кожные покровы бледные с лимонно-желтым оттенком, печень и селезенка увеличены, моча черного цвета. Подобные приступы отмечаются 1-2 раза в год. Выберите синдром, о котором идет речь в данном случае:",
+    "a": "гемолитический"
+  },
+  {
+    "id": 470,
+    "q": "На амбулаторном приеме девочка, 12 лет. Жалобы на слабость, головную боль, плохой аппетит, ломкость ногтей, выпадение волос. Объективно: кожа и слизистые оболочки бледные, сухие, чсс-100 в мин., АД-90/60 мм. рт. ст., нежный систолический шум на верхушке сердца. Доктор предполагает наличие синдрома анемии. Какой показатель необходимо определить в общем анализе крови для выявления степени анемии?",
+    "a": "уровень гемоглобина"
+  },
+  {
+    "id": 471,
+    "q": "На приеме у педиатра мама с мальчиком 4 лет. Жалобы на повышение температуры тела, кашель, одышку. Объективно: дыхание частое, аритмичное, в легких дыхание справа ослаблено, выслушиваются влажные хрипы. Доктор предполагает наличие синдрома поражения легких. Какой показатель следует определить в общем анализе крови, для подтверждения данного предположения?",
+    "a": "количество лейкоцитов"
+  },
+  {
+    "id": 472,
+    "q": "На приеме у педиатра мама с мальчиком 1,5лет. Жалобы на частые, продолжительные кровотечения из носа, кровоизлияния в суставы при падении. Из анамнеза: родители здоровы, но по линии мамы брат умер в возрасте 3 лет от кровотечения. При осмотре: кожные покровы бледные, отмечается кровоизлияние в правый коленный сустав. Какой показатель в анализе крови надо определить, чтобы обосновать наличие патологии?",
+    "a": "VIII фактор"
+  },
+  {
+    "id": 473,
+    "q": "Ребенок родился массой 3100,0, длиной 50 см. В настоящуу время ему 5 недель, имеет массу 3600,0. Мать обратилась к врачу, так как ребенок стал беспокойным, редко мочится. Мать обепокоена, что у нее недостаточно молока. Ребенок высасывает 60-70 мл молока. После кормления при сцеживании молока нет. Решить: достаточна ли масса у ребенка? Достаточно ли молока у матери? Для этого рассчитайте обьемным способом суточный обьем пищи, затем на одно кормление. Решить вопрос, нуждается ли ребенок в докорме и сколько?",
+    "a": "30,0"
+  },
+  {
+    "id": 474,
+    "q": "Ребенку 2 месяца. Масса при рождении 3400гр., длина 54 см. Находится на грудном вскармливании. Мама обратилась к доктору с жалобой: ребенок стал беспокойным, стул и мочеиспускание стали реже. При осмотре: ребенок активный, кожа чистая, розовая; подкожно-жировая клетчатка развита умеренно, масса 4800гр., длина 60см . Какие рекомендации маме ребенка необходимо дать?",
+    "a": "частое кормление и ночью"
+  },
+  {
+    "id": 475,
+    "q": "Ребенку 3 месяца. Родился массой 3300,0, длиной 52 см, доношенным в срок. Находился на грудном вскармливании, но у мамы хроническое заболевание и был переведен на искусственное вскармливание. В настоящее время масса 4600,0, длина 58 см. Рассчитайте суточный обьем пищи и на одно кормление (мл.):",
+    "a": "125-130"
+  },
+  {
+    "id": 476,
+    "q": "Ребенок родился массой 3400,0. В настоящее время уму 3 месяца. Мама обратилась к семейному врачу с просьбой выписать ребенку дополнительное питание, так как она должна выйти на работу и будет отсутствовать дома в течение 6,5 час. Ребенка кормят 6 раз, каждые 3,5 часа. Какой совет Вы дадите по кормлению ребенка? Рассчитать массу ребенка, суточный обьем пищи и на одно кормление. Составьте диету, исходя из приведенных выше условий?",
+    "a": "9:30 и 16:30 НАН1"
+  },
+  {
+    "id": 477,
+    "q": "Ребенку 4,5 месяца. Родился массой 3400,0, длиной 53 см. С 3-х месяцев находится на искусственном вскармливании, у мамы после тяжелой пневмонии пропало молоко, живут в деревне, есть корова, кормит коровьим молоком 7 раз в сутки. В настоящее время масса 7000,0, длина 62,5 см. Дайте рекомендации по питанию, продолжать давать коровье молоко? Рассчитайте массу, суточный обьем пищи обьемным способом, на одно кормление и сколько раз в сутки?",
+    "a": "НАН1 6 раз в день по 200,0"
+  },
+  {
+    "id": 478,
+    "q": "Ребенку 6 месяцев. Родился массой 3500,0, длиной 54 см. находится на грудном вскармливании, грудного молока достаточно. Растет здоровым, начинает сидеть, говорит слоги. В настоящее время масса 8300,0, длина 70,5. Рассчитайте: соответствует ли масса возрастной норме, суточный объём пищи. Дайте рекомендации маме о дальнейшем питании, какой дать первый прикорм, в какое время и какое количество прикорма должен получать этот ребенок на 6-м месяце?",
+    "a": "овощное пюре 150,0 до груди во 2-е кормление"
+  },
+  {
+    "id": 479,
+    "q": "Ребенку 10 дней жизни. Родился доношенным в срок массой 3100,0, длиной 52 см. Мать написала отказ от ребенка, он находится на обследовании в отделении патологии новорожденных. Медперсонал обеспечивает уход и кормление ребенка. Рассчитайте количество смеси, необходимого для кормления в сутки, на одно кормление и название смеси (мл)?",
+    "a": "NAN1 65-70"
+  },
+  {
+    "id": 480,
+    "q": "Ребенку 1 месяц. Родился доношенным в срок массой 2800,0, длиной 50 см. находится на искусственном вскармливании, у мамы пропало молоко. Рассчитайте: долженствующую массу, суточный объём смеси объёмным способом и на одно кормление (мл)?",
+    "a": "NAN1 120-125"
+  },
+  {
+    "id": 481,
+    "q": "Новорожденному 5 дней. Родился недоношенным в сроке 36 недель массой 2300,0, длиной 45 см. Сосательный рефлекс слабый, быстро устает, поэтому мама кормит сцеженным грудным молоком. Рассчитайте суточный объём молока на 10 кормлений и на одно кормление (мл)?",
+    "a": "15-20"
+  },
+  {
+    "id": 482,
+    "q": "Ребенку 6,5 месяцев. Мама с ребенком на приеме у семейного врача. Из анамнеза: ребенок от первой нормально протекавшей беременности и родов. Растет здоровым, ни разу не болел. Находится на грудном вскармливании, молока достаточно. Обследование: длина тела-69 см, масса-8250,0 - соответствуют возрастным нормам. По органам - здоров. Мама начала давать в 6 месяцев первый прикорм – молочную кашу. Оцените и дайте рекомендации маме о первом прикорме?",
+    "a": "овощное пюре"
+  },
+  {
+    "id": 483,
+    "q": "Ребенку 8 месяцев. Физическое развитие и нервно-психическое развитие соответствуют возрасту. Ребенок здоров, ни разу не болел. Прикорм введен в начале 7-го месяца в виде молочной каши. Врач посоветовал давать 3 прикорма и 2 перекуса, количество прикорма с каждым месяцем растет, увеличивается, а грудное молоко с возрастом уменьшается. Прикормы давать после груди через одно грудное кормление! Дайте рекомендации маме, какое количество прикорма нужно дать ребенку в возрасте 8-10 месяцев ( мл.)?",
+    "a": "180,0"
+  },
+  {
+    "id": 484,
+    "q": "Ребенку 4 месяца. Родился массой 3400,0, длиной 53 см. Сейчас масса 6600,0, длина 65 см. и нервно-психическое развитие соответствуют возрасту. С 3-х месяцев переведен на искусственное вскармливание, у мамы пропало молоко, получает адаптированную смесь NAN1. Мама просит совета у семейного врача по питанию. Рассчитайте суточный обьем пищи, на одно кормление и сколько раз (мл.)?",
+    "a": "160,06 раз"
+  },
+  {
+    "id": 485,
+    "q": "Ребенку 11 мес. При осмотре физическое развитие ребенка соответствует нижней границе нормы, волосы жидкие. У ребенка всего 8 зубов. Ребенок развивается хорошо, пытается ходить, режим дня соблюдает. Продолжает получать грудное молоко и 3 прикорма с 2 перекусами. Мама хочет отнять ребенка от груди. Какие рекомендации дадите матери, в каком возрасте необходимо отнять ребенка от груди по ВОЗ?",
+    "a": "2 года"
+  },
+  {
+    "id": 486,
+    "q": "Ребенку 6 месяцев. В настоящее время масса 8400,0, длина 69,5. На грудном вскармливании, начала вводить дополнительное питание - прикорм. Дайте рекомендации маме, что кроме прикормов дополнительно мама должна дать ребенку?",
+    "a": "перекусы"
+  },
+  {
+    "id": 487,
+    "q": "В отделение патологии новорожденных поступил ребенок, в возрасте 5 дней с воспалением легких. Масса тела при поступлении 3000,0. Ребенок на искусственном вскармливании, так как у матери развился гнойный мастит. Рассчитайте количество молока в сутки по формуле, затем на одно кормление (мл.)?",
+    "a": "56,0"
+  },
+  {
+    "id": 488,
+    "q": "В отделение неотложной соматики поступил ребенок, из Дома малютки. Возраст 5,5 месяца, с диагнозом: «Обструктивный бронхит». В физическом и нервно-психическом развитии не отстает. Какое количество молока в сутки по формуле, затем сколько необходимодать на одно кормление для данного ребенка (мл.)?",
+    "a": "150,0"
+  },
+  {
+    "id": 489,
+    "q": "Ребенок, 3 мес., мама обратилась к семейному врачу с жалобами на запоры, сонливость, затруднение глотания. Анамнез: Родился массой 4200,0, длиной 52 см. Приложен к груди сразу, сосал вяло. Пупочный остаток отпал на 16-й день жизни. Ребенок постоянно сонлив, аппетит снижен, в весе прибавляет хорошо. Объективно: длина тела - 58 см, масса - 6,200,0. Лицо одутловатое, язык большой, высунут. Кожа бледная с желтушным оттенком, сухая. Сердечные тоны приглушены, брадикардия. ЧСС - 106 в мин. Какой показатель в анализе крови необходимо определить , в первую очередь, у данного ребенка для уточнения синдрома?",
+    "a": "тиреотропный гормон"
+  },
+  {
+    "id": 490,
+    "q": "Ребенок, 2 мес. Родители обратились к семейному врачу с жалобами на запоры, мочится редко, желтушность кожи, сонливость, затруднение глотания. Анамнез: родился доношенным в срок, без осложнений массой – 4300,0. Сосал вяло. Пупочный остаток отпал поздно. Объективно: масса – 6400,0, лицо одутловатое, язык большой, высунут постоянно. Голос низкий. Кожа желтушная, сухая. Переносица запавшая. Тоны сердца приглушены, брадикардия, ЧСС -106 в мин. Уровень какого гормона необходимо определить для подтверждения наличия патологии у данного ребенка?",
+    "a": "тиреотропный"
+  },
+  {
+    "id": 491,
+    "q": "Ребенок, 1 мес. На профилактическом приеме у педиатра. Жалобы на вялое сосание, затруднение глотания, запоры, желтушность кожи. Из анамнеза: родился доношенным в срок, с массой – 3800,0. Сосал вяло. Пупочный остаток отпал поздно. Объективно: масса – 4200,0, лицо одутловатое, язык большой, высунут постоянно. Голоснизкий. Кожа желтушная, сухая. Переносица запавшая. Тоны сердца приглушены, брадикардия, ЧСС -106 в мин. Какой показатель необходимо определить для подтверждения наличия описанного синдрома уребенка?",
+    "a": "гормоны щитовидной железы"
+  },
+  {
+    "id": 492,
+    "q": "Ребенок, 10 месяцев обратился к педиатру с жалобами на отставание в развитии, вялость, сниженный аппетит. Из анамнеза: родился доношенным в срок, с массой – 3700,0. Сосал вяло, пупочный остаток отпал поздно, длительно держалась желтуха, головку начал держать в 6 месяцев, страдает запорами с рождения. Объективно: масса – 7200, лицо одутловатое, язык большой, высунут постоянно, голоснизкий. Кожные покровы сухие, волосы редкие тусклые. Ребенок не сидит. Эмоционально слабо реагирует на мать, не произносит слогов, не гулит. Тоны сердца приглушены, брадикардия, ЧСС -96 в мин. Уровень какого гормона необходимо определить, чтобы подтвердить наличие патологии у данного ребенка?",
+    "a": "тиреотропный"
+  },
+  {
+    "id": 493,
+    "q": "Девочка,10 лет, после перенесенного простудного заболевания, начала жаловаться на выраженную жажду (за сутки выпивает до 5 литров жидкости), учащение мочеиспускание, снижение массы тела на 5 кг за 3 недели, слабость. Уровень какого показателя в анализе крови надо определить,для уточнения описанного синдрома?",
+    "a": "глюкозы"
+  },
+  {
+    "id": 494,
+    "q": "На приеме у педиатра девочка, 13 лет. Жалобы на похудание, плаксивость, раздражительность, опухолевидное образование на передней поверхности шеи. При осмотре тремор пальцев вытянутых рук, экзофтальм, тахикардия. Какой показатель необходимо определить для подтверждения описанного синдрома уребенка?",
+    "a": "гормоны щитовидной железы"
+  }
+];
+
+var LS_KEY = 'detskije_known_ids';
+
+var order = [];
+var idx = 0;
+var correct = 0;
+var wrong = 0;
+var wrongItems = [];
+var isFlipped = false;
+var answering = false;
+
+// ─── localStorage helpers ───
+function loadKnown() {
+  try {
+    var data = localStorage.getItem(LS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch(e) { return []; }
+}
+function saveKnown(ids) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(ids)); } catch(e) {}
+}
+function addKnown(id) {
+  var known = loadKnown();
+  if (known.indexOf(id) === -1) {
+    known.push(id);
+    saveKnown(known);
+  }
+}
+
+// ─── start screen ───
+function showStart() {
+  document.getElementById('startView').style.display = '';
+  document.getElementById('quizView').classList.add('hidden');
+  document.getElementById('resultsView').classList.remove('visible');
+  document.getElementById('resultsView').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('progressLabel').style.display = 'none';
+
+  var known = loadKnown();
+  var total = QUESTIONS.length;
+  var remaining = total - known.length;
+  var pct = total > 0 ? ((known.length / total) * 100).toFixed(2) : '0.00';
+  document.getElementById('remainingCount').textContent = remaining;
+  document.getElementById('knownCount').textContent = known.length;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('knownPct').textContent = pct + '%';
+
+  var resetBtn = document.getElementById('resetBtn');
+  var allDone = document.getElementById('allDoneMsg');
+
+  if (known.length === 0) {
+    resetBtn.classList.add('hidden');
+    allDone.classList.add('hidden');
+  } else if (known.length >= total) {
+    resetBtn.classList.remove('hidden');
+    allDone.classList.remove('hidden');
+    launchConfetti();
+  } else {
+    resetBtn.classList.remove('hidden');
+    allDone.classList.add('hidden');
+  }
+}
+
+document.getElementById('startBtn').addEventListener('click', function() {
+  startQuiz();
+});
+document.getElementById('resetBtn').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.add('open');
+});
+document.getElementById('modalCancel').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+});
+document.getElementById('modalOk').addEventListener('click', function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  saveKnown([]);
+  showStart();
+});
+document.getElementById('restartBtn').addEventListener('click', function() {
+  location.reload();
+});
+document.getElementById('restartBtn2').addEventListener('click', function() {
+  location.reload();
+});
+
+// ─── start quiz ───
+function startQuiz() {
+  var known = loadKnown();
+  // build pool: indices of questions NOT in known list
+  var pool = [];
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    if (known.indexOf(QUESTIONS[i].id) === -1) {
+      pool.push(i);
+    }
+  }
+  if (pool.length === 0) {
+    backToStart();
+    return;
+  }
+  order = pool;
+  shuffle(order);
+  idx = 0; correct = 0; wrong = 0; wrongItems = [];
+  isFlipped = false; answering = false;
+
+  document.getElementById('startView').style.display = 'none';
+  document.getElementById('quizView').classList.remove('hidden');
+  document.getElementById('resultsView').classList.remove('visible');
+  document.getElementById('resultsView').style.display = 'none';
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('progressLabel').style.display = '';
+
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  hidePanels();
+  updateStats();
+  showQuestion();
+}
+
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+}
+
+function showQuestion() {
+  if (idx >= order.length) { showResults(); return; }
+  var q = QUESTIONS[order[idx]];
+  document.getElementById('qId').textContent = '#' + q.id;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('aText').textContent = q.a;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  isFlipped = false; answering = false;
+  hidePanels();
+  updateStats();
+}
+
+function flipCard() {
+  if (window.getSelection().toString().length > 0) return;
+  if (answering || idx >= order.length) return;
+  document.getElementById('card').classList.toggle('flipped');
+  isFlipped = !isFlipped;
+  if (isFlipped) {
+    document.getElementById('actions').classList.add('visible');
+    showPanels();
+  } else {
+    document.getElementById('actions').classList.remove('visible');
+    hidePanels();
+  }
+}
+
+function answer(knew) {
+  if (answering || idx >= order.length) return;
+  answering = true;
+
+  var q = QUESTIONS[order[idx]];
+  if (knew) {
+    correct++;
+    addKnown(q.id); // <-- immediately persist
+  } else {
+    wrong++;
+    wrongItems.push({q: q.q, a: q.a});
+  }
+  idx++;
+
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('actions').classList.remove('visible');
+  hidePanels();
+  isFlipped = false;
+  updateStats();
+
+  if (idx >= order.length) {
+    setTimeout(function() { showResults(); }, 500);
+    return;
+  }
+
+  setTimeout(function() {
+    var nq = QUESTIONS[order[idx]];
+    document.getElementById('qId').textContent = '#' + nq.id;
+    document.getElementById('qText').textContent = nq.q;
+    document.getElementById('aText').textContent = nq.a;
+    answering = false;
+  }, 280);
+}
+
+function updatePanels() {
+  var el = document.getElementById('panelLeft');
+  if (!el) return;
+  var show = isFlipped && window.innerWidth > window.innerHeight;
+  el.classList.toggle('show', show);
+  document.getElementById('panelRight').classList.toggle('show', show);
+}
+function showPanels() { updatePanels(); }
+function hidePanels() {
+  document.getElementById('panelLeft').classList.remove('show');
+  document.getElementById('panelRight').classList.remove('show');
+}
+
+function updateStats() {
+  var left = order.length - idx;
+  document.getElementById('statOk').textContent = correct;
+  document.getElementById('statFail').textContent = wrong;
+  document.getElementById('statLeft').textContent = left;
+  var done = correct + wrong;
+  var total = order.length;
+  var pct = total > 0 ? ((done + 1) / total) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = Math.min(done + 1, total) + ' / ' + total;
+}
+
+function showResults() {
+  document.getElementById('quizView').classList.add('hidden');
+  document.getElementById('resultsView').style.display = '';
+  document.getElementById('resultsView').classList.add('visible');
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  document.getElementById('scorePct').textContent = pct + '%';
+  document.getElementById('scoreSub').textContent = correct + ' / ' + total;
+  var list = document.getElementById('mistakesList');
+  list.innerHTML = '';
+  if (wrongItems.length === 0) {
+    list.innerHTML = '<li style="color:#30d158">✓ Нет ошибок</li>';
+  } else {
+    for (var i = 0; i < wrongItems.length; i++) {
+      var li = document.createElement('li');
+      li.textContent = wrongItems[i].q + ' — ' + wrongItems[i].a;
+      list.appendChild(li);
+    }
+  }
+  updateStats();
+}
+
+function backToStart() {
+  showStart();
+}
+
+// ─── confetti ───
+function launchConfetti() {
+  var end = Date.now() + 2 * 1000;
+  (function frame() {
+    confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#0a84ff','#30d158','#af52de'] });
+    confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#0a84ff','#30d158','#af52de'] });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
+
+// ─── keyboard ───
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    if (isFlipped) answer(true);
+  } else if (e.key === 'ArrowRight') {
+    if (isFlipped) answer(false);
+  } else if (e.key === ' ' || e.key === 'Space') {
+    e.preventDefault();
+    flipCard();
+  } else if (e.key === 'Escape') {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+});
+
+// ─── boot ───
+showStart();
+</script>
+</body>
+</html>
