@@ -248,7 +248,7 @@ function removeEmptyDays() {
 
 
 		
-    const groupId = 51; // ID группы
+    const groupId = 75; // ID группы 23гр на 4 курсе (было 51 на 3-м)
     const currWeekEl = document.getElementById("CurrWeek");
     const nextWeekEl = document.getElementById("NextWeek");
 
