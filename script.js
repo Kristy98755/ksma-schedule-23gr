@@ -400,19 +400,19 @@ function removeEmptyDays() {
 			// week: 'bw' // Применить к обеим неделям
 		// });
 		// insertLesson({
-			day: 'Среда',          
+			// day: 'Среда',          
 			// week: '20.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
 			// time: '10:00-15:00',         // время — для определения позиции вставки
 			// lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">10:00-10:00<br></div><div class="lesson__params"><span class="lesson__name">Модуль по неврологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>Морфокорпус, 106 кабинет</span></div></li>`
 		// });		
 		// insertLesson({
-			day: 'Среда',          
+			// day: 'Среда',          
 			// week: '21.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
 			// time: '06:40-07:00',         // время — для определения позиции вставки
 			// lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">06:40-07:00<br></div><div class="lesson__params"><span class="lesson__name">Медосмотр</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'><a href='Центр государственного санитарно-эпидемиологического надзора г. Бишкек
 // https://2gis.kg/bishkek/geo/70000001019333320/74.609141,42.849536'>Санэпидемстанция</a></span></div></li>`
 		// });		insertLesson({
-			day: 'Среда',          
+			// day: 'Среда',          
 			// week: '21.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
 			// time: '10:00-15:00',         // время — для определения позиции вставки
 			// lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">10:00-10:00<br></div><div class="lesson__params"><span class="lesson__name">Модуль по неврологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>Морфокорпус, 106 кабинет</span></div></li>`
