@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Общая гигиена — Zoom</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Segoe UI',Roboto,Arial,sans-serif;
+  background:linear-gradient(135deg,#0f1923,#1a2a3a);
+  color:#e6ecf1;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.card{
+  background:rgba(18,25,35,.9);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;
+  padding:40px 48px;
+  max-width:420px;
+  width:90%;
+  text-align:center;
+  box-shadow:0 24px 48px rgba(0,0,0,.5);
+}
+h1{font-size:22px;color:#4fc3f7;margin-bottom:8px}
+.subtitle{font-size:14px;color:#9aa4ad;margin-bottom:32px}
+.field{margin-bottom:24px}
+.field-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6b7a8d;margin-bottom:8px}
+.field-value{
+  font-size:28px;font-weight:700;color:#fff;
+  letter-spacing:6px;user-select:all;cursor:pointer;
+  transition:color .2s;
+}
+.field-value:hover{color:#4fc3f7}
+.field-note{font-size:12px;color:#6b7a8d;margin-top:6px}
+.field-value.code{letter-spacing:4px}
+.btn{
+  display:inline-block;margin-top:28px;padding:14px 36px;
+  background:linear-gradient(135deg,#4fc3f7,#2196f3);
+  color:#0b1420;text-decoration:none;border-radius:12px;
+  font-weight:700;font-size:16px;
+  transition:transform .15s,box-shadow .15s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,195,247,.35)}
+.copied{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:#4fc3f7;color:#0b1420;
+  padding:10px 24px;border-radius:10px;font-weight:600;font-size:14px;
+  opacity:0;transition:transform .3s,opacity .3s;pointer-events:none;z-index:10;
+}
+.copied.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Общая гигиена</h1>
+  <p class="subtitle">Подключение к занятию через Zoom</p>
+
+  <div class="field">
+    <div class="field-label">Идентификатор конференции</div>
+    <div class="field-value" id="confId" onclick="copyField('confId','4138538980')">413 853 8980</div>
+    <div class="field-note">Нажмите, чтобы скопировать</div>
+  </div>
+
+  <div class="field">
+    <div class="field-label">Код доступа</div>
+    <div class="field-value code" id="passCode" onclick="copyField('passCode','914583')">914583</div>
+    <div class="field-note">Нажмите, чтобы скопировать</div>
+  </div>
+
+  <a class="btn" href="https://zoom.us/j/4138538980" target="_blank">Присоединиться</a>
+</div>
+
+<div class="copied" id="toast">Скопировано!</div>
+
+<script>
+function copyField(id, text) {
+  navigator.clipboard.writeText(text).then(function() {
+    var toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 1500);
+  });
+}
+</script>
+</body>
+</html>

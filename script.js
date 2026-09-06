@@ -296,6 +296,9 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
+        "Общая гигиена|Практика|07.09": "<a href='gigiena.html'>Общая гигиена</a>",
+        "Кафедра: Общей гигиены|07.09": "<a href='gigienazoom.html'>Присоединиться в ZOOM</a>",
+        "Корпус 4, 3 этаж, Учебная ауд.-325 (общ.г.)|07.09": "<a href='gigienazoom.html'>Присоединиться в ZOOM</a>",
 
         // CURRENT WEEK
         // "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
@@ -476,8 +479,15 @@ https://2gis.kg/bishkek/geo/70000001019333320/74.609141,42.849536'>Санэпи�
 
     function applyOverrideToPlace(span) {
         if (!span) return;
-        const text = span.textContent.replace(/\s*^<i.*<\/i>/, '').trim(); // убираем иконку
-        const keysToCheck = [text, text.replace(/\./g, '')]; // можно расширить под нужные варианты
+        const text = span.textContent.replace(/\s*^<i.*<\/i>/, '').trim();
+        const dayEl = span.closest('.schedule__day');
+        const ddmm = dayEl ? dayEl.getAttribute('data-date') : null;
+
+        const keysToCheck = [
+            ddmm ? `${text}|${ddmm}` : null,
+            text,
+            text.replace(/\./g, '')
+        ].filter(Boolean);
 
         for (const key of keysToCheck) {
             if (overrides[key] !== undefined) {
@@ -486,7 +496,6 @@ https://2gis.kg/bishkek/geo/70000001019333320/74.609141,42.849536'>Санэпи�
                 let replacement = overrides[key];
                 const hasIcon = span.querySelector('img.loc-icon');
                 
-                // Если иконка была, замена не пустая и в замене иконки еще нет — возвращаем её
                 if (hasIcon && replacement.trim() !== "" && !replacement.includes("loc-icon")) {
                     replacement = `<img src="pin.png" class="loc-icon">` + replacement;
                 }
