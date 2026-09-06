@@ -269,7 +269,7 @@ function removeEmptyDays() {
         // "(общ.г.)": "",
 		"Пропедевтика внутренних болезней (фак.тер)":"Пропедевтика внутренних болезней",
 		"Мед.центр при КГМА, 1 этаж, кабинет № 109 (луч.д.)":"Медцентр КГМА, 1 этаж, кабинет №109",
-        "Кафедра: Общей гигиены": "4 корпус (вход справа), кабинет №325",
+        "Кафедра: Общей гигиены|07.09": "<a href='gigienazoom.html'>Присоединиться в ZOOM</a>",
         "Гл. корпус, 4 этаж, кабинет №425 (биохим.)": "Главный корпус, кабинет №432",
         "ЦТиРК, 5 этаж, Учеб.ауд.-516 (мни)": "Центр тестирования, цокольный этаж",
         "Гл.корпус, 1эт., Лекц.зал №1": "ЛЗ1",
@@ -399,24 +399,24 @@ function removeEmptyDays() {
 			// newTime: '07:30-09:45',
 			// week: 'bw' // Применить к обеим неделям
 		// });
-		insertLesson({
-			// day: 'Среда',          
-			week: '20.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
-			time: '10:00-15:00',         // время — для определения позиции вставки
-			lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">10:00-10:00<br></div><div class="lesson__params"><span class="lesson__name">Модуль по неврологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>Морфокорпус, 106 кабинет</span></div></li>`
-		});		
-		insertLesson({
-			// day: 'Среда',          
-			week: '21.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
-			time: '06:40-07:00',         // время — для определения позиции вставки
-			lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">06:40-07:00<br></div><div class="lesson__params"><span class="lesson__name">Медосмотр</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'><a href='Центр государственного санитарно-эпидемиологического надзора г. Бишкек
-https://2gis.kg/bishkek/geo/70000001019333320/74.609141,42.849536'>Санэпидемстанция</a></span></div></li>`
-		});		insertLesson({
-			// day: 'Среда',          
-			week: '21.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
-			time: '10:00-15:00',         // время — для определения позиции вставки
-			lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">10:00-10:00<br></div><div class="lesson__params"><span class="lesson__name">Модуль по неврологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>Морфокорпус, 106 кабинет</span></div></li>`
-		});
+		// insertLesson({
+			day: 'Среда',          
+			// week: '20.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
+			// time: '10:00-15:00',         // время — для определения позиции вставки
+			// lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">10:00-10:00<br></div><div class="lesson__params"><span class="lesson__name">Модуль по неврологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>Морфокорпус, 106 кабинет</span></div></li>`
+		// });		
+		// insertLesson({
+			day: 'Среда',          
+			// week: '21.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
+			// time: '06:40-07:00',         // время — для определения позиции вставки
+			// lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">06:40-07:00<br></div><div class="lesson__params"><span class="lesson__name">Медосмотр</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'><a href='Центр государственного санитарно-эпидемиологического надзора г. Бишкек
+// https://2gis.kg/bishkek/geo/70000001019333320/74.609141,42.849536'>Санэпидемстанция</a></span></div></li>`
+		// });		insertLesson({
+			day: 'Среда',          
+			// week: '21.04',                  // 'cw' = текущая, 'nw' = следующая, 'bw' = обе
+			// time: '10:00-15:00',         // время — для определения позиции вставки
+			// lessonHTML: `<li class="lesson" style="background-color:#f217;"><div class="lesson__time">10:00-10:00<br></div><div class="lesson__params"><span class="lesson__name">Модуль по неврологии</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>Морфокорпус, 106 кабинет</span></div></li>`
+		// });
 
 
 
