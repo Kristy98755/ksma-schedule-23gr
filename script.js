@@ -296,9 +296,8 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
-        "Общая гигиена|Практика|07.09": "<a href='gigiena.html'>Общая гигиена</a>",
-        "Кафедра: Общей гигиены|07.09": "<a href='gigienazoom.html'>Присоединиться в ZOOM</a>",
-        "Корпус 4, 3 этаж, Учебная ауд.-325 (общ.г.)|07.09": "<a href='gigienazoom.html'>Присоединиться к ZOOM</a>",
+        "Внутренние болезни (фак.терапия)|08.09": "<a href='https://jumpshare.com/share/ybnXNejwp9O42YueeFOo'>Внутренние болезни (фак.терапия)</a>",
+        "НГ МЗ КР, 3 этаж, Лекц. зал (офт.)|08.09": "<a href='fakterzoom.html'>Присоединиться к Zoom</a>",
 
         // CURRENT WEEK
         // "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
