@@ -297,7 +297,9 @@ function removeEmptyDays() {
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
         "Внутренние болезни (фак.терапия)|08.09": "<a href='https://jumpshare.com/share/ybnXNejwp9O42YueeFOo'>Внутренние болезни (фак.терапия)</a>",
-        "НЦКиТ, 2 база, 5 этаж, Учебный каб.-507|08.09": "<a href='fakterzoom.html'>Присоединиться к Zoom</a>",
+        "ул.Т.Молдо, (НЦОМиД, 2 база) 2 этаж, кабинет № 204 (госп.пед.)|08.09": "<a href='fakterzoom.html'>Присоединиться к Zoom</a>",
+        "Педиатрия|08.09":"<a href='https://jumpshare.com/share/OMxQ2EqyqLRXtEkYA0sK'>Педиатрия</a>",
+
 
         // CURRENT WEEK
         // "Клиническая биохимия|Практика|CurrWeek": "<a href='biohimia.html'>Клиническая биохимия</a>",
