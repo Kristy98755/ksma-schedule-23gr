@@ -299,7 +299,7 @@ function removeEmptyDays() {
         "Внутренние болезни (фак.терапия)|08.09": "<a href='https://jumpshare.com/share/ybnXNejwp9O42YueeFOo'>Внутренние болезни (фак.терапия)</a>",
         "ул.Т.Молдо, (НЦОМиД, 2 база) 2 этаж, кабинет № 204 (госп.пед.)|08.09": "<a href='gigienazoom.html'>Присоединиться к Zoom</a>",
         "Педиатрия|08.09":"<a href='https://jumpshare.com/share/OMxQ2EqyqLRXtEkYA0sK'>Педиатрия</a>",
-        "Общая гигиена (общ.г.)|14.09":"<a href='gigiena2.html'>Общая гигиена</a>",
+        "Общая гигиена (общ.г.)|Практика|14.09":"<a href='gigiena2.html'>Общая гигиена</a>",
 
 
         // CURRENT WEEK
@@ -321,7 +321,7 @@ function removeEmptyDays() {
 		// "Лучевая диагностика и терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/MfQjXwgBcFY0aa7Vchr4'>Лучевая диагностика</a>",
 		// "НИРС|Практика|CurrWeek": "<a href='https://jumpshare.com/share/GbUW87yUWiPTBeQzL2z3'>НИРС</a>",
 		// "Урология|Практика|CurrWeek":"<a href='urology.html'>Урология</a>",
-		"Оториноларингология|Практика|10.09":"<a href='lor.html'>Оториноларингология</a>",
+		// "Оториноларингология|Практика|10.09":"<a href='lor.html'>Оториноларингология</a>",
 		// "ВМП-ОТМС|Практика|CurrWeek":"<a href='https://jumpshare.com/share/W378sP6WnSnSTv5mmMUr'>ВМП-ОТМС</a>",
 		// "Пропедхирургия|Практика|CurrWeek":"<a href='propedhir.html'>Пропедхирургия</a>",
 		// "Госпитальная терапия|Практика|CurrWeek":"<a href='https://jumpshare.com/share/wBntWG89GumPmcLZdrP4'>Госпитальная терапия</a>",
