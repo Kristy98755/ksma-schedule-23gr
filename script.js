@@ -299,6 +299,7 @@ function removeEmptyDays() {
         "Внутренние болезни (фак.терапия)|08.09": "<a href='https://jumpshare.com/share/ybnXNejwp9O42YueeFOo'>Внутренние болезни (фак.терапия)</a>",
         "ул.Т.Молдо, (НЦОМиД, 2 база) 2 этаж, кабинет № 204 (госп.пед.)|08.09": "<a href='gigienazoom.html'>Присоединиться к Zoom</a>",
         "Педиатрия|08.09":"<a href='https://jumpshare.com/share/OMxQ2EqyqLRXtEkYA0sK'>Педиатрия</a>",
+        "Общая гигиена (общ.г.)|14.09":"<a href='gigiena2.html'>Общая гигиена</a>",
 
 
         // CURRENT WEEK
