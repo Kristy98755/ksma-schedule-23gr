@@ -300,6 +300,7 @@ function removeEmptyDays() {
         "ул.Т.Молдо, (НЦОМиД, 2 база) 2 этаж, кабинет № 204 (госп.пед.)|08.09": "<a href='gigienazoom.html'>Присоединиться к Zoom</a>",
         "Педиатрия|08.09":"<a href='https://jumpshare.com/share/OMxQ2EqyqLRXtEkYA0sK'>Педиатрия</a>",
         "Общая гигиена|Практика|14.09":"<a href='gigiena2.html'>Общая гигиена</a>",
+        "Хирургия (фак.хир.)|Практика|16.09":"<a href='surgery.html'>Хирургия</a>",
 
 
         // CURRENT WEEK
