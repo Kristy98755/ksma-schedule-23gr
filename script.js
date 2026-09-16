@@ -301,6 +301,7 @@ function removeEmptyDays() {
         "Педиатрия|08.09":"<a href='https://jumpshare.com/share/OMxQ2EqyqLRXtEkYA0sK'>Педиатрия</a>",
         "Общая гигиена|Практика|14.09":"<a href='gigiena2.html'>Общая гигиена</a>",
         "Хирургия (фак.хир.)|Практика|16.09":"<a href='surgery.html'>Хирургия</a>",
+        "Оториноларингология|Практика|17.09":"<a href='lor.html'>Оториноларингология</a>",
 
 
         // CURRENT WEEK
