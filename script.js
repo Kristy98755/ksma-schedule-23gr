@@ -297,7 +297,7 @@ function removeEmptyDays() {
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
         "Офтальмология|Практика|21.09":"<a href='ophthalmology.html'>Офтальмология</a>",
-        "Неонатология|Практика|21.09":"<a href='neonatology.html'>Неонатология</a><br><span style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline'><a href='neon.srs.html'>СРС</a></span>",
+        "Неонатология|Практика|21.09":"<a href='neonatology.html'>Неонатология</a><br><span style='color:#0f0 !important; font-size:14px !important; font-weight:300 !important; text-decoration:underline !important'><a href='neon.srs.html' style='color:#0f0 !important'>СРС</a></span>",
 
 
         // CURRENT WEEK
