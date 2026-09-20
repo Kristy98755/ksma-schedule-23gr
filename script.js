@@ -296,14 +296,7 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
-        "Внутренние болезни (фак.терапия)|08.09": "<a href='https://jumpshare.com/share/ybnXNejwp9O42YueeFOo'>Внутренние болезни (фак.терапия)</a>",
-        "ул.Т.Молдо, (НЦОМиД, 2 база) 2 этаж, кабинет № 204 (госп.пед.)|08.09": "<a href='gigienazoom.html'>Присоединиться к Zoom</a>",
-        "Педиатрия|08.09":"<a href='https://jumpshare.com/share/OMxQ2EqyqLRXtEkYA0sK'>Педиатрия</a>",
-        "Общая гигиена|Практика|14.09":"<a href='gigiena2.html'>Общая гигиена</a>",
-        "Хирургия (фак.хир.)|Практика|16.09":"<a href='surgery.html'>Хирургия</a>",
-        "Оториноларингология|Практика|17.09":"<a href='lor.html'>Оториноларингология</a>",
-        "Патологическое акушерство №1|Практика|18.09":"<a href='biomechanika.html'>Патологическое акушерство</a>",
-        "Офтальмология|Практика|18.09":"<a href='ophthalmology.html'>Офтальмология</a>",
+        "Офтальмология|Практика|21.09":"<a href='ophthalmology.html'>Офтальмология</a>",
 
 
         // CURRENT WEEK
