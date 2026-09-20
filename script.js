@@ -419,6 +419,13 @@ function removeEmptyDays() {
 
 
 
+		insertLesson({
+			day: 'Понедельник',
+			week: '21.09',
+			time: '12:30-14:45',
+			lessonHTML: `<li class="lesson"><div class="lesson__time">12:30-14:45</div><div class="lesson__params"><span class="lesson__name">Офтальмология</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>НГ МЗ КР, 3 этаж, Каб.зав.каф.-301 (офт.)</span></div></li>`
+		});
+
 		removeEmptyDays();
 
 	});
