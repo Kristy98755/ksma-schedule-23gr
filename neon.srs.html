@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СРС — Неонатология</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #1a1d27;
+            --text: #e1e4ed;
+            --accent: #00c9ff;
+            --accent2: #a855f7;
+            --border: #2a2d3a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 30px; font-size: 1.8em; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        ol { padding-left: 24px; }
+        li { margin-bottom: 12px; }
+        li a { font-size: 1.05em; }
+    </style>
+</head>
+<body>
+
+<h1>СРС — Неонатология</h1>
+
+<div class="card">
+    <ol>
+        <li><a href="neon.srs1.html">Недоношенные дети. Младенцы с низкой массой тела при рождении. Задержка внутриутробного развития плода</a></li>
+    </ol>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var backLink = document.createElement('p');
+    backLink.style.textAlign = 'center';
+    backLink.style.marginTop = '40px';
+    backLink.innerHTML = '<a href="index.html" style="color:#00c9ff;">← Назад к расписанию</a>';
+    document.body.appendChild(backLink);
+});
+</script>
+
+</body>
+</html>
