@@ -298,6 +298,7 @@ function removeEmptyDays() {
         // TARGETED
         "Офтальмология|Практика|21.09":"<a href='ophthalmology.html'>Офтальмология</a>",
         "Неонатология|Практика|21.09":"<a href='neonatology.html'>Неонатология</a><br><span style='color:#0f0 !important; font-size:14px !important; font-weight:300 !important; text-decoration:underline !important'><a href='neon.srs.html' style='color:#0f0 !important'>СРС</a></span>",
+        "Общая гигиена|Практика|21.09":"<a href='gigiena.html'>Общая гигиена</a>",
 
 
         // CURRENT WEEK
