@@ -296,7 +296,7 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
-        "Педиатрия|Практика|21.09":"<a href='myocarditis.html'>Педиатрия</a>",
+        "Педиатрия|Практика|22.09":"<a href='myocarditis.html'>Педиатрия</a>",
 
 
         // CURRENT WEEK
