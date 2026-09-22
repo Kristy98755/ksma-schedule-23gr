@@ -296,7 +296,7 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
-        "Педиатрия|Практика|22.09":"<a href='myocarditis.html'>Педиатрия</a>",
+        "Хирургия (фак.хир.)|Практика|23.09":"<a href='fakter.html'>Хирургия (фак.хир.)</a>",
 
 
         // CURRENT WEEK
@@ -405,6 +405,21 @@ function removeEmptyDays() {
 			oldTime: '0',
 			newTime: '07:40-09:15',
 			week: 'bw'
+		});
+		removeLesson({
+			subject: 'Хирургия (фак.хир.)',
+			type: 'Практика',
+			day: 'Среда',
+			time: '10:10-11:45',
+			week: 'cw'
+		});
+		shiftLessonTime({
+			subject: 'Хирургия (фак.хир.)',
+			type: 'Практика',
+			day: 'Среда',
+			oldTime: '07:00-09:15',
+			newTime: '07:00-11:45',
+			week: 'cw'
 		});
 		// insertLesson({
 			// day: 'Среда',          
