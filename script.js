@@ -301,7 +301,8 @@ function removeEmptyDays() {
         "Оториноларингология|Практика|24.09":"<a href='lor_inner.html'>Оториноларингология</a>",
         "Патологическое акушерство №1|Практика|25.09":"<a href='path_obst.html'>Патологическое акушерство №1</a>",
         "Офтальмология|Практика|25.09":"<a href='ophthalmology_func.html'>Офтальмология</a>",
-        "Неонатология|Практика|28.09":"<a href='neon_birth_trauma.html'>Неонатология</a><br><span style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline'><a href='neon.srs.html'>СРС</a></span>",
+        "Неонатология|Практика|28.09":"<a href='neon_birth_trauma.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a><br><span style='color:#8B0000; font-size:14px; font-weight:300; font-style:italic'>КРОКСЫ И ХИРФОРМА!</span>",
+        "Общая гигиена (общ.г.)|Практика|28.09":"<a href='gigiena_medotkazy.html'>Общая гигиена</a>",
 
 
         // CURRENT WEEK
