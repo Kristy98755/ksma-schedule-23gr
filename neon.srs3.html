@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СРС 3 — Геморрагическая болезнь новорождённых</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #1a1d27;
+            --text: #e1e4ed;
+            --accent: #00c9ff;
+            --accent2: #a855f7;
+            --accent3: #f97316;
+            --accent4: #22c55e;
+            --border: #2a2d3a;
+            --highlight: #1c3a5e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 30px; font-size: 1.6em; }
+        h2 { color: var(--accent2); margin: 25px 0 10px; font-size: 1.15em; }
+        p, li { margin-bottom: 8px; }
+        ul, ol { padding-left: 24px; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .highlight {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent);
+            padding: 10px 14px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.92em;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            text-align: left;
+        }
+        th { background: var(--highlight); color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<h1>СРС 3 — Геморрагическая болезнь новорождённых</h1>
+<div class="card">
+    <h2>Особенности гемостаза новорождённого</h2>
+    <ul>
+        <li><strong>Сосудистое звено</strong> сформировано, но недостаточность аргирофильного каркаса даёт повышенную ломкость и проницаемость капилляров</li>
+        <li><strong>Тромбоцитарное:</strong> число тромбоцитов не отличается от взрослых, функциональная активность снижена</li>
+        <li><strong>Плазменное:</strong> активность витамин-К-зависимых факторов (II, VII, IX, X) низка, особенно на 3-й день</li>
+        <li>Высокий уровень гепарина сохраняется 10 дней жизни; фибринолиз после рождения повышен</li>
+        <li><strong>Группа риска:</strong> недоношенные с ОНМТ, хроническая внутриутробная гипоксия, лекарства матери</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Определение и патогенез</h2>
+    <p><strong>ГрБН (Р53)</strong> — витамин-К-дефицитный геморрагический синдром. Частота <strong>0,25–1,5%</strong> без профилактики и 0,01% при парентеральном введении витамина К.</p>
+    <ul>
+        <li>Витамин К плохо проникает через плаценту; в женском молоке 2 мкг/л, синтез К2 микрофлорой недостаточен</li>
+        <li>При дефиците витамина К циркулируют неактивные предшественники прокоагулянтов (PIVKA), часть которых — антагонисты протромбина</li>
+        <li><strong>Факторы гиповитаминоза К:</strong> непрямые антикоагулянты, фенобарбитал, дифенин, гестоз, гепато- и энтеропатии</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Клиническая картина</h2>
+    <table>
+        <tr><th>Форма</th><th>Сроки</th><th>Проявления</th></tr>
+        <tr><td><strong>Ранняя</strong></td><td>первые 24 часа</td><td>Лекарства матери (аспирин, индометацин); ВЧК на УЗИ, кефалогематома, кровотечение из пупка</td></tr>
+        <tr><td><strong>Классическая</strong></td><td>2–5-й дни</td><td>Мелена, кровавая рвота, петехии, пурпуры, кровотечение при отпадении пуповины, кефалогематома</td></tr>
+        <tr><td><strong>Поздняя</strong></td><td>2–8-я неделя</td><td>ВЧК (более 50%), обширные экхимозы, мелена, кровотечения из мест инъекций. Провоцируют диарея, атрезия желчевых путей, гепатиты, антибиотикотерапия</td></tr>
+    </table>
+    <p><strong>Мелена</strong> — тёмно-красный ободок вокруг каловых масс; распад эритроцитов даёт гипербилирубинемию. От «синдрома заглотанной крови» отличает <strong>тест Апта</strong>.</p>
+</div>
+
+<div class="card">
+    <h2>Диагностика</h2>
+    <table>
+        <tr><th>Показатель</th><th>Взрослые</th><th>Здоровый доношенный</th><th>При ГрБН</th></tr>
+        <tr><td>Тромбоциты, ×10⁹/л</td><td>200–400</td><td>150–400</td><td>норма</td></tr>
+        <tr><td>Протромбиновое время, с</td><td>12–14</td><td>13–16</td><td>увеличено</td></tr>
+        <tr><td>Тромбиновое время, с</td><td>10–12</td><td>0–16</td><td>норма</td></tr>
+        <tr><td>ПТЧ, с</td><td>35–45</td><td>45–65</td><td>увеличено</td></tr>
+        <tr><td>Фибриноген, г/л</td><td>2,5–4,0</td><td>1,5–3,0</td><td>норма</td></tr>
+    </table>
+    <p>При ГрБН уровень протромбина около <strong>10% от нормы взрослых</strong> или ниже; фибриноген и число тромбоцитов не изменены.</p>
+</div>
+
+<div class="card">
+    <h2>Лечение и профилактика</h2>
+    <ul>
+        <li>Витамин К (конакион) в/в или в/м в терапевтической дозе <strong>1–5 мг</strong>; за 4 часа ПТ и ПТЧ нормализуются, при отсутствии улучшения диагноз сомнителен</li>
+        <li>При обильном кровотечении с анемией — СЗП или свежая кровь (не более 2 дней консервирования) 15 мл/кг в/в</li>
+    </ul>
+    <div class="highlight"><strong>Профилактика:</strong> витамин К в/м в переднелатеральную поверхность верхней трети бедра сразу после рождения — <strong>1 мг доношенным и 0,5 мг недоношенным</strong> (или в/в при венозном доступе); запись в истории развития обязательна.</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var backLink = document.createElement('p');
+    backLink.style.textAlign = 'center';
+    backLink.style.marginTop = '40px';
+    backLink.innerHTML = '<a href="neon.srs.html" style="color:#00c9ff;">← Назад к оглавлению</a>';
+    document.body.appendChild(backLink);
+});
+</script>
+
+</body>
+</html>
