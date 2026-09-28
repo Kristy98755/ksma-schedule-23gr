@@ -284,6 +284,7 @@ function removeEmptyDays() {
 		"РНЦУ, 2 этаж, кабинет №202 (урол.)":"Корпус урологии у нацгоспиталя (Тоголок Молдо, 1/13), 3 этаж<br>Сменка обязательна!",
 		"клин.Ахунбаева, подвал, Учеб.ауд.-04 (проп.хир.)":"<img src='pin.png' class='loc-icon'>Клиника «Ренато», мкр. Джал",
 		"НГ МЗ КР, 3эт., Каб.завуча-4 (энд.)":"Национальный госпиталь, подвал",
+		"НЦКиТ, 2 база, 5 этаж, Учебный каб.-507":"<a href='https://2gis.kg/bishkek/firm/70000001019344018' style='color:green; text-shadow:none; -webkit-text-stroke:0;'>РДЛЦ, 314 кабинет</a>",
 		"Общежитие-1, 1 этаж, Учеб.ауд.-101а (ВМП)":"Общежитие №1",
 		"Гл.корпус, 3эт., Лекц.зал №2":"ЛЗ2",
 		"Пропедевтика внутренних болезней (гос.тер)":"Госпитальная терапия",
@@ -303,6 +304,11 @@ function removeEmptyDays() {
         "Офтальмология|Практика|25.09":"<a href='ophthalmology_func.html'>Офтальмология</a>",
         "Неонатология|Практика|28.09":"<a href='neon_birth_trauma.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a><br><span style='color:#8B0000; font-size:14px; font-weight:300; font-style:italic'>КРОКСЫ И ХИРФОРМА!</span>",
         "Общая гигиена|Практика|28.09":"<a href='gigiena_medotkazy.html'>Общая гигиена</a>",
+        "Внутренние болезни (фак.терапия)|Практика|29.09":"<a href='https://jumpshare.com/share/p3KzIVX5L5BUA37dl7x1'>Внутренние болезни</a>",
+        "Педиатрия|Практика|29.09":"<a href='pediatriya_bronhity.html'>Педиатрия</a>",
+        "Педиатрия|Практика|13.10":"<a href='pediatriya_bronhity.html'>Педиатрия</a>",
+        "Кафедра: Госпитальной педиатрии с курсом неонатологии|29.09":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
+        "Кафедра: Госпитальной педиатрии с курсом неонатологии|13.10":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
 
 
         // CURRENT WEEK
@@ -404,14 +410,14 @@ function removeEmptyDays() {
 			// newTime: '07:30-09:45',
 			// week: 'bw' // Применить к обеим неделям
 		// });
-		shiftLessonTime({
-			subject: 'Внутренние болезни (фак.терапия)',
-			type: 'Практика',
-			day: 'Вторник',
-			oldTime: '0',
-			newTime: '07:40-09:15',
-			week: 'bw'
-		});
+		// shiftLessonTime({
+		// 	subject: 'Внутренние болезни (фак.терапия)',
+		// 	type: 'Практика',
+		// 	day: 'Вторник',
+		// 	oldTime: '0',
+		// 	newTime: '07:40-09:15',
+		// 	week: 'bw'
+		// });
 		removeLesson({
 			subject: 'Хирургия (фак.хир.)',
 			type: 'Практика',
