@@ -309,6 +309,7 @@ function removeEmptyDays() {
         "Педиатрия|Практика|13.10":"<a href='pediatriya_bronhity.html'>Педиатрия</a>",
         "Кафедра: Госпитальной педиатрии с курсом неонатологии|29.09":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
         "Кафедра: Госпитальной педиатрии с курсом неонатологии|13.10":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
+        "Хирургия (фак.хир.)|Практика|30.09":"<a href='fakter.html'>Хирургия (фак.хир.)</a>",
 
 
         // CURRENT WEEK
@@ -430,7 +431,7 @@ function removeEmptyDays() {
 			type: 'Практика',
 			day: 'Среда',
 			oldTime: '07:00-09:15',
-			newTime: '07:00-11:45',
+			newTime: '07:40-11:45',
 			week: 'cw'
 		});
 		// insertLesson({
