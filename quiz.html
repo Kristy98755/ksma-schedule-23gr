@@ -48,7 +48,7 @@ async function api(path, data) {
     tm = setTimeout(() => ac.abort(), 6000);
   }
   try {
-    const r = await fetch('/api/quiz/' + path, opts);
+    const r = await fetch(API_BASE + '/api/quiz/' + path, opts);
     if (!r.ok) {
       const e = new Error('http ' + r.status);
       e.status = r.status;

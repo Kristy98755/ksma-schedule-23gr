@@ -2,6 +2,10 @@
 // Подключается и quiz.html, и quiz/status.html.
 'use strict';
 
+// API воркера по абсолютному пути — работает с любого хоста
+// (github.io, workers.dev, локального сервера)
+const API_BASE = 'https://kanamiisa.itismynickname9.workers.dev';
+
 const TOPICS = [
   { name: 'ПИТАНИЕ', qs: [
     { q: 'Сколько углеводов в сутки рекомендовано при гестационном сахарном диабете?', o: ['100 г', '175 г', '250 г', 'Без ограничений'], a: 1 },
