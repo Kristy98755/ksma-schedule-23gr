@@ -13,6 +13,7 @@ html,body{margin:0;padding:0;height:100%;background:#050508;overflow:hidden;}
 </head>
 <body>
 <canvas id="c"></canvas>
+<script src="quiz-data.js"></script>
 <script>
 'use strict';
 
@@ -30,59 +31,27 @@ const FM = s => `400 ${s}px 'Share Tech Mono','Courier New',monospace`;
 const LETTERS = ['а', 'б', 'в', 'г'];
 const TIME_MS = 30000;
 const SEQ_LEN = 15;
-// счёт не ведётся — захардкожен намеренно
-const FIXED_SCORE = 15;
-const FIXED_PER = [5, 5, 5];
+const LS_KEY = 'quiz_seat';
 
-function getProgress() {
-  const m = document.cookie.match(/(?:^|;\s*)progress=(\d+)/);
-  return m ? parseInt(m[1], 10) : 0;
+// ---------- API ----------
+async function api(path, data) {
+  const opts = { cache: 'no-store' };
+  if (data !== undefined) {
+    opts.method = 'POST';
+    opts.headers = { 'Content-Type': 'application/json' };
+    opts.body = JSON.stringify(data);
+  }
+  const r = await fetch('/api/quiz/' + path, opts);
+  if (!r.ok) {
+    const e = new Error('http ' + r.status);
+    e.status = r.status;
+    throw e;
+  }
+  return r.json();
 }
-function setProgress(n) {
-  document.cookie = `progress=${Math.min(Math.max(n, 0), SEQ_LEN)}; path=/; max-age=31536000`;
-}
-function resetProgress() {
-  setProgress(0);
-}
-
-const TOPICS = [
-  { name: 'ПИТАНИЕ', qs: [
-    { q: 'Сколько углеводов в сутки рекомендовано при гестационном сахарном диабете?', o: ['100 г', '175 г', '250 г', 'Без ограничений'], a: 1 },
-    { q: 'Минимальная калорийность рациона для профилактики кетонурии:', o: ['1200 ккал', '1500 ккал', '1800 ккал', '2500 ккал'], a: 2 },
-    { q: 'Рекомендуемый перерыв между приёмами пищи при ГСД:', o: ['1–1,5 часа', '2,5–3 часа', '4–5 часов', 'Не регламентируется'], a: 1 },
-    { q: 'Максимальный интервал между последним приёмом пищи и первым утренним:', o: ['6 часов', '8 часов', '10 часов', '12 часов'], a: 2 },
-    { q: 'Суточная норма пищевых волокон при ГСД:', o: ['15 г', '28 г', '45 г', '60 г'], a: 1 },
-    { q: 'Дополнительный приём 12–15 г углеводов перед сном нужен для профилактики:', o: ['Кетонурии', 'Гипертонии', 'Анемии', 'Аллергии'], a: 0 },
-    { q: 'Какие сахарозаменители разрешены при беременности?', o: ['Аспартам', 'Сахарин', 'Сукралоза и стевиазит', 'Фруктоза'], a: 2 },
-    { q: 'При преэклампсии диета рекомендует ограничить:', o: ['Острую и солёную пищу', 'Овощи и фрукты', 'Белок', 'Клетчатку'], a: 0 },
-    { q: 'При ожирении насыщенные жиры ограничивают до:', o: ['5% суточной нормы жиров', '10% суточной нормы жиров', '20% суточной нормы жиров', '30% суточной нормы жиров'], a: 1 },
-    { q: 'Фолиевая кислота до зачатия и в I триместре нужна для профилактики:', o: ['Дефектов нервной трубки', 'Железодефицитной анемии', 'Гестоза', 'Кариеса'], a: 0 }
-  ]},
-  { name: 'РЕЗУС-КОНФЛИКТ', qs: [
-    { q: 'Какие антитела матери проходят через плаценту к плоду?', o: ['IgM', 'IgG', 'IgA', 'IgE'], a: 1 },
-    { q: 'В каком триместре эритроциты плода чаще всего попадают в кровь матери (29–30% случаев)?', o: ['I триместр', 'II триместр', 'III триместр', 'Одинаково часто'], a: 2 },
-    { q: 'Первичный иммунный ответ при сенсибилизации — это выработка:', o: ['IgG', 'IgM', 'IgE', 'IgD'], a: 1 },
-    { q: 'Гемолитическая болезнь плода при первой беременности:', o: ['Развивается почти всегда', 'Развивается редко', 'Невозможна', 'Всегда протекает тяжело'], a: 1 },
-    { q: 'Антенатальная профилактика анти-D проводится в срок:', o: ['12–14 недель', '28–30 недель', '36–38 недель', 'Только после родов'], a: 1 },
-    { q: 'Постнатальная доза иммуноглобулина антирезус Rho[D]:', o: ['500 МЕ', '1000 МЕ', '1500 МЕ (300 мкг)', '3000 МЕ'], a: 2 },
-    { q: 'Ввести анти-D после родов желательно:', o: ['В первые 2 часа, но не позже 72 часов', 'На 5-е сутки', 'На 10-е сутки', 'Через 2 недели'], a: 0 },
-    { q: 'Каким тестом оценивают объём плодово-материнского кровотечения?', o: ['Проба Кумбса', 'Тест Клейхауэра–Бетке', 'Проба Зимницкого', 'Шкала Апгар'], a: 1 },
-    { q: 'Если объём плодово-материнского кровотечения 25–50 мл, дозу анти-D:', o: ['Уменьшают', 'Удваивают', 'Не меняют', 'Отменяют'], a: 1 },
-    { q: 'Самая тяжёлая форма гемолитической болезни плода:', o: ['Желтушная', 'Анемическая', 'Отёчная (водянка)', 'Смешанная'], a: 2 }
-  ]},
-  { name: 'ЗАВИСИМОСТИ', qs: [
-    { q: 'Безопасная доза алкоголя при беременности:', o: ['1 бокал сухого вина', 'Пиво раз в неделю', 'Не существует', 'Только в I триместре'], a: 2 },
-    { q: 'Концентрация карбоксигемоглобина в крови плода курящей матери:', o: ['В 2 раза выше, чем у матери', 'Такая же, как у матери', 'Ниже, чем у матери', 'Не определяется'], a: 0 },
-    { q: 'Курение увеличивает перинатальную смертность примерно на:', o: ['5%', '15%', '27%', '50%'], a: 2 },
-    { q: 'Абстинентный синдром новорождённых при никотиновой зависимости матери встречается:', o: ['У 69,2% новорождённых', 'У 5% новорождённых', 'У 30% новорождённых', 'Не встречается'], a: 0 },
-    { q: 'При алкоголизме матери вероятность рождения ребёнка с ФАС:', o: ['5%', '10–15%', '25–45%', 'Почти 100%'], a: 2 },
-    { q: 'Какие лицевые дисморфии характерны для ФАС?', o: ['Тонкая верхняя губа и сглаженный носогубный желобок', 'Крупный подбородок', 'Выпуклый лоб', 'Длинная шея'], a: 0 },
-    { q: 'Абстинентный синдром новорождённого при опиоидной зависимости матери наступает:', o: ['Через 2–3 недели', 'В первые 24–72 часа', 'Сразу в родах, в минуты', 'Не бывает'], a: 1 },
-    { q: 'Главная опасность кокаина при беременности:', o: ['Катаракта', 'Отслойка плаценты', 'Глаукома', 'Кариес'], a: 1 },
-    { q: 'Отказ от курения при беременности:', o: ['Имеет смысл только до зачатия', 'Снижает риск ЗВУР на любом сроке', 'Не влияет на плод', 'Увеличивает риск ЗВУР'], a: 1 },
-    { q: 'Какое утверждение о вейпинге верно?', o: ['Он безопаснее сигарет', 'Никотин не проникает через плаценту', 'Связан с маловодием, апноэ и низкой массой', 'Пассивный вейпинг безопасен'], a: 2 }
-  ]}
-];
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
 
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
@@ -104,15 +73,24 @@ if (window.visualViewport) {
 fit();
 
 const S = {
-  mode: 'menu',          // menu | question | result
-  seq: [],               // [{q, t}]
+  mode: 'select',       // select | menu | question | result
+  seq: [],              // [{q, t}]
   qi: 0,
-  phase: 'run',          // run | done
+  phase: 'run',         // run | done
   chosen: -1,
   deadline: 0,
   hover: null,
   hoverBtn: null,
-  hits: []
+  hits: [],
+  // сессия
+  seat: -1,             // индекс студента
+  claimed: false,       // место занято на сервере
+  online: false,        // сервер доступен
+  answers: [],          // [{q: gid, c: choice}] — сердцебиение и complete
+  score: 15,            // личный балл (захардкожен в STUDENTS)
+  resume: 0,            // с какого вопроса продолжаем
+  // селектор
+  sel: { loading: true, offline: false, list: [], open: false, pick: -1, err: null, busy: false }
 };
 
 function pad2(n) { return (n < 10 ? '0' : '') + n; }
@@ -131,19 +109,116 @@ function pickSeq() {
   });
   return shuffle(picked);
 }
+
+// ---------- селектор студента ----------
+function enterOfflineSelector() {
+  S.online = false;
+  S.sel.loading = false;
+  S.sel.offline = true;
+  S.sel.list = STUDENTS.map((_, i) => ({ i, occupied: false, progress: 0, completed: false }));
+  S.mode = 'select';
+}
+async function loadSelector() {
+  S.sel = { loading: true, offline: false, list: [], open: false, pick: -1, err: null, busy: false };
+  S.mode = 'select';
+  try {
+    const st = await api('students');
+    S.sel.list = st.students.map(s => ({ i: s.i, occupied: !!s.occupied, progress: s.progress, completed: !!s.completed }));
+    S.online = true;
+    S.sel.loading = false;
+  } catch (e) {
+    enterOfflineSelector();
+  }
+}
+async function confirmSelection() {
+  if (S.sel.busy || S.sel.pick < 0) return;
+  const i = S.sel.pick;
+  const row = S.sel.list[i];
+  if (row && row.occupied) { S.sel.err = 'МЕСТО УЖЕ ЗАНЯТО'; return; }
+  S.sel.busy = true;
+  S.sel.err = null;
+  lsSet(LS_KEY, String(i));
+  S.seat = i;
+  S.score = STUDENTS[i].score;
+  S.answers = [];
+  S.resume = 0;
+  S.claimed = false;
+  S.sel.busy = false;
+  S.mode = 'menu';
+  S.hoverBtn = null;
+}
+
+// ---------- сессия ----------
+async function initSession() {
+  const saved = lsGet(LS_KEY);
+  if (saved !== null) {
+    try {
+      const st = await api('state?i=' + encodeURIComponent(saved));
+      if (st.occupied && st.age !== null && st.age <= 45) {
+        const seat = parseInt(saved, 10);
+        if (seat >= 0 && seat < STUDENTS.length) {
+          // продолжаем без выбора
+          S.seat = seat;
+          S.score = STUDENTS[seat].score;
+          S.answers = Array.isArray(st.answers) ? st.answers : [];
+          S.resume = Math.min(st.progress || 0, SEQ_LEN);
+          S.online = true;
+          S.claimed = true;
+          S.mode = 'menu';
+          return;
+        }
+      } else {
+        await api('release', { i: parseInt(saved, 10) });
+      }
+    } catch (e) {
+      lsDel(LS_KEY);
+      enterOfflineSelector();
+      return;
+    }
+    lsDel(LS_KEY);
+  }
+  await loadSelector();
+}
+
+function heartbeat(done) {
+  if (!S.online || !S.claimed || S.seat < 0) return;
+  api('heartbeat', { i: S.seat, done: done, answers: S.answers }).catch(() => {});
+}
+
 function startTest() {
-  const p = Math.min(getProgress(), SEQ_LEN);
+  if (S.online && !S.claimed) {
+    api('start', { i: S.seat }).then(() => {
+      S.claimed = true;
+      beginRun();
+    }).catch(e => {
+      if (e.status === 409) {
+        S.claimed = false;
+        loadSelector().then(() => { S.sel.err = 'МЕСТО УЖЕ ЗАНЯТО'; S.sel.pick = -1; });
+      } else {
+        // сервер не отвечает — пускаем без сохранения
+        S.online = false;
+        S.claimed = false;
+        beginRun();
+      }
+    });
+    return;
+  }
+  beginRun();
+}
+
+function beginRun() {
   S.seq = pickSeq();
-  S.qi = p;
+  S.qi = Math.min(S.resume || 0, SEQ_LEN);
   S.hover = null;
   S.hoverBtn = null;
-  if (p >= SEQ_LEN) {
+  if (S.qi >= SEQ_LEN) {
     S.mode = 'result';
   } else {
     S.mode = 'question';
     beginQuestion();
   }
 }
+
 function beginQuestion() {
   S.phase = 'run';
   S.chosen = -1;
@@ -153,30 +228,48 @@ function answer(i) {
   if (S.mode !== 'question' || S.phase !== 'run') return;
   S.chosen = i;
   S.phase = 'done';
+  S.answers.push({ q: S.seq[S.qi].q.g, c: i });
+  heartbeat(S.qi + 1);
 }
 function onTimeout() {
   S.phase = 'done';
   S.chosen = -1;
+  S.answers.push({ q: S.seq[S.qi].q.g, c: -1 });
+  heartbeat(S.qi + 1);
 }
 function next() {
   if (S.mode === 'question' && S.phase === 'done') {
     S.qi++;
-    setProgress(S.qi);
     if (S.qi >= SEQ_LEN) {
-      S.mode = 'result';
-      S.hover = null;
-      S.hoverBtn = null;
+      finishTest();
     } else {
       beginQuestion();
     }
   }
 }
+function finishTest() {
+  S.mode = 'result';
+  S.hover = null;
+  S.hoverBtn = null;
+  if (S.online && S.claimed) {
+    api('complete', { i: S.seat, answers: S.answers }).catch(() => {});
+  }
+  S.claimed = false;
+  S.resume = 0;
+  lsDel(LS_KEY);
+}
 function restartTest() {
-  resetProgress();
+  S.resume = 0;
+  S.answers = [];
   startTest();
 }
+function backToMenu() {
+  S.mode = 'menu';
+  S.hoverBtn = null;
+}
 function primaryAction() {
-  if (S.mode === 'menu') startTest();
+  if (S.mode === 'select') confirmSelection();
+  else if (S.mode === 'menu') startTest();
   else if (S.mode === 'question') next();
   else if (S.mode === 'result') restartTest();
 }
@@ -289,7 +382,7 @@ function drawBG(t) {
   });
 }
 
-function addHit(x, y, w, h, fn) { S.hits.push({ x, y, w, h, fn }); }
+function addHit(x, y, w, h, fn, tag) { S.hits.push({ x, y, w, h, fn, tag: tag || null }); }
 
 function hitAt(px, py) {
   for (let i = S.hits.length - 1; i >= 0; i--) {
@@ -317,10 +410,16 @@ function drawButton(x, y, w, h, label, opt) {
   });
 }
 
+function fitSpaced(str, maxW, sp) {
+  let fs = 16;
+  while (fs > 10 && measureSpaced(str, FM(fs), sp) > maxW) fs--;
+  return fs;
+}
+
 // ---------- screens ----------
 function drawMenu(t) {
   const cx = W / 2;
-  const chipY = Math.max(30, H * 0.16);
+  const chipY = Math.max(30, H * 0.14);
   txt('// NEURO-TEST v1.0', cx, chipY, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 2 });
 
   const titleY = chipY + Math.min(76, H * 0.13);
@@ -332,18 +431,168 @@ function drawMenu(t) {
   txt('MEMENTO MORI', cx, titleY, { font: tf, color: C.cyan, align: 'center', spacing: sp, glow: 16 });
 
   txt('ТЕСТ: ПАТОЛОГИЯ БЕРЕМЕННОСТИ', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
-  txt('15 ВОПРОСОВ · 5 ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 62, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
+  txt('15 ВОПРОСОВ · 5 ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
+
+  if (S.seat >= 0) {
+    const nm = STUDENTS[S.seat].name;
+    txt(`// ${nm}`, cx, titleY + 88, { font: FM(fitSpaced(nm, W - 40, 1)), color: C.cyan, align: 'center', glow: 6, spacing: 1 });
+    if (!S.online) {
+      txt('// БЕЗ СОХРАНЕНИЯ', cx, titleY + 108, { font: FM(11), color: C.mag, align: 'center', spacing: 2 });
+    }
+  }
 
   const bw = Math.min(W - 48, 360), bh = 64;
-  const bx = cx - bw / 2, by = Math.min(H - 190, titleY + 110);
+  const bx = cx - bw / 2, by = Math.min(H - 190, titleY + 120);
   const hov = S.hoverBtn === 'start';
   drawButton(bx, by, bw, bh, 'Тест', { hovered: hov, font: FD(26), spacing: 8 });
-  addHit(bx, by, bw, bh, startTest);
+  addHit(bx, by, bw, bh, startTest, 'start');
 
   const pulse = 0.5 + 0.5 * Math.sin(t / 350);
   ctx.globalAlpha = 0.4 + 0.6 * pulse;
-  txt('// ВРЕМЯ ИДЁТ', cx, by + bh + 44, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 3 });
+  txt(S.resume > 0 ? `// ПРОДОЛЖЕНИЕ С ВОПРОСа ${pad2(S.resume + 1)}` : '// ВРЕМЯ ИДЁТ', cx, by + bh + 44, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 3 });
   ctx.globalAlpha = 1;
+}
+
+function drawSelect(t) {
+  const cx = W / 2;
+  const y0 = Math.max(26, H * 0.09);
+  txt('// ДОСТУП К ТЕСТУ', cx, y0, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 2 });
+  txt('КАК ТЕБЯ ЗОВУТ?', cx, y0 + 44, {
+    font: FD(Math.min(30, Math.max(18, W * 0.065))),
+    color: C.cyan, align: 'center', spacing: 3, glow: 14
+  });
+
+  const dw = Math.min(W - 36, 440), dh = 52;
+  const dx = cx - dw / 2, dy = y0 + 70;
+
+  if (S.sel.loading) {
+    const blink = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(t / 300));
+    ctx.globalAlpha = blink;
+    txt('// ЗАГРУЗКА СПИСКА...', cx, dy + dh / 2, { font: FM(14), color: C.cyan, align: 'center', baseline: 'middle', spacing: 2 });
+    ctx.globalAlpha = 1;
+    return;
+  }
+
+  const pick = S.sel.pick;
+  const open = S.sel.open && pickOpenAvailable();
+
+  // выпадающий список
+  roundRect(dx, dy, dw, dh, 6);
+  ctx.fillStyle = open ? 'rgba(0,255,255,0.10)' : (S.hoverBtn === 'drop' ? 'rgba(0,255,255,0.09)' : 'rgba(0,255,255,0.05)');
+  ctx.fill();
+  neon(C.cyan, open ? 16 : 8);
+  ctx.strokeStyle = C.cyan;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  noNeon();
+
+  const label = pick >= 0 ? STUDENTS[pick].name : '— выберите ФИ —';
+  const lfs = fitSpaced(label, dw - 70, 1);
+  txt(label, dx + 16, dy + dh / 2, {
+    font: FM(lfs),
+    color: pick >= 0 ? C.text : 'rgba(0,255,255,0.5)',
+    baseline: 'middle', spacing: 1, glow: pick >= 0 ? 4 : 0
+  });
+  txt(open ? '▲' : '▼', dx + dw - 20, dy + dh / 2, { font: FM(14), color: C.cyan, align: 'center', baseline: 'middle', glow: 6 });
+  addHit(dx, dy, dw, dh, () => { S.sel.open = !S.sel.open; S.hoverBtn = null; }, 'drop');
+
+  // панель со списком
+  let by = dy + dh + 18;
+  if (open) {
+    const rowH = Math.max(26, Math.min(44, (H - dy - dh - 130) / 10));
+    const py = dy + dh + 6;
+    const ph = rowH * 10 + 8;
+    roundRect(dx, py, dw, ph, 6);
+    ctx.fillStyle = 'rgba(5,5,8,0.97)';
+    ctx.fill();
+    neon('rgba(0,255,255,0.5)', 8);
+    ctx.strokeStyle = 'rgba(0,255,255,0.45)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    noNeon();
+
+    S.sel.list.forEach((s, idx) => {
+      const ry = py + 4 + idx * rowH;
+      const hov = S.hoverBtn === 'row' + idx;
+      const occupied = !!s.occupied;
+      const selected = pick === idx;
+      if (selected) {
+        ctx.fillStyle = 'rgba(0,255,255,0.12)';
+        ctx.fillRect(dx + 4, ry, dw - 8, rowH);
+      } else if (hov && !occupied) {
+        ctx.fillStyle = 'rgba(0,255,255,0.06)';
+        ctx.fillRect(dx + 4, ry, dw - 8, rowH);
+      }
+      if (idx > 0) {
+        ctx.strokeStyle = 'rgba(0,255,255,0.10)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(dx + 10, ry + 0.5);
+        ctx.lineTo(dx + dw - 10, ry + 0.5);
+        ctx.stroke();
+      }
+
+      const rx = dx + 20, rr = Math.min(8, rowH * 0.24);
+      ctx.beginPath();
+      ctx.arc(rx, ry + rowH / 2, rr, 0, Math.PI * 2);
+      ctx.strokeStyle = occupied ? 'rgba(224,224,232,0.3)' : C.cyan;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      if (selected) {
+        ctx.beginPath();
+        ctx.arc(rx, ry + rowH / 2, rr - 3, 0, Math.PI * 2);
+        ctx.fillStyle = C.cyan;
+        ctx.fill();
+      }
+
+      const nm = STUDENTS[idx].name;
+      let nfs = Math.max(11, Math.min(16, rowH * 0.42));
+      while (nfs > 10 && measureSpaced(nm, FM(nfs), 1) > dw - 150) nfs--;
+      txt(nm, dx + 40, ry + rowH / 2, {
+        font: FM(nfs),
+        color: occupied ? 'rgba(224,224,232,0.35)' : (selected ? C.cyan : C.text),
+        baseline: 'middle', spacing: 1, glow: selected && !occupied ? 6 : 0
+      });
+
+      const status = occupied ? 'ЗАНЯТО' : (s.completed ? 'СДАН' : 'СВОБОДНО');
+      const scol = occupied ? 'rgba(224,224,232,0.30)' : (s.completed ? 'rgba(233,65,150,0.8)' : 'rgba(15,255,150,0.7)');
+      txt(status, dx + dw - 16, ry + rowH / 2, { font: FM(11), color: scol, align: 'right', baseline: 'middle', spacing: 1 });
+
+      if (!occupied) {
+        addHit(dx + 4, ry, dw - 8, rowH, () => {
+          S.sel.pick = idx;
+          S.sel.open = false;
+          S.sel.err = null;
+          S.hoverBtn = null;
+        }, 'row' + idx);
+      }
+    });
+    by = py + ph + 14;
+  }
+
+  // кнопка подтверждения
+  const bh = 52;
+  const rowP = S.sel.list[pick];
+  const canGo = pick >= 0 && !(rowP && rowP.occupied);
+  drawButton(dx, by, dw, bh, 'ПОДТВЕРДИТЬ', {
+    hovered: canGo && S.hoverBtn === 'go',
+    color: canGo ? C.cyan : 'rgba(0,255,255,0.30)',
+    font: FD(18), spacing: 5
+  });
+  if (canGo) addHit(dx, by, dw, bh, confirmSelection, 'go');
+
+  let infoY = by + bh + 30;
+  if (S.sel.offline) {
+    txt('// СЕРВЕР НЕ ОТВЕЧАЕТ — ПУСКАТЬ БЕЗ СОХРАНЕНИЯ', cx, infoY, { font: FM(11), color: C.mag, align: 'center', spacing: 2 });
+    infoY += 22;
+  }
+  if (S.sel.err) {
+    txt('// ' + S.sel.err, cx, infoY, { font: FM(12), color: C.red, align: 'center', spacing: 2, glow: 6 });
+  }
+}
+
+function pickOpenAvailable() {
+  return S.sel.list.length > 0;
 }
 
 function questionLayout(q) {
@@ -410,7 +659,7 @@ function drawQuestion(t) {
     const bw = Math.min(150, W * 0.4), bh = L.headH - 12;
     const bx = W - 20 - bw, by = 8 + (L.headH - bh) / 2;
     drawButton(bx, by, bw, bh, 'Далее', { hovered: S.hoverBtn === 'next', font: FD(Math.min(17, bh * 0.45)), spacing: 3 });
-    addHit(bx, by, bw, bh, next);
+    addHit(bx, by, bw, bh, next, 'next');
   }
 
   // topic chip + question
@@ -495,43 +744,39 @@ function drawResult() {
   txt('// СЕАНС ЗАВЕРШЁН', cx, y0, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 2 });
 
   const sf = Math.min(72, Math.max(40, W * 0.16));
-  txt(`${FIXED_SCORE}/15`, cx, y0 + sf + 10, { font: FD(sf), color: C.cyan, align: 'center', glow: 20, spacing: 4 });
+  txt(`${S.score}/15`, cx, y0 + sf + 10, { font: FD(sf), color: C.cyan, align: 'center', glow: 20, spacing: 4 });
 
-  const lineY = y0 + sf + 52;
-  TOPICS.forEach((t, i) => {
-    const y = lineY + i * 30;
-    txt(`// ${t.name}`, cx - 140, y, { font: FM(14), color: C.mag, align: 'left', glow: 5, spacing: 1 });
-    txt(`${FIXED_PER[i]}/5`, cx + 140, y, { font: FD(16), color: C.cyan, align: 'right', glow: 8 });
-    ctx.strokeStyle = 'rgba(0,255,255,0.15)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(cx - 140, y + 10);
-    ctx.lineTo(cx + 140, y + 10);
-    ctx.stroke();
-  });
+  const nm = S.seat >= 0 ? STUDENTS[S.seat].name : 'СТУДЕНТ';
+  const nameY = y0 + sf + 48;
+  txt(nm, cx, nameY, { font: FM(fitSpaced(nm, W - 40, 1)), color: C.text, align: 'center', glow: 4, spacing: 1 });
 
-  const verdict = FIXED_SCORE >= 13 ? 'NEURO-УРОВЕНЬ ПОДТВЕРЖДЁН'
-     : FIXED_SCORE >= 10 ? 'СИСТЕМА СТАБИЛЬНА'
+  const verdict = S.score >= 13 ? 'NEURO-УРОВЕНЬ ПОДТВЕРЖДЁН'
+     : S.score >= 10 ? 'СИСТЕМА СТАБИЛЬНА'
     : 'ТРЕБУЕТСЯ ПЕРЕПРОШИВКА';
-  const vy = lineY + TOPICS.length * 30 + 34;
+  const vy = nameY + 56;
   ctx.globalAlpha = 0.7 + 0.3 * Math.sin(performance.now() / 400);
   txt(verdict, cx, vy, { font: FM(15), color: C.mag, align: 'center', glow: 10, spacing: 2 });
   ctx.globalAlpha = 1;
 
+  if (!S.online) {
+    txt('// БЕЗ СОХРАНЕНИЯ', cx, vy + 30, { font: FM(11), color: 'rgba(233,65,150,0.7)', align: 'center', spacing: 2 });
+  }
+
   const bw = Math.min((W - 60) / 2, 220), bh = 56;
   const gap = 14;
-  const by = Math.min(H - 90, vy + 46);
+  const by = Math.min(H - 90, vy + (S.online ? 56 : 76));
   const x1 = cx - bw - gap / 2, x2 = cx + gap / 2;
   drawButton(x1, by, bw, bh, 'Заново', { hovered: S.hoverBtn === 'again', font: FD(18), spacing: 4 });
-  addHit(x1, by, bw, bh, restartTest);
+  addHit(x1, by, bw, bh, restartTest, 'again');
   drawButton(x2, by, bw, bh, 'Меню', { hovered: S.hoverBtn === 'menu', color: C.mag, font: FD(18), spacing: 4 });
-  addHit(x2, by, bw, bh, () => { S.mode = 'menu'; S.hoverBtn = null; });
+  addHit(x2, by, bw, bh, backToMenu, 'menu');
 }
 
 function draw(t) {
   S.hits = [];
   drawBG(t);
-  if (S.mode === 'menu') drawMenu(t);
+  if (S.mode === 'select') drawSelect(t);
+  else if (S.mode === 'menu') drawMenu(t);
   else if (S.mode === 'question') drawQuestion(t);
   else drawResult();
 }
@@ -561,9 +806,7 @@ canvas.addEventListener('pointermove', e => {
   S.hoverBtn = null;
   if (h) {
     canvas.style.cursor = 'pointer';
-    if (h.fn === next) S.hoverBtn = 'next';
-    else if (h.fn === startTest) S.hoverBtn = 'start';
-    else if (h.fn === restartTest) S.hoverBtn = 'again';
+    if (h.tag) S.hoverBtn = h.tag;
     else if (S.mode === 'question' && S.phase === 'run') S.hover = S.hits.indexOf(h);
   } else {
     canvas.style.cursor = 'default';
@@ -577,11 +820,15 @@ window.addEventListener('keydown', e => {
   } else if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();
     primaryAction();
+  } else if (e.key === 'Escape' && S.mode === 'select') {
+    S.sel.open = false;
   }
 });
 
 document.fonts.load(FD(40)).catch(() => {});
 document.fonts.load(FM(16)).catch(() => {});
+
+initSession().catch(() => { enterOfflineSelector(); });
 </script>
 </body>
 </html>

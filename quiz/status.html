@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Режим ада — статус теста</title>
+<style>
+@font-face{font-family:'Orbitron';src:url('/fonts/Orbitron.woff2') format('woff2');font-style:normal;font-weight:100 900;font-display:swap;}
+@font-face{font-family:'Share Tech Mono';src:url('/fonts/ShareTechMono.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap;}
+:root{
+  --bg:#050508; --cyan:#00ffff; --mag:#e94196; --green:#0f0; --red:#ff4060;
+  --text:#e0e0e8; --card:#0b0d13; --line:rgba(0,255,255,0.25);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);min-height:100dvh;
+  font-family:'Share Tech Mono','Courier New',monospace;}
+body{background-image:
+  linear-gradient(rgba(0,255,255,0.04) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0,255,255,0.04) 1px, transparent 1px);
+  background-size:44px 44px;}
+header{padding:22px 16px 8px;text-align:center;}
+.chip{color:var(--mag);font-size:12px;letter-spacing:2px;text-shadow:0 0 8px var(--mag);}
+h1{margin:8px 0 4px;font-family:'Orbitron',monospace;font-weight:700;font-size:clamp(20px,5vw,34px);
+  color:var(--cyan);letter-spacing:4px;text-shadow:0 0 16px rgba(0,255,255,0.6);}
+.sub{font-size:12px;color:rgba(0,255,255,0.65);letter-spacing:1px;}
+#net{display:none;margin:10px auto 0;font-size:12px;color:var(--red);letter-spacing:1px;}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:1100px;margin:18px auto;padding:0 12px;}
+.cell{background:var(--card);border:2px solid var(--line);border-radius:8px;padding:10px 8px;
+  min-height:118px;display:flex;flex-direction:column;gap:6px;cursor:pointer;position:relative;
+  transition:border-color .2s, box-shadow .2s;}
+.cell.free{border-color:rgba(255,64,96,0.55);}
+.cell.busy{border-color:var(--green);box-shadow:0 0 14px rgba(0,255,0,0.35);}
+.cell.done{border-color:var(--red);box-shadow:0 0 14px rgba(255,64,96,0.35);}
+.cell .num{font-family:'Orbitron',monospace;font-size:11px;color:rgba(0,255,255,0.6);letter-spacing:1px;}
+.cell .name{font-size:12px;line-height:1.25;color:rgba(224,224,232,0.8);flex:1;}
+.cell .st{font-size:11px;letter-spacing:1px;text-align:center;padding:4px 2px;border-radius:4px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);}
+.cell.busy .st{color:var(--green);border-color:rgba(0,255,0,0.4);text-shadow:0 0 8px rgba(0,255,0,0.7);}
+.cell.free .st{color:rgba(255,64,96,0.9);}
+.cell.done .st{color:var(--red);border-color:rgba(255,64,96,0.5);font-family:'Orbitron',monospace;
+  text-shadow:0 0 8px rgba(255,64,96,0.7);}
+#ov{display:none;position:fixed;inset:0;background:rgba(5,5,8,0.88);z-index:10;
+  align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px;}
+#ov.on{display:flex;}
+.pop{background:#0b0d13;border:2px solid var(--cyan);border-radius:10px;max-width:760px;width:100%;
+  padding:18px 16px 16px;box-shadow:0 0 30px rgba(0,255,255,0.35);}
+.pop h2{margin:0 0 4px;font-family:'Orbitron',monospace;font-size:16px;color:var(--cyan);letter-spacing:2px;}
+.pop .meta{font-size:12px;color:var(--mag);letter-spacing:1px;margin-bottom:12px;}
+.qa{border:1px solid rgba(0,255,255,0.18);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:13px;}
+.qa .qh{color:rgba(0,255,255,0.85);margin-bottom:4px;}
+.qa .line{color:rgba(224,224,232,0.85);}
+.qa .ok{color:var(--green);}
+.qa .bad{color:var(--red);}
+.scores{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 6px;align-items:center;}
+.badge{font-family:'Orbitron',monospace;padding:8px 14px;border-radius:6px;font-size:15px;letter-spacing:2px;}
+.badge.honest{border:2px solid var(--green);color:var(--green);text-shadow:0 0 8px rgba(0,255,0,0.7);}
+.badge.total{border:2px solid var(--mag);color:var(--mag);text-shadow:0 0 8px rgba(233,65,150,0.7);}
+.acts{display:flex;gap:10px;margin-top:14px;justify-content:flex-end;}
+.btn{font-family:'Orbitron',monospace;background:rgba(0,255,255,0.06);color:var(--cyan);
+  border:2px solid var(--cyan);border-radius:6px;padding:9px 16px;font-size:13px;letter-spacing:2px;cursor:pointer;}
+.btn:hover{background:rgba(0,255,255,0.16);box-shadow:0 0 12px rgba(0,255,255,0.5);}
+.btn.warn{border-color:var(--red);color:var(--red);background:rgba(255,64,96,0.06);}
+.btn.warn:hover{background:rgba(255,64,96,0.16);box-shadow:0 0 12px rgba(255,64,96,0.5);}
+.idle{font-size:13px;color:rgba(224,224,232,0.8);padding:6px 0 4px;}
+@media (max-width:820px){
+  .grid{grid-template-columns:repeat(5,1fr);gap:6px;padding:0 8px;}
+  .cell{min-height:96px;padding:8px 5px;}
+  .cell .name{font-size:10px;}
+  .cell .st{font-size:9px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="chip">// КОНТРОЛЬНЫЙ ТЕРМИНАЛ</div>
+  <h1>РЕЖИМ АДА</h1>
+  <div class="sub">ПАТОЛОГИЯ БЕРЕМЕННОСТИ · ОБНОВЛЕНИЕ КАЖДЫЕ 3 С</div>
+  <div id="net">// НЕТ СВЯЗИ С СЕРВЕРОМ</div>
+</header>
+<div class="grid" id="grid"></div>
+<div id="ov"><div class="pop" id="pop"></div></div>
+<script src="/quiz-data.js"></script>
+<script>
+'use strict';
+const grid = document.getElementById('grid');
+const ov = document.getElementById('ov');
+const pop = document.getElementById('pop');
+const net = document.getElementById('net');
+let last = [];
+let openIdx = -1;
+const LETTERS = ['а', 'б', 'в', 'г'];
+
+function api(path, data) {
+  const opts = { cache: 'no-store' };
+  if (data !== undefined) {
+    opts.method = 'POST';
+    opts.headers = { 'Content-Type': 'application/json' };
+    opts.body = JSON.stringify(data);
+  }
+  return fetch('/api/quiz/' + path, opts).then(r => {
+    if (!r.ok) throw new Error('http ' + r.status);
+    return r.json();
+  });
+}
+
+function render() {
+  grid.innerHTML = '';
+  last.forEach(s => {
+    const st = STUDENTS[s.i] || { name: '—', score: 0 };
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (s.occupied ? 'busy' : (s.completed ? 'done' : 'free'));
+    let status;
+    if (s.occupied) status = 'ВОПРОС ' + String(Math.min(s.progress + 1, 15)).padStart(2, '0') + '/15';
+    else if (s.completed) status = 'БАЛЛ ' + st.score + '/15';
+    else status = 'НЕ ПРОХОДИТ';
+    cell.innerHTML = '<div class="num">#' + String(s.i + 1).padStart(2, '0') + '</div>' +
+      '<div class="name"></div><div class="st">' + status + '</div>';
+    cell.querySelector('.name').textContent = st.name;
+    cell.addEventListener('click', () => openPopup(s.i));
+    grid.appendChild(cell);
+  });
+}
+
+function openPopup(i) {
+  openIdx = i;
+  const st = STUDENTS[i] || { name: '—', score: 0 };
+  const s = last.find(x => x.i === i);
+  let html = '<h2>' + esc(st.name) + '</h2><div class="meta">#' + String(i + 1).padStart(2, '0') + ' · ЛИЧНЫЙ БАЛЛ: ' + st.score + '/15</div>';
+
+  if (s && s.occupied) {
+    html += '<div class="idle">// проходит тест, вопрос ' + Math.min(s.progress + 1, 15) + ' из 15</div>';
+    html += actsHTML(i, false);
+  } else if (s && s.completed) {
+    const c = s.completed;
+    const n = Math.min(c.questions.length, c.answers.length);
+    let honest = 0;
+    let rows = '';
+    for (let k = 0; k < n; k++) {
+      const q = questionByGid(c.questions[k]);
+      if (!q) continue;
+      const ans = c.answers[k];
+      const ok = ans === q.a;
+      if (ok) honest++;
+      const your = ans >= 0 && ans <= 3 ? LETTERS[ans] + ') ' + esc(q.o[ans]) : '— нет ответа';
+      rows += '<div class="qa">' +
+        '<div class="qh">ВОПРОС ' + (k + 1) + ': ' + esc(q.q) + '</div>' +
+        '<div class="line">Ваш ответ: <span class="' + (ok ? 'ok' : 'bad') + '">' + your + (ok ? ' ✓' : ' ✗') + '</span></div>' +
+        '<div class="line">Правильно: <span class="ok">' + LETTERS[q.a] + ') ' + esc(q.o[q.a]) + '</span></div>' +
+        '</div>';
+    }
+    if (!rows) rows = '<div class="idle">// нет данных об ответах</div>';
+    html += rows;
+    html += '<div class="scores"><span class="badge honest">ЧЕСТНЫЙ БАЛЛ: ' + honest + '/' + n + '</span>' +
+      '<span class="badge total">ЗАЧЁТ: ' + st.score + '/15</span></div>';
+    html += actsHTML(i, true);
+  } else {
+    html += '<div class="idle">// не проходит тест</div>';
+    html += actsHTML(i, false);
+  }
+  pop.innerHTML = html;
+  ov.classList.add('on');
+  const fb = pop.querySelector('[data-flush]');
+  if (fb) fb.addEventListener('click', () => {
+    api('flush', { i: i }).then(() => { poll(); openPopup(i); }).catch(() => {});
+  });
+  const cb = pop.querySelector('[data-close]');
+  if (cb) cb.addEventListener('click', closePopup);
+}
+
+function actsHTML(i, canFlush) {
+  let h = '<div class="acts">';
+  if (canFlush) h += '<button class="btn warn" data-flush>FLUSH!</button>';
+  h += '<button class="btn" data-close>ЗАКРЫТЬ</button></div>';
+  return h;
+}
+
+function closePopup() {
+  ov.classList.remove('on');
+  openIdx = -1;
+}
+ov.addEventListener('click', e => { if (e.target === ov) closePopup(); });
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function poll() {
+  api('status').then(d => {
+    last = d.students;
+    net.style.display = 'none';
+    render();
+    if (openIdx >= 0 && ov.classList.contains('on')) openPopup(openIdx);
+  }).catch(() => {
+    net.style.display = 'block';
+  });
+}
+
+poll();
+setInterval(poll, 3000);
+</script>
+</body>
+</html>

@@ -1,13 +1,22 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "kanamiisa",
-  "compatibility_date": "2026-05-17",
+  "compatibility_date": "2026-07-13",
   "observability": {
     "enabled": true
   },
+  "main": "worker.js",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
   },
+  "kv_namespaces": [
+    {
+      "binding": "QUIZ",
+      "id": "d1374c1898dc4b4bb1658c1571b66c99"
+    }
+  ],
   "compatibility_flags": [
     "nodejs_compat"
   ]
