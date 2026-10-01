@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тест — патология беременности</title>
+<style>
+@font-face{font-family:'Orbitron';src:url('fonts/Orbitron.woff2') format('woff2');font-style:normal;font-weight:100 900;font-display:swap;}
+@font-face{font-family:'Share Tech Mono';src:url('fonts/ShareTechMono.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap;}
+html,body{margin:0;padding:0;height:100%;background:#050508;overflow:hidden;}
+#c{display:block;width:100vw;height:100vh;height:100dvh;touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:default;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+'use strict';
+
+const C = {
+  bg: '#050508',
+  cyan: '#00ffff',
+  cyanDim: 'rgba(0,255,255,0.45)',
+  mag: '#e94196',
+  green: '#0f0',
+  red: '#f00',
+  text: '#e0e0e8'
+};
+const FD = s => `700 ${s}px 'Orbitron','Courier New',monospace`;
+const FM = s => `400 ${s}px 'Share Tech Mono','Courier New',monospace`;
+const LETTERS = ['а', 'б', 'в', 'г'];
+const TIME_MS = 30000;
+
+const TOPICS = [
+  { name: 'ПИТАНИЕ', qs: [
+    { q: 'Сколько углеводов в сутки рекомендовано при гестационном сахарном диабете?', o: ['100 г', '175 г', '250 г', 'Без ограничений'], a: 1 },
+    { q: 'Минимальная калорийность рациона для профилактики кетонурии:', o: ['1200 ккал', '1500 ккал', '1800 ккал', '2500 ккал'], a: 2 },
+    { q: 'Рекомендуемый перерыв между приёмами пищи при ГСД:', o: ['1–1,5 часа', '2,5–3 часа', '4–5 часов', 'Не регламентируется'], a: 1 },
+    { q: 'Максимальный интервал между последним приёмом пищи и первым утренним:', o: ['6 часов', '8 часов', '10 часов', '12 часов'], a: 2 },
+    { q: 'Суточная норма пищевых волокон при ГСД:', o: ['15 г', '28 г', '45 г', '60 г'], a: 1 },
+    { q: 'Дополнительный приём 12–15 г углеводов перед сном нужен для профилактики:', o: ['Кетонурии', 'Гипертонии', 'Анемии', 'Аллергии'], a: 0 },
+    { q: 'Какие сахарозаменители разрешены при беременности?', o: ['Аспартам', 'Сахарин', 'Сукралоза и стевиазит', 'Фруктоза'], a: 2 },
+    { q: 'При преэклампсии диета рекомендует ограничить:', o: ['Острую и солёную пищу', 'Овощи и фрукты', 'Белок', 'Клетчатку'], a: 0 },
+    { q: 'При ожирении насыщенные жиры ограничивают до:', o: ['5% суточной нормы жиров', '10% суточной нормы жиров', '20% суточной нормы жиров', '30% суточной нормы жиров'], a: 1 },
+    { q: 'Фолиевая кислота до зачатия и в I триместре нужна для профилактики:', o: ['Дефектов нервной трубки', 'Железодефицитной анемии', 'Гестоза', 'Кариеса'], a: 0 }
+  ]},
+  { name: 'РЕЗУС-КОНФЛИКТ', qs: [
+    { q: 'Какие антитела матери проходят через плаценту к плоду?', o: ['IgM', 'IgG', 'IgA', 'IgE'], a: 1 },
+    { q: 'В каком триместре эритроциты плода чаще всего попадают в кровь матери (29–30% случаев)?', o: ['I триместр', 'II триместр', 'III триместр', 'Одинаково часто'], a: 2 },
+    { q: 'Первичный иммунный ответ при сенсибилизации — это выработка:', o: ['IgG', 'IgM', 'IgE', 'IgD'], a: 1 },
+    { q: 'Гемолитическая болезнь плода при первой беременности:', o: ['Развивается почти всегда', 'Развивается редко', 'Невозможна', 'Всегда протекает тяжело'], a: 1 },
+    { q: 'Антенатальная профилактика анти-D проводится в срок:', o: ['12–14 недель', '28–30 недель', '36–38 недель', 'Только после родов'], a: 1 },
+    { q: 'Постнатальная доза иммуноглобулина антирезус Rho[D]:', o: ['500 МЕ', '1000 МЕ', '1500 МЕ (300 мкг)', '3000 МЕ'], a: 2 },
+    { q: 'Ввести анти-D после родов желательно:', o: ['В первые 2 часа, но не позже 72 часов', 'На 5-е сутки', 'На 10-е сутки', 'Через 2 недели'], a: 0 },
+    { q: 'Каким тестом оценивают объём плодово-материнского кровотечения?', o: ['Проба Кумбса', 'Тест Клейхауэра–Бетке', 'Проба Зимницкого', 'Шкала Апгар'], a: 1 },
+    { q: 'Если объём плодово-материнского кровотечения 25–50 мл, дозу анти-D:', o: ['Уменьшают', 'Удваивают', 'Не меняют', 'Отменяют'], a: 1 },
+    { q: 'Самая тяжёлая форма гемолитической болезни плода:', o: ['Желтушная', 'Анемическая', 'Отёчная (водянка)', 'Смешанная'], a: 2 }
+  ]},
+  { name: 'ЗАВИСИМОСТИ', qs: [
+    { q: 'Безопасная доза алкоголя при беременности:', o: ['1 бокал сухого вина', 'Пиво раз в неделю', 'Не существует', 'Только в I триместре'], a: 2 },
+    { q: 'Концентрация карбоксигемоглобина в крови плода курящей матери:', o: ['В 2 раза выше, чем у матери', 'Такая же, как у матери', 'Ниже, чем у матери', 'Не определяется'], a: 0 },
+    { q: 'Курение увеличивает перинатальную смертность примерно на:', o: ['5%', '15%', '27%', '50%'], a: 2 },
+    { q: 'Абстинентный синдром новорождённых при никотиновой зависимости матери встречается:', o: ['У 69,2% новорождённых', 'У 5% новорождённых', 'У 30% новорождённых', 'Не встречается'], a: 0 },
+    { q: 'При алкоголизме матери вероятность рождения ребёнка с ФАС:', o: ['5%', '10–15%', '25–45%', 'Почти 100%'], a: 2 },
+    { q: 'Какие лицевые дисморфии характерны для ФАС?', o: ['Тонкая верхняя губа и сглаженный носогубный желобок', 'Крупный подбородок', 'Выпуклый лоб', 'Длинная шея'], a: 0 },
+    { q: 'Абстинентный синдром новорождённого при опиоидной зависимости матери наступает:', o: ['Через 2–3 недели', 'В первые 24–72 часа', 'Сразу в родах, в минуты', 'Не бывает'], a: 1 },
+    { q: 'Главная опасность кокаина при беременности:', o: ['Катаракта', 'Отслойка плаценты', 'Глаукома', 'Кариес'], a: 1 },
+    { q: 'Отказ от курения при беременности:', o: ['Имеет смысл только до зачатия', 'Снижает риск ЗВУР на любом сроке', 'Не влияет на плод', 'Увеличивает риск ЗВУР'], a: 1 },
+    { q: 'Какое утверждение о вейпинге верно?', o: ['Он безопаснее сигарет', 'Никотин не проникает через плаценту', 'Связан с маловодием, апноэ и низкой массой', 'Пассивный вейпинг безопасен'], a: 2 }
+  ]}
+];
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0, dpr = 1;
+
+function fit() {
+  dpr = window.devicePixelRatio || 1;
+  W = canvas.clientWidth;
+  H = canvas.clientHeight;
+  canvas.width = Math.max(1, Math.round(W * dpr));
+  canvas.height = Math.max(1, Math.round(H * dpr));
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', fit);
+window.addEventListener('orientationchange', fit);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', fit);
+}
+fit();
+
+const S = {
+  mode: 'menu',          // menu | question | result
+  seq: [],               // [{q, t}]
+  qi: 0,
+  phase: 'run',          // run | done
+  chosen: -1,
+  deadline: 0,
+  score: 0,
+  per: [0, 0, 0],
+  hover: null,
+  hoverBtn: null,
+  hits: []
+};
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function pickSeq() {
+  const picked = [];
+  TOPICS.forEach((t, ti) => {
+    shuffle(t.qs).slice(0, 5).forEach(q => picked.push({ q, t: ti }));
+  });
+  return shuffle(picked);
+}
+function startTest() {
+  S.seq = pickSeq();
+  S.qi = 0;
+  S.score = 0;
+  S.per = [0, 0, 0];
+  S.mode = 'question';
+  beginQuestion();
+}
+function beginQuestion() {
+  S.phase = 'run';
+  S.chosen = -1;
+  S.deadline = performance.now() + TIME_MS;
+}
+function answer(i) {
+  if (S.mode !== 'question' || S.phase !== 'run') return;
+  const item = S.seq[S.qi];
+  S.chosen = i;
+  S.phase = 'done';
+  if (i === item.q.a) {
+    S.score++;
+    S.per[item.t]++;
+  }
+}
+function onTimeout() {
+  S.phase = 'done';
+  S.chosen = -1;
+}
+function next() {
+  if (S.mode === 'question' && S.phase === 'done') {
+    S.qi++;
+    if (S.qi >= S.seq.length) {
+      S.mode = 'result';
+      S.hover = null;
+    } else {
+      beginQuestion();
+    }
+  }
+}
+function primaryAction() {
+  if (S.mode === 'menu') startTest();
+  else if (S.mode === 'question') next();
+  else if (S.mode === 'result') startTest();
+}
+
+// ---------- drawing helpers ----------
+function neon(color, blur) { ctx.shadowColor = color; ctx.shadowBlur = blur || 0; }
+function noNeon() { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; }
+
+function roundRect(x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function measureSpaced(str, font, sp) {
+  ctx.font = font;
+  let w = 0;
+  for (const ch of str) w += ctx.measureText(ch).width + sp;
+  return w - sp;
+}
+
+function txt(str, x, y, opt) {
+  opt = opt || {};
+  const font = opt.font || FM(14);
+  const color = opt.color || C.cyan;
+  const align = opt.align || 'left';
+  const baseline = opt.baseline || 'alphabetic';
+  const sp = opt.spacing || 0;
+  ctx.font = font;
+  ctx.textBaseline = baseline;
+  ctx.textAlign = sp ? 'left' : align;
+  ctx.fillStyle = color;
+  if (opt.alpha !== undefined) ctx.globalAlpha = opt.alpha;
+  if (opt.glow) neon(color, opt.glow);
+  if (!sp) {
+    ctx.fillText(str, x, y);
+  } else {
+    let w = measureSpaced(str, font, sp);
+    let cx = x;
+    if (align === 'center') cx = x - w / 2;
+    else if (align === 'right') cx = x - w;
+    for (const ch of str) {
+      ctx.fillText(ch, cx, y);
+      cx += ctx.measureText(ch).width + sp;
+    }
+  }
+  noNeon();
+  ctx.globalAlpha = 1;
+}
+
+function wrapText(str, maxW, font) {
+  ctx.font = font;
+  const words = str.split(' ');
+  const lines = [];
+  let line = '';
+  for (const w of words) {
+    const t = line ? line + ' ' + w : w;
+    if (ctx.measureText(t).width <= maxW) line = t;
+    else { if (line) lines.push(line); line = w; }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawBG(t) {
+  ctx.fillStyle = C.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(0,255,255,0.045)';
+  ctx.lineWidth = 1;
+  const step = 44;
+  ctx.beginPath();
+  for (let x = 0; x <= W; x += step) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); }
+  for (let y = 0; y <= H; y += step) { ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
+  ctx.stroke();
+
+  const by = ((t / 26) % (H + 240)) - 120;
+  const g = ctx.createLinearGradient(0, by - 70, 0, by + 70);
+  g.addColorStop(0, 'rgba(0,255,255,0)');
+  g.addColorStop(0.5, 'rgba(0,255,255,0.05)');
+  g.addColorStop(1, 'rgba(0,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, by - 70, W, 140);
+
+  const mg = ctx.createRadialGradient(W / 2, -H * 0.12, 0, W / 2, -H * 0.12, H * 0.95);
+  mg.addColorStop(0, 'rgba(233,65,150,0.10)');
+  mg.addColorStop(1, 'rgba(233,65,150,0)');
+  ctx.fillStyle = mg;
+  ctx.fillRect(0, 0, W, H);
+
+  const v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.32, W / 2, H / 2, Math.max(W, H) * 0.75);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(1, 'rgba(0,0,0,0.5)');
+  ctx.fillStyle = v;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(0,255,255,0.25)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(6.5, 6.5, W - 13, H - 13);
+  ctx.fillStyle = C.mag;
+  const c = 14;
+  [[6, 6], [W - 6 - c, 6], [6, H - 6 - c], [W - 6 - c, H - 6 - c]].forEach(p => {
+    ctx.fillRect(p[0], p[1], c, 2);
+    ctx.fillRect(p[0], p[1], 2, c);
+  });
+}
+
+function addHit(x, y, w, h, fn) { S.hits.push({ x, y, w, h, fn }); }
+
+function hitAt(px, py) {
+  for (let i = S.hits.length - 1; i >= 0; i--) {
+    const h = S.hits[i];
+    if (px >= h.x && px <= h.x + h.w && py >= h.y && py <= h.y + h.h) return h;
+  }
+  return null;
+}
+
+function drawButton(x, y, w, h, label, opt) {
+  opt = opt || {};
+  const col = opt.color || C.cyan;
+  const hovered = opt.hovered;
+  roundRect(x, y, w, h, 6);
+  ctx.fillStyle = hovered ? (opt.fillHover || 'rgba(0,255,255,0.14)') : 'rgba(0,255,255,0.05)';
+  ctx.fill();
+  neon(col, hovered ? 18 : 10);
+  ctx.strokeStyle = col;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  noNeon();
+  txt(label, x + w / 2, y + h / 2 + 1, {
+    font: opt.font || FD(Math.min(20, h * 0.42)),
+    color: col, align: 'center', baseline: 'middle', glow: hovered ? 12 : 6, spacing: opt.spacing !== undefined ? opt.spacing : 2
+  });
+}
+
+// ---------- screens ----------
+function drawMenu(t) {
+  const cx = W / 2;
+  const chipY = Math.max(30, H * 0.16);
+  txt('// NEURO-TEST v1.0', cx, chipY, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 2 });
+
+  const titleY = chipY + Math.min(76, H * 0.13);
+  const tf = FD(Math.min(46, Math.max(26, W * 0.09)));
+  const sp = 6;
+  const tw = measureSpaced('MEMENTO MORI', tf, sp);
+  txt('MEMENTO MORI', cx - 2, titleY, { font: tf, color: C.mag, align: 'center', spacing: sp, alpha: 0.55 });
+  txt('MEMENTO MORI', cx + 2, titleY, { font: tf, color: 'rgba(0,255,255,0.6)', align: 'center', spacing: sp });
+  txt('MEMENTO MORI', cx, titleY, { font: tf, color: C.cyan, align: 'center', spacing: sp, glow: 16 });
+
+  txt('ТЕСТ: ПАТОЛОГИЯ БЕРЕМЕННОСТИ', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
+  txt('15 ВОПРОСОВ · 5 ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 62, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
+
+  const bw = Math.min(W - 48, 360), bh = 64;
+  const bx = cx - bw / 2, by = Math.min(H - 190, titleY + 110);
+  const hov = S.hoverBtn === 'start';
+  drawButton(bx, by, bw, bh, 'Тест', { hovered: hov, font: FD(26), spacing: 8 });
+  addHit(bx, by, bw, bh, startTest);
+
+  const pulse = 0.5 + 0.5 * Math.sin(t / 350);
+  ctx.globalAlpha = 0.4 + 0.6 * pulse;
+  txt('// ВРЕМЯ ИДЁТ', cx, by + bh + 44, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 3 });
+  ctx.globalAlpha = 1;
+}
+
+function questionLayout(q) {
+  const barH = 8;
+  const headH = W < 480 ? 40 : 46;
+  const topY = barH + headH;
+  const labelY = topY + 14;
+  const qTop = topY + 26;
+  const maxW = W - 40;
+  const sizes = W < 600 ? [19, 17, 15, 13] : [23, 21, 19, 17];
+  let fs = sizes[sizes.length - 1];
+  let lines = wrapText(q.q, maxW, FM(fs));
+  for (const s of sizes) {
+    const l = wrapText(q.q, maxW, FM(s));
+    const qH = l.length * s * 1.35;
+    if (qTop + qH + 14 + 150 + 14 <= H) { fs = s; lines = l; break; }
+  }
+  const qH = lines.length * fs * 1.35;
+  let gridTop = qTop + qH + 14;
+  const minGrid = Math.min(150, H * 0.55);
+  if (H - gridTop - 14 < minGrid) gridTop = Math.max(topY + 40, H - 14 - minGrid);
+  const gap = W < 600 ? 10 : 14;
+  const gridH = H - gridTop - 14;
+  const cardW = (W - 40 - gap) / 2;
+  const cardH = (gridH - gap) / 2;
+  return { barH, headH, topY, labelY, qTop, fs, lines, gridTop, gap, cardW, cardH, maxW };
+}
+
+function drawQuestion(t) {
+  const item = S.seq[S.qi];
+  const q = item.q;
+  const L = questionLayout(q);
+  const run = S.phase === 'run';
+  const rem = Math.max(0, S.deadline - t);
+
+  // countdown bar (full width)
+  ctx.fillStyle = 'rgba(0,255,255,0.10)';
+  ctx.fillRect(0, 0, W, L.barH);
+  if (run) {
+    const p = rem / TIME_MS;
+    const low = rem <= 5000;
+    const col = low ? C.mag : C.cyan;
+    const blink = low ? 0.6 + 0.4 * Math.sin(t / 90) : 1;
+    ctx.globalAlpha = blink;
+    neon(col, 10);
+    ctx.fillStyle = col;
+    ctx.fillRect(0, 0, W * p, L.barH);
+    noNeon();
+    ctx.globalAlpha = 1;
+  }
+
+  // header
+  const headMid = 8 + L.headH / 2;
+  txt(`ВОПРОС ${pad2(S.qi + 1)}/15`, 20, headMid, { font: FM(13), color: C.cyan, baseline: 'middle', glow: 5, spacing: 1 });
+
+  if (run) {
+    const secs = Math.ceil(rem / 1000);
+    const low = secs <= 5;
+    txt(`00:${pad2(secs)}`, W - 20, headMid, {
+      font: FD(W < 480 ? 18 : 20), color: low ? C.mag : C.cyan,
+      align: 'right', baseline: 'middle', glow: low ? 14 : 8
+    });
+  } else {
+    const bw = Math.min(150, W * 0.4), bh = L.headH - 12;
+    const bx = W - 20 - bw, by = 8 + (L.headH - bh) / 2;
+    drawButton(bx, by, bw, bh, 'Далее', { hovered: S.hoverBtn === 'next', font: FD(Math.min(17, bh * 0.45)), spacing: 3 });
+    addHit(bx, by, bw, bh, next);
+  }
+
+  // topic chip + question
+  txt(`// ${TOPICS[item.t].name}`, 20, L.labelY, { font: FM(12), color: C.mag, glow: 6, spacing: 2 });
+  let y = L.qTop + L.fs;
+  for (const line of L.lines) {
+    txt(line, 20, y, { font: FM(L.fs), color: C.cyan, glow: 4 });
+    y += L.fs * 1.35;
+  }
+
+  // answer cards 2x2
+  const correct = q.a;
+  const done = !run;
+  for (let i = 0; i < 4; i++) {
+    const col = i % 2, row = (i / 2) | 0;
+    const x = 20 + col * (L.cardW + L.gap);
+    const cy = L.gridTop + row * (L.cardH + L.gap);
+    let state;
+    if (!done) state = S.hover === i ? 'hover' : 'idle';
+    else if (i === correct) state = 'correct';
+    else if (i === S.chosen) state = 'wrong';
+    else state = 'dim';
+    drawCard(i, x, cy, L.cardW, L.cardH, q.o[i], state);
+    if (!done) addHit(x, cy, L.cardW, L.cardH, () => answer(i));
+  }
+}
+
+function drawCard(i, x, y, w, h, label, state) {
+  let border = C.cyanDim, glow = 0, col = C.cyan, fill = 'rgba(0,255,255,0.05)';
+  if (state === 'hover') { border = C.cyan; glow = 12; fill = 'rgba(0,255,255,0.10)'; }
+  if (state === 'correct') { border = C.green; glow = 18; col = C.green; fill = 'rgba(0,255,0,0.07)'; }
+  if (state === 'wrong') { border = C.red; glow = 18; col = C.red; fill = 'rgba(255,0,0,0.07)'; }
+  const dimA = state === 'dim' ? 0.35 : 1;
+  ctx.globalAlpha = dimA;
+
+  roundRect(x, y, w, h, 8);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  neon(border, glow || 6);
+  ctx.strokeStyle = border;
+  ctx.lineWidth = state === 'idle' ? 1.5 : 2;
+  ctx.stroke();
+  noNeon();
+  ctx.globalAlpha = 1;
+
+  const badge = Math.min(30, h * 0.36);
+  const bx = x + 12, by = y + (h - badge) / 2;
+  ctx.globalAlpha = dimA;
+  ctx.beginPath();
+  ctx.arc(bx + badge / 2, by + badge / 2, badge / 2, 0, Math.PI * 2);
+  ctx.strokeStyle = border;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  txt(LETTERS[i], bx + badge / 2, by + badge / 2 + 1, { font: FM(badge * 0.55), color: col, align: 'center', baseline: 'middle', alpha: dimA });
+
+  const tx = x + 12 + badge + 8, tw = x + w - 10 - tx;
+  let fs = W < 600 ? 14 : 15;
+  let lines = wrapText(label, tw, FM(fs));
+  const maxLines = Math.max(3, Math.floor((h - 10) / (fs * 1.25)));
+  while (lines.length > maxLines && fs > 10) {
+    fs--;
+    lines = wrapText(label, tw, FM(fs));
+  }
+  if (lines.length > maxLines) {
+    lines = lines.slice(0, maxLines);
+    lines[maxLines - 1] += '…';
+  }
+  const lh = fs * 1.3;
+  const blockH = lines.length * lh;
+  let ty = y + (h - blockH) / 2 + lh * 0.8;
+  for (const line of lines) {
+    txt(line, tx, ty, { font: FM(fs), color: col, glow: state === 'correct' || state === 'wrong' ? 8 : 3, alpha: dimA });
+    ty += lh;
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawResult() {
+  const cx = W / 2;
+  const y0 = Math.max(40, H * 0.16);
+  txt('// СЕАНС ЗАВЕРШЁН', cx, y0, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 2 });
+
+  const sf = Math.min(72, Math.max(40, W * 0.16));
+  txt(`${S.score}/15`, cx, y0 + sf + 10, { font: FD(sf), color: C.cyan, align: 'center', glow: 20, spacing: 4 });
+
+  const lineY = y0 + sf + 52;
+  TOPICS.forEach((t, i) => {
+    const y = lineY + i * 30;
+    txt(`// ${t.name}`, cx - 140, y, { font: FM(14), color: C.mag, align: 'left', glow: 5, spacing: 1 });
+    txt(`${S.per[i]}/5`, cx + 140, y, { font: FD(16), color: C.cyan, align: 'right', glow: 8 });
+    ctx.strokeStyle = 'rgba(0,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - 140, y + 10);
+    ctx.lineTo(cx + 140, y + 10);
+    ctx.stroke();
+  });
+
+  const verdict = S.score >= 13 ? 'NEURO-УРОВЕНЬ ПОДТВЕРЖДЁН'
+    : S.score >= 10 ? 'СИСТЕМА СТАБИЛЬНА'
+    : 'ТРЕБУЕТСЯ ПЕРЕПРОШИВКА';
+  const vy = lineY + TOPICS.length * 30 + 34;
+  ctx.globalAlpha = 0.7 + 0.3 * Math.sin(performance.now() / 400);
+  txt(verdict, cx, vy, { font: FM(15), color: C.mag, align: 'center', glow: 10, spacing: 2 });
+  ctx.globalAlpha = 1;
+
+  const bw = Math.min((W - 60) / 2, 220), bh = 56;
+  const gap = 14;
+  const by = Math.min(H - 90, vy + 46);
+  const x1 = cx - bw - gap / 2, x2 = cx + gap / 2;
+  drawButton(x1, by, bw, bh, 'Заново', { hovered: S.hoverBtn === 'again', font: FD(18), spacing: 4 });
+  addHit(x1, by, bw, bh, startTest);
+  drawButton(x2, by, bw, bh, 'Меню', { hovered: S.hoverBtn === 'menu', color: C.mag, font: FD(18), spacing: 4 });
+  addHit(x2, by, bw, bh, () => { S.mode = 'menu'; S.hoverBtn = null; });
+}
+
+function draw(t) {
+  S.hits = [];
+  drawBG(t);
+  if (S.mode === 'menu') drawMenu(t);
+  else if (S.mode === 'question') drawQuestion(t);
+  else drawResult();
+}
+
+function frame(t) {
+  if (S.mode === 'question' && S.phase === 'run' && t >= S.deadline) onTimeout();
+  draw(t);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ---------- input ----------
+function pointerPos(e) {
+  const r = canvas.getBoundingClientRect();
+  const src = e.touches && e.touches[0] ? e.touches[0] : e;
+  return { x: src.clientX - r.left, y: src.clientY - r.top };
+}
+canvas.addEventListener('pointerdown', e => {
+  const p = pointerPos(e);
+  const h = hitAt(p.x, p.y);
+  if (h) { e.preventDefault(); h.fn(); S.hoverBtn = null; }
+});
+canvas.addEventListener('pointermove', e => {
+  const p = pointerPos(e);
+  const h = hitAt(p.x, p.y);
+  S.hover = null;
+  S.hoverBtn = null;
+  if (h) {
+    canvas.style.cursor = 'pointer';
+    if (h.fn === next) S.hoverBtn = 'next';
+    else if (h.fn === startTest) S.hoverBtn = (S.mode === 'menu') ? 'start' : 'again';
+    else if (S.mode === 'question' && S.phase === 'run') S.hover = S.hits.indexOf(h);
+  } else {
+    canvas.style.cursor = 'default';
+  }
+});
+canvas.addEventListener('pointerleave', () => { S.hover = null; S.hoverBtn = null; });
+
+window.addEventListener('keydown', e => {
+  if (S.mode === 'question' && S.phase === 'run' && e.key >= '1' && e.key <= '4') {
+    answer(+e.key - 1);
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    primaryAction();
+  }
+});
+
+document.fonts.load(FD(40)).catch(() => {});
+document.fonts.load(FM(16)).catch(() => {});
+</script>
+</body>
+</html>
