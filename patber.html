@@ -423,7 +423,7 @@
 <p class="back"><a href="index.html">← К расписанию</a></p>
 
 <div id="quizOverlay" aria-hidden="true">
-    <iframe src="quiz.html" title="Тест" allow="fullscreen"></iframe>
+    <iframe title="Тест" allow="fullscreen"></iframe>
 </div>
 
 <footer>Материалы подготовлены по клиническим рекомендациям РОАГ и Минздрава РФ. Носит образовательный характер, не заменяет консультацию врача.</footer>
@@ -432,7 +432,11 @@
     (function () {
         var btn = document.getElementById('quizStart');
         var overlay = document.getElementById('quizOverlay');
+        var frame = overlay.querySelector('iframe');
         btn.addEventListener('click', function () {
+            // грузим тест только когда оверлей видим — иначе канвас внутри
+            // инициализируется с размером 0×0 и экран остаётся пустым
+            if (!frame.getAttribute('src')) frame.setAttribute('src', 'quiz.html');
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';

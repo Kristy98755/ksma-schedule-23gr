@@ -79,7 +79,7 @@ h1{margin:10px 0 6px;font-family:'Orbitron',monospace;font-weight:700;font-size:
 <header>
   <div class="chip">// КОНТРОЛЬНЫЙ ТЕРМИНАЛ</div>
   <h1>РЕЖИМ АДА</h1>
-  <div class="sub">ПАТОЛОГИЯ БЕРЕМЕННОСТИ · ОБНОВЛЕНИЕ КАЖДЫЕ 3 С</div>
+  <div class="sub">ПАТОЛОГИЯ БЕРЕМЕННОСТИ</div>
   <div id="net">// НЕТ СВЯЗИ С СЕРВЕРОМ</div>
 </header>
 <div class="grid" id="grid"></div>
@@ -195,8 +195,9 @@ function poll() {
     net.style.display = 'none';
     render();
     if (openIdx >= 0 && ov.classList.contains('on')) openPopup(openIdx);
-  }).catch(() => {
+  }).catch(e => {
     net.style.display = 'block';
+    net.textContent = '// НЕТ СВЯЗИ С СЕРВЕРОМ: ' + (e && e.message ? e.message : 'неизвестно');
   });
 }
 

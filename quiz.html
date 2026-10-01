@@ -41,13 +41,23 @@ async function api(path, data) {
     opts.headers = { 'Content-Type': 'application/json' };
     opts.body = JSON.stringify(data);
   }
-  const r = await fetch('/api/quiz/' + path, opts);
-  if (!r.ok) {
-    const e = new Error('http ' + r.status);
-    e.status = r.status;
-    throw e;
+  const ac = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  let tm = 0;
+  if (ac) {
+    opts.signal = ac.signal;
+    tm = setTimeout(() => ac.abort(), 6000);
   }
-  return r.json();
+  try {
+    const r = await fetch('/api/quiz/' + path, opts);
+    if (!r.ok) {
+      const e = new Error('http ' + r.status);
+      e.status = r.status;
+      throw e;
+    }
+    return await r.json();
+  } finally {
+    if (tm) clearTimeout(tm);
+  }
 }
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -64,13 +74,39 @@ function fit() {
   canvas.width = Math.max(1, Math.round(W * dpr));
   canvas.height = Math.max(1, Math.round(H * dpr));
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // iframe мог загрузиться в скрытом контейнере (0×0) — перепроверяем размер
+  if ((W === 0 || H === 0) && fit.retry < 200) {
+    fit.retry++;
+    setTimeout(fit, 250);
+  }
 }
+fit.retry = 0;
 window.addEventListener('resize', fit);
 window.addEventListener('orientationchange', fit);
+window.addEventListener('pageshow', fit);
+window.addEventListener('focus', fit);
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', fit);
 }
+if (typeof ResizeObserver !== 'undefined') {
+  new ResizeObserver(() => fit()).observe(canvas);
+}
 fit();
+
+// диагностика: ошибку рисуем прямо на канвасе, чтобы не было «пустого экрана»
+window.addEventListener('error', e => {
+  try {
+    if (!W || !H) fit();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = '#050508';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ff4060';
+    ctx.font = '14px monospace';
+    ctx.fillText('ERROR: ' + (e.message || 'unknown'), 16, 40);
+    const st = (e.error && e.error.stack || '').split('\n').slice(0, 8);
+    st.forEach((line, i) => ctx.fillText(line.slice(0, 110), 16, 66 + i * 18));
+  } catch (err) {}
+});
 
 const S = {
   mode: 'select',       // select | menu | question | result
@@ -111,15 +147,16 @@ function pickSeq() {
 }
 
 // ---------- селектор студента ----------
-function enterOfflineSelector() {
+function enterOfflineSelector(msg) {
   S.online = false;
   S.sel.loading = false;
   S.sel.offline = true;
+  S.sel.offlineMsg = msg ? String(msg).slice(0, 80) : '';
   S.sel.list = STUDENTS.map((_, i) => ({ i, occupied: false, progress: 0, completed: false }));
   S.mode = 'select';
 }
 async function loadSelector() {
-  S.sel = { loading: true, offline: false, list: [], open: false, pick: -1, err: null, busy: false };
+  S.sel = { loading: true, offline: false, offlineMsg: null, list: [], open: false, pick: -1, err: null, busy: false };
   S.mode = 'select';
   try {
     const st = await api('students');
@@ -127,7 +164,7 @@ async function loadSelector() {
     S.online = true;
     S.sel.loading = false;
   } catch (e) {
-    enterOfflineSelector();
+    enterOfflineSelector(e && e.message);
   }
 }
 async function confirmSelection() {
@@ -172,7 +209,7 @@ async function initSession() {
       }
     } catch (e) {
       lsDel(LS_KEY);
-      enterOfflineSelector();
+      enterOfflineSelector(e && e.message);
       return;
     }
     lsDel(LS_KEY);
@@ -583,8 +620,18 @@ function drawSelect(t) {
 
   let infoY = by + bh + 30;
   if (S.sel.offline) {
+    const ry = by + bh + 10;
+    drawButton(dx, ry, dw, 46, 'ПОВТОРИТЬ СВЯЗЬ', {
+      hovered: S.hoverBtn === 'retry', color: C.mag, font: FD(15), spacing: 4
+    });
+    addHit(dx, ry, dw, 46, () => { S.sel.err = null; loadSelector(); S.hoverBtn = null; }, 'retry');
+    infoY = ry + 46 + 26;
     txt('// СЕРВЕР НЕ ОТВЕЧАЕТ — ПУСКАТЬ БЕЗ СОХРАНЕНИЯ', cx, infoY, { font: FM(11), color: C.mag, align: 'center', spacing: 2 });
-    infoY += 22;
+    infoY += 20;
+    if (S.sel.offlineMsg) {
+      txt(S.sel.offlineMsg, cx, infoY, { font: FM(10), color: 'rgba(255,64,96,0.75)', align: 'center', spacing: 1 });
+      infoY += 22;
+    }
   }
   if (S.sel.err) {
     txt('// ' + S.sel.err, cx, infoY, { font: FM(12), color: C.red, align: 'center', spacing: 2, glow: 6 });
