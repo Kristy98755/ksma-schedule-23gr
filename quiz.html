@@ -427,10 +427,11 @@ function drawBG(t) {
   ctx.lineWidth = 1;
   ctx.strokeRect(6.5, 6.5, W - 13, H - 13);
   ctx.fillStyle = C.mag;
-  const c = 14;
-  [[6, 6, 1, 1], [W - 6, 6, -1, 1], [6, H - 6, 1, -1], [W - 6, H - 6, -1, -1]].forEach(([x, y, sx, sy]) => {
-    ctx.fillRect(sx > 0 ? x : x - c, sy > 0 ? y : y - 2, c, 2);
-    ctx.fillRect(sx > 0 ? x : x - 2, sy > 0 ? y : y - c, 2, c);
+  const c = 14, th = 2;
+  // вершина уголка — внутренняя точка, от неё отрезки смотрят ОТ угла экрана наружу
+  [[6 + c, 6 + c, -1, -1], [W - 6 - c, 6 + c, 1, -1], [6 + c, H - 6 - c, -1, 1], [W - 6 - c, H - 6 - c, 1, 1]].forEach(([x, y, sx, sy]) => {
+    ctx.fillRect(sx > 0 ? x : x - c, sy > 0 ? y : y - th, c, th);
+    ctx.fillRect(sx > 0 ? x : x - th, sy > 0 ? y : y - c, th, c);
   });
 }
 
