@@ -224,25 +224,6 @@
             outline: none;
         }
         #quizStart:active { transform: translateY(1px); }
-        #quizOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            z-index: 9999;
-            background: #050508;
-            display: none;
-        }
-        #quizOverlay.open { display: block; }
-        #quizOverlay iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-            background: #050508;
-        }
         @media (max-width: 700px) {
             #quizStart { font-size: 1em; padding: 15px 24px; letter-spacing: 3px; }
             .quiz-cta { padding: 24px 14px; }
@@ -422,24 +403,23 @@
 
 <p class="back"><a href="index.html">← К расписанию</a></p>
 
-<div id="quizOverlay" aria-hidden="true">
-    <iframe title="Тест" allow="fullscreen"></iframe>
-</div>
-
 <footer>Материалы подготовлены по клиническим рекомендациям РОАГ и Минздрава РФ. Носит образовательный характер, не заменяет консультацию врача.</footer>
 
 <script>
     (function () {
         var btn = document.getElementById('quizStart');
-        var overlay = document.getElementById('quizOverlay');
-        var frame = overlay.querySelector('iframe');
         btn.addEventListener('click', function () {
-            // грузим тест только когда оверлей видим — иначе канвас внутри
-            // инициализируется с размером 0×0 и экран остаётся пустым
-            if (!frame.getAttribute('src')) frame.setAttribute('src', 'quiz.html');
-            overlay.classList.add('open');
-            overlay.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
+            // с ПК — доска статуса (seats), с телефона — сам квиз;
+            // если тип клиента определить не удалось — фоллбек на квиз
+            var dest = 'quiz.html';
+            try {
+                var fine = matchMedia('(pointer: fine)').matches;
+                var coarse = matchMedia('(pointer: coarse)').matches;
+                if (fine && !coarse) {
+                    dest = 'https://kanamiisa.itismynickname9.workers.dev/quiz/status';
+                }
+            } catch (e) {}
+            location.href = dest;
         });
     })();
 </script>

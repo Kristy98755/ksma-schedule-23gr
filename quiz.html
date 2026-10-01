@@ -642,30 +642,43 @@ function pickOpenAvailable() {
   return S.sel.list.length > 0;
 }
 
+// на тач-устройствах ховера нет — карточки сразу рисуются «подсвеченными»
+let TOUCH_UI = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+
 function questionLayout(q) {
   const barH = 8;
   const headH = W < 480 ? 40 : 46;
-  const topY = barH + headH;
-  const labelY = topY + 14;
-  const qTop = topY + 26;
+  // нижняя треть экрана — тема, вопрос и карточки ответов;
+  // верхние 2/3 освобождены под крупный таймер / кнопку «Далее»
+  const zoneTop = Math.floor(H * 2 / 3);
+  const labelY = zoneTop + 16;
+  const qTop = zoneTop + 30;
   const maxW = W - 40;
-  const sizes = W < 600 ? [19, 17, 15, 13] : [23, 21, 19, 17];
+  const sizes = W < 600 ? [21, 19, 17, 15, 13] : [26, 24, 22, 20, 18];
+  const minGrid = Math.min(140, Math.max(96, Math.round((H - qTop) * 0.4)));
   let fs = sizes[sizes.length - 1];
   let lines = wrapText(q.q, maxW, FM(fs));
   for (const s of sizes) {
     const l = wrapText(q.q, maxW, FM(s));
-    const qH = l.length * s * 1.35;
-    if (qTop + qH + 14 + 150 + 14 <= H) { fs = s; lines = l; break; }
+    const gridAvail = H - 14 - (qTop + l.length * s * 1.35 + 14);
+    if (gridAvail >= minGrid) { fs = s; lines = l; break; }
   }
   const qH = lines.length * fs * 1.35;
-  let gridTop = qTop + qH + 14;
-  const minGrid = Math.min(150, H * 0.55);
-  if (H - gridTop - 14 < minGrid) gridTop = Math.max(topY + 40, H - 14 - minGrid);
   const gap = W < 600 ? 10 : 14;
+  // сетка прижата ко дну и не выходит за нижнюю треть
+  let gridTop = qTop + qH + 14;
+  gridTop = Math.min(Math.max(gridTop, zoneTop + 56), H - 14 - minGrid);
   const gridH = H - gridTop - 14;
   const cardW = (W - 40 - gap) / 2;
   const cardH = (gridH - gap) / 2;
-  return { barH, headH, topY, labelY, qTop, fs, lines, gridTop, gap, cardW, cardH, maxW };
+  return { barH, headH, zoneTop, labelY, qTop, fs, lines, gridTop, gap, gridH, cardW, cardH, maxW };
+}
+
+function answerState(i, done) {
+  if (!done) return (TOUCH_UI || S.hover === i) ? 'hover' : 'idle';
+  if (i === S.seq[S.qi].q.a) return 'correct';
+  if (i === S.chosen) return 'wrong';
+  return 'dim';
 }
 
 function drawQuestion(t) {
@@ -691,26 +704,34 @@ function drawQuestion(t) {
     ctx.globalAlpha = 1;
   }
 
-  // header
+  // header: только номер вопроса — верхняя зона освобождена
   const headMid = 8 + L.headH / 2;
-  txt(`ВОПРОС ${pad2(S.qi + 1)}/15`, 20, headMid, { font: FM(13), color: C.cyan, baseline: 'middle', glow: 5, spacing: 1 });
+  txt(`ВОПРОС ${pad2(S.qi + 1)}/15`, 20, headMid, { font: FM(14), color: C.cyan, baseline: 'middle', glow: 5, spacing: 1 });
 
+  // центр освободившегося сверху пространства:
+  // крупный таймер во время хода, большая кнопка «Далее» после ответа
+  const topZoneH = L.zoneTop - (8 + L.headH);
+  const topMid = 8 + L.headH + topZoneH / 2;
   if (run) {
     const secs = Math.ceil(rem / 1000);
     const low = secs <= 5;
-    txt(`00:${pad2(secs)}`, W - 20, headMid, {
-      font: FD(W < 480 ? 18 : 20), color: low ? C.mag : C.cyan,
-      align: 'right', baseline: 'middle', glow: low ? 14 : 8
+    const blink = low ? 0.6 + 0.4 * Math.sin(t / 90) : 1;
+    ctx.globalAlpha = blink;
+    txt(`00:${pad2(secs)}`, W / 2, topMid, {
+      font: FD(Math.min(W < 480 ? 76 : 96, Math.max(44, topZoneH * 0.5))),
+      color: low ? C.mag : C.cyan, align: 'center', baseline: 'middle',
+      glow: low ? 24 : 16, spacing: 6
     });
+    ctx.globalAlpha = 1;
   } else {
-    const bw = Math.min(150, W * 0.4), bh = L.headH - 12;
-    const bx = W - 20 - bw, by = 8 + (L.headH - bh) / 2;
-    drawButton(bx, by, bw, bh, 'Далее', { hovered: S.hoverBtn === 'next', font: FD(Math.min(17, bh * 0.45)), spacing: 3 });
+    const bw = Math.min(320, W * 0.64), bh = Math.max(44, Math.min(72, topZoneH * 0.42));
+    const bx = W / 2 - bw / 2, by = topMid - bh / 2;
+    drawButton(bx, by, bw, bh, 'Далее', { hovered: S.hoverBtn === 'next', font: FD(Math.min(30, bh * 0.42)), spacing: 5 });
     addHit(bx, by, bw, bh, next, 'next');
   }
 
-  // topic chip + question
-  txt(`// ${TOPICS[item.t].name}`, 20, L.labelY, { font: FM(12), color: C.mag, glow: 6, spacing: 2 });
+  // тема + вопрос в нижней трети
+  txt(`// ${TOPICS[item.t].name}`, 20, L.labelY, { font: FM(13), color: C.mag, glow: 6, spacing: 2 });
   let y = L.qTop + L.fs;
   for (const line of L.lines) {
     txt(line, 20, y, { font: FM(L.fs), color: C.cyan, glow: 4 });
@@ -718,17 +739,12 @@ function drawQuestion(t) {
   }
 
   // answer cards 2x2
-  const correct = q.a;
   const done = !run;
   for (let i = 0; i < 4; i++) {
     const col = i % 2, row = (i / 2) | 0;
     const x = 20 + col * (L.cardW + L.gap);
     const cy = L.gridTop + row * (L.cardH + L.gap);
-    let state;
-    if (!done) state = S.hover === i ? 'hover' : 'idle';
-    else if (i === correct) state = 'correct';
-    else if (i === S.chosen) state = 'wrong';
-    else state = 'dim';
+    const state = answerState(i, done);
     drawCard(i, x, cy, L.cardW, L.cardH, q.o[i], state);
     if (!done) addHit(x, cy, L.cardW, L.cardH, () => answer(i));
   }
@@ -764,10 +780,10 @@ function drawCard(i, x, y, w, h, label, state) {
   txt(LETTERS[i], bx + badge / 2, by + badge / 2 + 1, { font: FM(badge * 0.55), color: col, align: 'center', baseline: 'middle', alpha: dimA });
 
   const tx = x + 12 + badge + 8, tw = x + w - 10 - tx;
-  let fs = W < 600 ? 14 : 15;
+  let fs = W < 600 ? 16 : 17;
   let lines = wrapText(label, tw, FM(fs));
   const maxLines = Math.max(3, Math.floor((h - 10) / (fs * 1.25)));
-  while (lines.length > maxLines && fs > 10) {
+  while (lines.length > maxLines && fs > 11) {
     fs--;
     lines = wrapText(label, tw, FM(fs));
   }

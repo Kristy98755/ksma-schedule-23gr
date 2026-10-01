@@ -32,15 +32,15 @@ h1{margin:10px 0 6px;font-family:'Orbitron',monospace;font-weight:700;font-size:
 .cell:hover{box-shadow:0 0 18px rgba(0,255,255,0.25);}
 .cell.free{border-color:rgba(255,64,96,0.55);}
 .cell.busy{border-color:var(--green);box-shadow:0 0 18px rgba(0,255,0,0.35);}
-.cell.done{border-color:var(--red);box-shadow:0 0 18px rgba(255,64,96,0.35);}
+.cell.done{border-color:var(--cyan);box-shadow:0 0 18px rgba(0,255,255,0.35);}
 .cell .num{font-family:'Orbitron',monospace;font-size:clamp(14px,1.3vw,20px);color:rgba(0,255,255,0.6);letter-spacing:2px;}
 .cell .name{font-size:clamp(15px,1.45vw,23px);line-height:1.3;color:rgba(224,224,232,0.85);flex:1;}
 .cell .st{font-size:clamp(13px,1.25vw,20px);letter-spacing:2px;text-align:center;padding:10px 4px;
   border-radius:6px;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.10);}
 .cell.busy .st{color:var(--green);border-color:rgba(0,255,0,0.4);text-shadow:0 0 10px rgba(0,255,0,0.7);}
 .cell.free .st{color:rgba(255,64,96,0.9);}
-.cell.done .st{color:var(--red);border-color:rgba(255,64,96,0.5);font-family:'Orbitron',monospace;
-  text-shadow:0 0 10px rgba(255,64,96,0.7);}
+.cell.done .st{color:var(--cyan);border-color:rgba(0,255,255,0.5);font-family:'Orbitron',monospace;
+  text-shadow:0 0 10px rgba(0,255,255,0.7);}
 #ov{display:none;position:fixed;inset:0;background:rgba(5,5,8,0.88);z-index:10;
   align-items:flex-start;justify-content:center;overflow-y:auto;padding:30px 12px;}
 #ov.on{display:flex;}
@@ -113,11 +113,11 @@ function render() {
   last.forEach(s => {
     const st = STUDENTS[s.i] || { name: '—', score: 0 };
     const cell = document.createElement('div');
-    cell.className = 'cell ' + (s.occupied ? 'busy' : (s.completed ? 'done' : 'free'));
+    cell.className = 'cell ' + (s.completed ? 'done' : (s.occupied ? 'busy' : 'free'));
     let status;
-    if (s.occupied) status = 'ВОПРОС ' + String(Math.min(s.progress + 1, 15)).padStart(2, '0') + '/15';
-    else if (s.completed) status = 'БАЛЛ ' + st.score + '/15';
-    else status = 'НЕ ПРОХОДИТ';
+    if (s.completed) status = 'БАЛЛ ' + st.score + '/15';
+    else if (s.occupied) status = 'ВОПРОС ' + String(Math.min(s.progress + 1, 15)).padStart(2, '0') + '/15';
+    else status = '—';
     cell.innerHTML = '<div class="num">#' + String(s.i + 1).padStart(2, '0') + '</div>' +
       '<div class="name"></div><div class="st">' + status + '</div>';
     cell.querySelector('.name').textContent = st.name;
