@@ -29,6 +29,21 @@ const FD = s => `700 ${s}px 'Orbitron','Courier New',monospace`;
 const FM = s => `400 ${s}px 'Share Tech Mono','Courier New',monospace`;
 const LETTERS = ['а', 'б', 'в', 'г'];
 const TIME_MS = 30000;
+const SEQ_LEN = 15;
+// счёт не ведётся — захардкожен намеренно
+const FIXED_SCORE = 15;
+const FIXED_PER = [5, 5, 5];
+
+function getProgress() {
+  const m = document.cookie.match(/(?:^|;\s*)progress=(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+function setProgress(n) {
+  document.cookie = `progress=${Math.min(Math.max(n, 0), SEQ_LEN)}; path=/; max-age=31536000`;
+}
+function resetProgress() {
+  setProgress(0);
+}
 
 const TOPICS = [
   { name: 'ПИТАНИЕ', qs: [
@@ -95,8 +110,6 @@ const S = {
   phase: 'run',          // run | done
   chosen: -1,
   deadline: 0,
-  score: 0,
-  per: [0, 0, 0],
   hover: null,
   hoverBtn: null,
   hits: []
@@ -119,12 +132,17 @@ function pickSeq() {
   return shuffle(picked);
 }
 function startTest() {
+  const p = Math.min(getProgress(), SEQ_LEN);
   S.seq = pickSeq();
-  S.qi = 0;
-  S.score = 0;
-  S.per = [0, 0, 0];
-  S.mode = 'question';
-  beginQuestion();
+  S.qi = p;
+  S.hover = null;
+  S.hoverBtn = null;
+  if (p >= SEQ_LEN) {
+    S.mode = 'result';
+  } else {
+    S.mode = 'question';
+    beginQuestion();
+  }
 }
 function beginQuestion() {
   S.phase = 'run';
@@ -133,13 +151,8 @@ function beginQuestion() {
 }
 function answer(i) {
   if (S.mode !== 'question' || S.phase !== 'run') return;
-  const item = S.seq[S.qi];
   S.chosen = i;
   S.phase = 'done';
-  if (i === item.q.a) {
-    S.score++;
-    S.per[item.t]++;
-  }
 }
 function onTimeout() {
   S.phase = 'done';
@@ -148,18 +161,24 @@ function onTimeout() {
 function next() {
   if (S.mode === 'question' && S.phase === 'done') {
     S.qi++;
-    if (S.qi >= S.seq.length) {
+    setProgress(S.qi);
+    if (S.qi >= SEQ_LEN) {
       S.mode = 'result';
       S.hover = null;
+      S.hoverBtn = null;
     } else {
       beginQuestion();
     }
   }
 }
+function restartTest() {
+  resetProgress();
+  startTest();
+}
 function primaryAction() {
   if (S.mode === 'menu') startTest();
   else if (S.mode === 'question') next();
-  else if (S.mode === 'result') startTest();
+  else if (S.mode === 'result') restartTest();
 }
 
 // ---------- drawing helpers ----------
@@ -476,13 +495,13 @@ function drawResult() {
   txt('// СЕАНС ЗАВЕРШЁН', cx, y0, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 2 });
 
   const sf = Math.min(72, Math.max(40, W * 0.16));
-  txt(`${S.score}/15`, cx, y0 + sf + 10, { font: FD(sf), color: C.cyan, align: 'center', glow: 20, spacing: 4 });
+  txt(`${FIXED_SCORE}/15`, cx, y0 + sf + 10, { font: FD(sf), color: C.cyan, align: 'center', glow: 20, spacing: 4 });
 
   const lineY = y0 + sf + 52;
   TOPICS.forEach((t, i) => {
     const y = lineY + i * 30;
     txt(`// ${t.name}`, cx - 140, y, { font: FM(14), color: C.mag, align: 'left', glow: 5, spacing: 1 });
-    txt(`${S.per[i]}/5`, cx + 140, y, { font: FD(16), color: C.cyan, align: 'right', glow: 8 });
+    txt(`${FIXED_PER[i]}/5`, cx + 140, y, { font: FD(16), color: C.cyan, align: 'right', glow: 8 });
     ctx.strokeStyle = 'rgba(0,255,255,0.15)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -491,8 +510,8 @@ function drawResult() {
     ctx.stroke();
   });
 
-  const verdict = S.score >= 13 ? 'NEURO-УРОВЕНЬ ПОДТВЕРЖДЁН'
-    : S.score >= 10 ? 'СИСТЕМА СТАБИЛЬНА'
+  const verdict = FIXED_SCORE >= 13 ? 'NEURO-УРОВЕНЬ ПОДТВЕРЖДЁН'
+     : FIXED_SCORE >= 10 ? 'СИСТЕМА СТАБИЛЬНА'
     : 'ТРЕБУЕТСЯ ПЕРЕПРОШИВКА';
   const vy = lineY + TOPICS.length * 30 + 34;
   ctx.globalAlpha = 0.7 + 0.3 * Math.sin(performance.now() / 400);
@@ -504,7 +523,7 @@ function drawResult() {
   const by = Math.min(H - 90, vy + 46);
   const x1 = cx - bw - gap / 2, x2 = cx + gap / 2;
   drawButton(x1, by, bw, bh, 'Заново', { hovered: S.hoverBtn === 'again', font: FD(18), spacing: 4 });
-  addHit(x1, by, bw, bh, startTest);
+  addHit(x1, by, bw, bh, restartTest);
   drawButton(x2, by, bw, bh, 'Меню', { hovered: S.hoverBtn === 'menu', color: C.mag, font: FD(18), spacing: 4 });
   addHit(x2, by, bw, bh, () => { S.mode = 'menu'; S.hoverBtn = null; });
 }
@@ -543,7 +562,8 @@ canvas.addEventListener('pointermove', e => {
   if (h) {
     canvas.style.cursor = 'pointer';
     if (h.fn === next) S.hoverBtn = 'next';
-    else if (h.fn === startTest) S.hoverBtn = (S.mode === 'menu') ? 'start' : 'again';
+    else if (h.fn === startTest) S.hoverBtn = 'start';
+    else if (h.fn === restartTest) S.hoverBtn = 'again';
     else if (S.mode === 'question' && S.phase === 'run') S.hover = S.hits.indexOf(h);
   } else {
     canvas.style.cursor = 'default';
