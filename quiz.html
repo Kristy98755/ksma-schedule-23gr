@@ -167,6 +167,21 @@ async function loadSelector() {
     enterOfflineSelector(e && e.message);
   }
 }
+
+let selPollAt = 0;
+let selPollInflight = false;
+function pollSelector(t) {
+  if (S.mode !== 'select' || !S.sel.open || !S.online || S.sel.loading || S.sel.busy || selPollInflight) return;
+  if (t - selPollAt < 1000) return;
+  selPollAt = t;
+  selPollInflight = true;
+  api('students').then(st => {
+    selPollInflight = false;
+    if (S.mode !== 'select' || !S.sel.open) return;
+    S.sel.list = st.students.map(s => ({ i: s.i, occupied: !!s.occupied, progress: s.progress, completed: !!s.completed }));
+  }, () => { selPollInflight = false; });
+}
+
 async function confirmSelection() {
   if (S.sel.busy || S.sel.pick < 0) return;
   const i = S.sel.pick;
@@ -413,9 +428,9 @@ function drawBG(t) {
   ctx.strokeRect(6.5, 6.5, W - 13, H - 13);
   ctx.fillStyle = C.mag;
   const c = 14;
-  [[6, 6], [W - 6 - c, 6], [6, H - 6 - c], [W - 6 - c, H - 6 - c]].forEach(p => {
-    ctx.fillRect(p[0], p[1], c, 2);
-    ctx.fillRect(p[0], p[1], 2, c);
+  [[6, 6, 1, 1], [W - 6, 6, -1, 1], [6, H - 6, 1, -1], [W - 6, H - 6, -1, -1]].forEach(([x, y, sx, sy]) => {
+    ctx.fillRect(sx > 0 ? x : x - c, sy > 0 ? y : y - 2, c, 2);
+    ctx.fillRect(sx > 0 ? x : x - 2, sy > 0 ? y : y - c, 2, c);
   });
 }
 
@@ -845,6 +860,7 @@ function draw(t) {
 }
 
 function frame(t) {
+  if (S.mode === 'select') pollSelector(t);
   if (S.mode === 'question' && S.phase === 'run' && t >= S.deadline) onTimeout();
   draw(t);
   requestAnimationFrame(frame);
