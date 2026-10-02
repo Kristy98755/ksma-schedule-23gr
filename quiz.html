@@ -141,7 +141,7 @@ function shuffle(arr) {
 function pickSeq() {
   const picked = [];
   TOPICS.forEach((t, ti) => {
-    shuffle(t.qs).slice(0, 4).forEach(q => picked.push({ q, t: ti }));
+    shuffle(t.qs).slice(0, PER_TOPIC_TEST).forEach(q => picked.push({ q, t: ti }));
   });
   return shuffle(picked);
 }
@@ -499,7 +499,7 @@ function drawMenu(t) {
   txt('MEMENTO MORI', cx, titleY, { font: tf, color: C.cyan, align: 'center', spacing: sp, glow: 16 });
 
   txt('ТЕСТ: РЕФРАКЦИЯ ГЛАЗА', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
-  txt(SEQ_LEN + ' ВОПРОСА · 4 ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
+  txt(SEQ_LEN + ' ВОПРОСА · ' + PER_TOPIC_TEST + ' ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
 
   if (S.seat >= 0) {
     const nm = STUDENTS[S.seat].name;

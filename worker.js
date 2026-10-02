@@ -1,7 +1,7 @@
 // quiz state API — KV: seat:0 .. seat:9
 const SEATS = 10;
 const STALE_MS = 45000;
-const MAX_Q = 44;   // вопросов в тесте
+const MAX_Q = 22;   // вопросов в тесте
 const MAX_GID = 99; // верхняя граница глобального id в банке (сейчас 0..76)
 
 function key(i) { return 'seat:' + i; }
