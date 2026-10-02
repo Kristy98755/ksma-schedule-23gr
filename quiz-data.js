@@ -128,7 +128,7 @@ function questionByGid(g) {
 // диапазон 36..44 при 44 вопросах — randint(floor(4*N/5)+1, N)).
 const STUDENTS = [
   { name: 'Алмазбек кызы Нургул', score: 43 },
-  { name: 'Ахвердиева Анель', score: 37 },
+  { name: 'Ахвердиева Анель', score: 38 },
   { name: 'Болотов Шамил', score: 36 },
   { name: 'Ганиев Миркамил', score: 41 },
   { name: 'Дастанова Нуркыз', score: 39 },
