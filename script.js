@@ -753,6 +753,7 @@ function loadWeek(monday, container, weekId) {
             const dd = String(currentDate.getDate()).padStart(2, '0');
             const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
             liDay.setAttribute("data-date", `${dd}.${mm}`);
+            liDay.setAttribute("data-iso", `${currentDate.getFullYear()}-${mm}-${dd}`);
 
             const dateSpan = document.createElement("span");
             dateSpan.className = "schedule__date";
@@ -769,10 +770,12 @@ function loadWeek(monday, container, weekId) {
                 const lessonLi = document.createElement("li");
                 lessonLi.className = "lesson";
 
-                const timeDiv = document.createElement("div");
-                timeDiv.className = "lesson__time";
-                timeDiv.textContent = lesson.tm;
-                lessonLi.appendChild(timeDiv);
+const timeDiv = document.createElement("div");
+                    timeDiv.className = "lesson__time";
+                    timeDiv.textContent = lesson.tm;
+                    const startHour = parseInt(String(lesson.tm).split("-")[0], 10);
+                    if (!isNaN(startHour)) timeDiv.setAttribute("data-hour", String(startHour));
+                    lessonLi.appendChild(timeDiv);
 
                 const paramsDiv = document.createElement("div");
                 paramsDiv.className = "lesson__params";
@@ -827,7 +830,7 @@ statusP.innerHTML =
 			(async function() {
 				try {
 					console.log("[WEATHER] Загружаем данные погоды...");
-					const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=42.875&longitude=74.5&hourly=temperature_2m,precipitation,snowfall,cloudcover&timezone=Asia/Bishkek`);
+					const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=42.875&longitude=74.5&hourly=temperature_2m,precipitation,snowfall,cloudcover&past_days=7&forecast_days=14&timezone=Asia/Bishkek`);
 					const weatherData = await response.json();
 					console.log("[WEATHER] Данные получены");
 
@@ -836,13 +839,20 @@ statusP.innerHTML =
 
 					lessonsTimeDivs.forEach(div => {
 						const times = div.textContent.trim().split("-");
-						if (times.length !== 2) {
+						// data-hour ставит рендер, он надёжнее разбора текста
+						if (times.length !== 2 && !div.getAttribute("data-hour")) {
 							console.warn("[WEATHER] Не удалось распознать время пары:", div.textContent);
 							return;
 						}
 						const startTime = times[0];
 
-						const dateLi = div.closest(".schedule__day").querySelector(".schedule__date")?.textContent.trim();
+					// Берём дату из data-iso (её ставит рендер), иначе разбираем текст
+					const dayLi = div.closest(".schedule__day");
+					const timeDiv = div;
+					let isoDate = dayLi ? dayLi.getAttribute("data-iso") : null;
+
+					if (!isoDate) {
+						const dateLi = dayLi.querySelector(".schedule__date")?.textContent.trim();
 						if (!dateLi) {
 							console.warn("[WEATHER] Не удалось найти дату для пары:", div.textContent);
 							return;
@@ -865,18 +875,24 @@ statusP.innerHTML =
 							return;
 						}
 
-						// Берём только час начала пары
-						const [h, m] = startTime.split(":").map(Number);
-						const hour = h; // игнорируем минуты
+						isoDate = `${new Date().getFullYear()}-${month}-${day}`;
+					}
 
-						const isoDate = `${new Date().getFullYear()}-${month}-${day}`;
+					// Берём только час начала пары: сперва из data-hour, иначе разбираем время
+					const hour = timeDiv.getAttribute("data-hour")
+						?? (parseInt(String(startTime).split(":")[0], 10) || parseInt(timeDiv.textContent.trim(), 10));
 
-						// Находим индекс ближайшего часа в API
-						const index = weatherData.hourly.time.findIndex(t => t.startsWith(isoDate + `T${hour.toString().padStart(2,'0')}:`));
-						if (index === -1) {
-							console.warn("[WEATHER] Не найден индекс времени для", isoDate, hour);
-							return;
-						}
+					if (isNaN(hour)) {
+						console.warn("[WEATHER] Не удалось распознать час:", startTime);
+						return;
+					}
+
+					// Находим индекс ближайшего часа в API
+					const index = weatherData.hourly.time.findIndex(t => t.startsWith(isoDate + `T${hour.toString().padStart(2,'0')}:`));
+					if (index === -1) {
+						console.warn("[WEATHER] Не найден индекс времени для", isoDate, hour);
+						return;
+					}
 
 						const temp = weatherData.hourly.temperature_2m[index];
 						const precip = weatherData.hourly.precipitation[index];
