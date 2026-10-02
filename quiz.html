@@ -30,7 +30,7 @@ const FD = s => `700 ${s}px 'Orbitron','Courier New',monospace`;
 const FM = s => `400 ${s}px 'Share Tech Mono','Courier New',monospace`;
 const LETTERS = ['а', 'б', 'в', 'г'];
 const TIME_MS = 30000;
-const SEQ_LEN = 15;
+const HB_MS = 3000;
 const LS_KEY = 'quiz_seat';
 
 // ---------- API ----------
@@ -123,7 +123,7 @@ const S = {
   claimed: false,       // место занято на сервере
   online: false,        // сервер доступен
   answers: [],          // [{q: gid, c: choice}] — сердцебиение и complete
-  score: 15,            // личный балл (захардкожен в STUDENTS)
+  score: 0,             // личный балл (захардкожен в STUDENTS)
   resume: 0,            // с какого вопроса продолжаем
   // селектор
   sel: { loading: true, offline: false, list: [], open: false, pick: -1, err: null, busy: false }
@@ -141,7 +141,7 @@ function shuffle(arr) {
 function pickSeq() {
   const picked = [];
   TOPICS.forEach((t, ti) => {
-    shuffle(t.qs).slice(0, 5).forEach(q => picked.push({ q, t: ti }));
+    shuffle(t.qs).slice(0, 4).forEach(q => picked.push({ q, t: ti }));
   });
   return shuffle(picked);
 }
@@ -237,6 +237,17 @@ function heartbeat(done) {
   api('heartbeat', { i: S.seat, done: done, answers: S.answers }).catch(() => {});
 }
 
+// хартбит каждые 3 секунды на всё время теста (протухание сессии — 45с)
+let hbTimer = null;
+function hbTick() {
+  hbTimer = setTimeout(() => {
+    if (S.mode === 'question') heartbeat(S.qi + (S.phase === 'done' ? 1 : 0));
+    hbTick();
+  }, HB_MS);
+}
+function startHb() { if (hbTimer === null) hbTick(); }
+function stopHb() { if (hbTimer !== null) { clearTimeout(hbTimer); hbTimer = null; } }
+
 function startTest() {
   if (S.online && !S.claimed) {
     api('start', { i: S.seat }).then(() => {
@@ -263,8 +274,10 @@ function beginRun() {
   S.qi = Math.min(S.resume || 0, SEQ_LEN);
   S.hover = null;
   S.hoverBtn = null;
+  startHb();
   if (S.qi >= SEQ_LEN) {
     S.mode = 'result';
+    stopHb();
   } else {
     S.mode = 'question';
     beginQuestion();
@@ -301,6 +314,7 @@ function next() {
 }
 function finishTest() {
   S.mode = 'result';
+  stopHb();
   S.hover = null;
   S.hoverBtn = null;
   if (S.online && S.claimed) {
@@ -317,6 +331,7 @@ function restartTest() {
 }
 function backToMenu() {
   S.mode = 'menu';
+  stopHb();
   S.hoverBtn = null;
 }
 function primaryAction() {
@@ -483,8 +498,8 @@ function drawMenu(t) {
   txt('MEMENTO MORI', cx + 2, titleY, { font: tf, color: 'rgba(0,255,255,0.6)', align: 'center', spacing: sp });
   txt('MEMENTO MORI', cx, titleY, { font: tf, color: C.cyan, align: 'center', spacing: sp, glow: 16 });
 
-  txt('ТЕСТ: ПАТОЛОГИЯ БЕРЕМЕННОСТИ', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
-  txt('15 ВОПРОСОВ · 5 ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
+  txt('ТЕСТ: РЕФРАКЦИЯ ГЛАЗА', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
+  txt(SEQ_LEN + ' ВОПРОСА · 4 ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
 
   if (S.seat >= 0) {
     const nm = STUDENTS[S.seat].name;
@@ -722,7 +737,7 @@ function drawQuestion(t) {
 
   // header: только номер вопроса — верхняя зона освобождена
   const headMid = 8 + L.headH / 2;
-  txt(`ВОПРОС ${pad2(S.qi + 1)}/15`, 20, headMid, { font: FM(14), color: C.cyan, baseline: 'middle', glow: 5, spacing: 1 });
+  txt(`ВОПРОС ${pad2(S.qi + 1)}/${SEQ_LEN}`, 20, headMid, { font: FM(14), color: C.cyan, baseline: 'middle', glow: 5, spacing: 1 });
 
   // центр освободившегося сверху пространства:
   // крупный таймер во время хода, большая кнопка «Далее» после ответа
@@ -823,14 +838,14 @@ function drawResult() {
   txt('// СЕАНС ЗАВЕРШЁН', cx, y0, { font: FM(13), color: C.mag, align: 'center', glow: 8, spacing: 2 });
 
   const sf = Math.min(72, Math.max(40, W * 0.16));
-  txt(`${S.score}/15`, cx, y0 + sf + 10, { font: FD(sf), color: C.cyan, align: 'center', glow: 20, spacing: 4 });
+  txt(`${S.score}/${SEQ_LEN}`, cx, y0 + sf + 10, { font: FD(sf), color: C.cyan, align: 'center', glow: 20, spacing: 4 });
 
   const nm = S.seat >= 0 ? STUDENTS[S.seat].name : 'СТУДЕНТ';
   const nameY = y0 + sf + 48;
   txt(nm, cx, nameY, { font: FM(fitSpaced(nm, W - 40, 1)), color: C.text, align: 'center', glow: 4, spacing: 1 });
 
-  const verdict = S.score >= 13 ? 'NEURO-УРОВЕНЬ ПОДТВЕРЖДЁН'
-     : S.score >= 10 ? 'СИСТЕМА СТАБИЛЬНА'
+  const verdict = S.score >= Math.round(SEQ_LEN * 0.9) ? 'ОПТИКА СИНХРОНИЗИРОВАНА'
+     : S.score >= Math.round(SEQ_LEN * 0.8) ? 'РЕФРАКЦИЯ В НОРМЕ'
     : 'ТРЕБУЕТСЯ ПЕРЕПРОШИВКА';
   const vy = nameY + 56;
   ctx.globalAlpha = 0.7 + 0.3 * Math.sin(performance.now() / 400);

@@ -1,7 +1,8 @@
 // quiz state API — KV: seat:0 .. seat:9
 const SEATS = 10;
 const STALE_MS = 45000;
-const MAX_Q = 15;
+const MAX_Q = 44;   // вопросов в тесте
+const MAX_GID = 99; // верхняя граница глобального id в банке (сейчас 0..76)
 
 function key(i) { return 'seat:' + i; }
 function valid(i) { return Number.isInteger(i) && i >= 0 && i < SEATS; }
@@ -9,7 +10,7 @@ function emptySeat() { return { occupied: 0, progress: 0, heartbeat: 0, answers:
 
 function sanitizeAnswers(a) {
   if (!Array.isArray(a)) return [];
-  return a.slice(0, MAX_Q).filter(x => x && Number.isInteger(x.q) && x.q >= 0 && x.q < 30 && Number.isInteger(x.c) && x.c >= -1 && x.c <= 3)
+  return a.slice(0, MAX_Q).filter(x => x && Number.isInteger(x.q) && x.q >= 0 && x.q < MAX_GID && Number.isInteger(x.c) && x.c >= -1 && x.c <= 3)
     .map(x => ({ q: x.q, c: x.c }));
 }
 

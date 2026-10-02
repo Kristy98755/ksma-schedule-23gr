@@ -115,8 +115,8 @@ function render() {
     const cell = document.createElement('div');
     cell.className = 'cell ' + (s.completed ? 'done' : (s.occupied ? 'busy' : 'free'));
     let status;
-    if (s.completed) status = 'БАЛЛ ' + st.score + '/15';
-    else if (s.occupied) status = 'ВОПРОС ' + String(Math.min(s.progress + 1, 15)).padStart(2, '0') + '/15';
+    if (s.completed) status = 'БАЛЛ ' + st.score + '/' + SEQ_LEN;
+    else if (s.occupied) status = 'ВОПРОС ' + String(Math.min(s.progress + 1, SEQ_LEN)).padStart(2, '0') + '/' + SEQ_LEN;
     else status = '—';
     cell.innerHTML = '<div class="num">#' + String(s.i + 1).padStart(2, '0') + '</div>' +
       '<div class="name"></div><div class="st">' + status + '</div>';
@@ -130,10 +130,10 @@ function openPopup(i) {
   openIdx = i;
   const st = STUDENTS[i] || { name: '—', score: 0 };
   const s = last.find(x => x.i === i);
-  let html = '<h2>' + esc(st.name) + '</h2><div class="meta">#' + String(i + 1).padStart(2, '0') + ' · ЛИЧНЫЙ БАЛЛ: ' + st.score + '/15</div>';
+  let html = '<h2>' + esc(st.name) + '</h2><div class="meta">#' + String(i + 1).padStart(2, '0') + ' · ЛИЧНЫЙ БАЛЛ: ' + st.score + '/' + SEQ_LEN + '</div>';
 
   if (s && s.occupied) {
-    html += '<div class="idle">// проходит тест, вопрос ' + Math.min(s.progress + 1, 15) + ' из 15</div>';
+    html += '<div class="idle">// проходит тест, вопрос ' + Math.min(s.progress + 1, SEQ_LEN) + ' из ' + SEQ_LEN + '</div>';
     html += actsHTML(i, false);
   } else if (s && s.completed) {
     const c = s.completed;
@@ -156,7 +156,7 @@ function openPopup(i) {
     if (!rows) rows = '<div class="idle">// нет данных об ответах</div>';
     html += rows;
     html += '<div class="scores"><span class="badge honest">ЧЕСТНЫЙ БАЛЛ: ' + honest + '/' + n + '</span>' +
-      '<span class="badge total">ЗАЧЁТ: ' + st.score + '/15</span></div>';
+      '<span class="badge total">ЗАЧЁТ: ' + st.score + '/' + SEQ_LEN + '</span></div>';
     html += actsHTML(i, true);
   } else {
     html += '<div class="idle">// не проходит тест</div>';
