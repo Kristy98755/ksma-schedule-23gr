@@ -304,6 +304,8 @@ function removeEmptyDays() {
         "Офтальмология|Практика|25.09":"<a href='ophthalmology_func.html'>Офтальмология</a>",
         "Неонатология|Практика|28.09":"<a href='neon_birth_trauma.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a><br><span style='color:#8B0000; font-size:14px; font-weight:300; font-style:italic'>КРОКСЫ И ХИРФОРМА!</span>",
         "Общая гигиена|Практика|28.09":"<a href='gigiena_medotkazy.html'>Общая гигиена</a>",
+        "Общая гигиена (общ.г.)|Практика|05.10":"<a href='hygiene_energy_efficiency.html'>Общая гигиена (общ.г.)</a><br><a href='hygiene_energy_efficiency.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>конспект</a>",
+        "Неонатология|Практика|05.10":"<a href='neon.srs_hemolytic.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a><br><a href='neon.srs_hemolytic.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>ГБН</a>",
         "Внутренние болезни (фак.терапия)|Практика|29.09":"<a href='https://jumpshare.com/share/p3KzIVX5L5BUA37dl7x1'>Внутренние болезни</a>",
         "Педиатрия|Практика|29.09":"<a href='pediatriya_bronhity.html'>Педиатрия</a>",
         "Педиатрия|Практика|13.10":"<a href='pediatriya_bronhity.html'>Педиатрия</a>",
