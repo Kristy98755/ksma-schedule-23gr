@@ -4,7 +4,7 @@
 
 // API воркера по абсолютному пути — работает с любого хоста
 // (github.io, workers.dev, локального сервера)
-const API_BASE = 'https://kanamiisa.itismynickname9.workers.dev';
+const API_BASE = 'https://ksma-schedule-23gr.itismynickname9.workers.dev';
 
 // Банк: 11 разделов конспекта по 7 вопросов = 77.
 // Тест: 2 вопроса из каждого раздела = 22.
