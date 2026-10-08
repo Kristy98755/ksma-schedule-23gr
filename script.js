@@ -319,6 +319,8 @@ function removeEmptyDays() {
         "Педиатрия|Практика|06.10":"<a href='pediatriya_pneumonia.html'>Педиатрия</a>",
         "Хирургия (фак.хир.)|Практика|07.10":"<a href='fakhir.html'>Хирургия (фак.хир.)</a>",
         "Оториноларингология|Практика|08.10":"<a href='lor_nos_glotka.html'>Оториноларингология</a>",
+        "Патологическое акушерство №1|Практика|09.10":"<a href='path_obst_ksr.html'>Патологическое акушерство №1</a>",
+        "Офтальмология|Практика|09.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
 
 
         // CURRENT WEEK
