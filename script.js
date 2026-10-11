@@ -321,6 +321,7 @@ function removeEmptyDays() {
         "Оториноларингология|Практика|08.10":"<a href='lor_nos_glotka.html'>Оториноларингология</a>",
         "Патологическое акушерство №1|Практика|09.10":"<a href='path_obst_ksr.html'>Патологическое акушерство №1</a>",
         "Офтальмология|Практика|09.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
+        "Офтальмология|Практика|12.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
 
 
         // CURRENT WEEK
@@ -469,6 +470,13 @@ function removeEmptyDays() {
 		insertLesson({
 			day: 'Понедельник',
 			week: '21.09',
+			time: '12:30-14:45',
+			lessonHTML: `<li class="lesson"><div class="lesson__time">12:30-14:45</div><div class="lesson__params"><span class="lesson__name">Офтальмология</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>НГ МЗ КР, 3 этаж, Каб.зав.каф.-301 (офт.)</span></div></li>`
+		});
+
+		insertLesson({
+			day: 'Понедельник',
+			week: '12.10',
 			time: '12:30-14:45',
 			lessonHTML: `<li class="lesson"><div class="lesson__time">12:30-14:45</div><div class="lesson__params"><span class="lesson__name">Офтальмология</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>НГ МЗ КР, 3 этаж, Каб.зав.каф.-301 (офт.)</span></div></li>`
 		});
