@@ -611,6 +611,11 @@ function removeEmptyDays() {
 
     // --- Загрузка недели ---
 
+	function hideLoader() {
+		const l = document.querySelector('.loadinganim');
+		if (l) l.classList.remove('popup');
+	}
+
 function loadWeek(monday, container, weekId) {
     const url = `https://ksma-schedule.itismynickname9.workers.dev/proxy/${groupId}/${formatDate(monday)}/get`;
     const key = `schedule_${groupId}_${formatDate(monday)}`;
@@ -730,11 +735,13 @@ function loadWeek(monday, container, weekId) {
     fetchWithHybridCache(url, key).then(data => {
         if (!data) {
             container.innerHTML = "<p style='color:red; text-align:center;'>Не удалось загрузить расписание</p>";
+            if (weekId === "CurrWeek") hideLoader();
             return;
         };
 		if (data.message) {
 			container.innerHTML = `<p style="color:red; text-align:center;">${data.message}</p>`;
-        return;
+			if (weekId === "CurrWeek") hideLoader();
+			return;
 		};
 		if (data.message) {
 				container.innerHTML = `
@@ -745,6 +752,7 @@ function loadWeek(monday, container, weekId) {
 					</p>
 				`;
 				alert(`${data.message}`);
+				if (weekId === "CurrWeek") hideLoader();
 				return;
 		};
         container.innerHTML = "";
@@ -848,6 +856,7 @@ statusP.innerHTML =
     // Сначала применяем твои overrides
 			applyGlobalOverrides(container);
 			applyOverridesToWeek(container, weekId);
+			if (weekId === "CurrWeek") hideLoader();
 
 			// --- Вставка погоды под каждой парой ---
 			(async function() {
