@@ -480,10 +480,15 @@ function removeEmptyDays() {
 			day: 'Понедельник',
 			week: '12.10',
 			time: '12:30-14:45',
-			lessonHTML: `<li class="lesson"><div class="lesson__time">12:30-14:45</div><div class="lesson__params"><span class="lesson__name">Офтальмология</span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>НГ МЗ КР, 3 этаж, Каб.зав.каф.-301 (офт.)</span></div></li>`
+			lessonHTML: `<li class="lesson"><div class="lesson__time">12:30-14:45</div><div class="lesson__params"><span class="lesson__name"><a href='ophthalmology_strabismus.html'>Офтальмология</a></span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>НГ МЗ КР, 3 этаж, Каб.зав.каф.-301 (офт.)</span></div></li>`
 		});
 
 		removeEmptyDays();
+
+		setTimeout(() => {
+			applyOverridesToWeek(document.querySelector('#CurrWeek'), 'cw');
+			applyOverridesToWeek(document.querySelector('#NextWeek'), 'nw');
+		}, 100);
 
 	});
 
