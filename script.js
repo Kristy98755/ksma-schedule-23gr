@@ -612,8 +612,8 @@ function removeEmptyDays() {
     // --- Загрузка недели ---
 
 	function hideLoader() {
-		const l = document.querySelector('.loadinganim');
-		if (l) l.classList.remove('popup');
+		const el = document.getElementById('page-loader');
+		if (el) el.classList.add('hidden');
 	}
 
 function loadWeek(monday, container, weekId) {
