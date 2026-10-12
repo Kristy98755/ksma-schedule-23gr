@@ -310,7 +310,7 @@ function removeEmptyDays() {
         "Неонатология|Практика|12.10":"<a href='neon_respiratory.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
         "Внутренние болезни (фак.терапия)|Практика|29.09":"<a href='https://jumpshare.com/share/p3KzIVX5L5BUA37dl7x1'>Внутренние болезни</a>",
         "Педиатрия|Практика|29.09":"<a href='pediatriya_bronhity.html'>Педиатрия</a>",
-        "Педиатрия|Практика|13.10":"<a href='pediatriya_hnzl.html'>Педиатрия</a>",
+        "Педиатрия|Практика|13.10":"<a href='pediatriya_hnzl.html'>Педиатрия</a><br><a href='pediatriya.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
         "Кафедра: Госпитальной педиатрии с курсом неонатологии|29.09":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
         "Кафедра: Госпитальной педиатрии с курсом неонатологии|13.10":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
         "Хирургия (фак.хир.)|Практика|30.09":"<a href='fakhir.html'>Хирургия (фак.хир.)</a>",

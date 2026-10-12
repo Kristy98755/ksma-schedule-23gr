@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СРС 4 — Перикардиты</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #1a1d27;
+            --text: #e1e4ed;
+            --accent: #00c9ff;
+            --accent2: #a855f7;
+            --accent3: #f97316;
+            --accent4: #22c55e;
+            --border: #2a2d3a;
+            --highlight: #1c3a5e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 30px; font-size: 1.6em; }
+        h2 { color: var(--accent2); margin: 25px 0 10px; font-size: 1.15em; }
+        p, li { margin-bottom: 8px; }
+        ul, ol { padding-left: 24px; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .highlight {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent);
+            padding: 10px 14px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<h1>Перикардиты у детей</h1>
+
+<div class="card">
+    <h2>Определение и этиология</h2>
+    <p><strong>Перикардит</strong> — воспаление серозной оболочки сердца. У детей чаще вирусной (Коксаки, грипп), реже бактериальной, туберкулёзной этиологии; аутоиммунные (СКВ, ревматизм), уремия, постинфарктный (Дресслера), после операций на сердце.</p>
+    <p><strong>Формы:</strong> сухой (фибринозный) и выпотной (экссудативный).</p>
+</div>
+
+<div class="card">
+    <h2>Сухой перикардит</h2>
+    <p><strong>Клиника:</strong> боли в грудной клетке (усиливаются при вдохе, кашле, глотании; облегчение — положение сидя с наклоном вперёд), шум трения перикарда (слышен на выдохе, не проводится в сосуды шеи), субфебрилитет, тахикардия.</p>
+    <p><strong>ЭКГ:</strong> диффузная элевация сегмента ST (выпуклой вверх) во всех отведениях, снижение PQ, отрицательный зубец Т (в отличие от инфаркта — по отведениям).</p>
+</div>
+
+<div class="card">
+    <h2>Выпотной перикардит и тампонада</h2>
+    <p><strong>Выпотной:</strong> тупые боли, одышка, при большом выпоте — набухание вен шеи, глухость тонов, расширение границ сердечной тупости в обе стороны (шаровидная тень на рентгене).</p>
+    <p><strong>Тампонада сердца — неотложное состояние.</strong> Триада Бека: артериальная гипотензия, набухание вен шеи, тонкие/тихие тоны сердца. Плюс тахикардия, пульс парадокс (падение АД на вдохе).</p>
+    <div class="highlight"><strong>Лечение тампонады — экстренная пункция (перикардиоцентез)</strong> с отсасыванием выпота.</div>
+    <p><strong>Лечение перикардита:</strong> лечение основного заболевания, НПВС (ибупрофен), при аутоиммунных/адгезивных — глюкокортикостероиды, покой, наблюдение.</p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var backLink = document.createElement('p');
+    backLink.style.textAlign = 'center';
+    backLink.style.marginTop = '40px';
+    backLink.innerHTML = '<a href="pediatriya.srs.html" style="color:#00c9ff;">← Назад к оглавлению</a>';
+    document.body.appendChild(backLink);
+});
+</script>
+
+</body>
+</html>

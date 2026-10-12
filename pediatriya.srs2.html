@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СРС 2 — Инфекционный эндокардит</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #1a1d27;
+            --text: #e1e4ed;
+            --accent: #00c9ff;
+            --accent2: #a855f7;
+            --accent3: #f97316;
+            --accent4: #22c55e;
+            --border: #2a2d3a;
+            --highlight: #1c3a5e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 30px; font-size: 1.6em; }
+        h2 { color: var(--accent2); margin: 25px 0 10px; font-size: 1.15em; }
+        p, li { margin-bottom: 8px; }
+        ul, ol { padding-left: 24px; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .highlight {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent);
+            padding: 10px 14px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<h1>Инфекционный эндокардит у детей</h1>
+
+<div class="card">
+    <h2>Определение и этиология</h2>
+    <p><strong>Инфекционный эндокардит</strong> — инфекционное воспаление эндокарда с образованием <strong>вегетаций</strong> на клапанах (чаще аортальном и митральном).</p>
+    <p><strong>Возбудители:</strong> золотистый стафилококк (чаще у детей раннего возраста), стрептококки, энтерококки, грибы.</p>
+    <p><strong>Предрасполагающие факторы:</strong> врождённые пороки сердца, ревматизм, кардиомиопатии, внутривенные катетеры, операции на сердце, иммунодефицит, хронические очаги инфекции.</p>
+</div>
+
+<div class="card">
+    <h2>Клиника</h2>
+    <p><strong>Системные:</strong> волнообразная лихорадка с ознобами, потливость, слабость, потеря массы тела, миалгии, гепато- и спленомегалия.</p>
+    <p><strong>Со стороны ССС:</strong> новый или усилившийся шум, признаки клапанной недостаточности, ХСН.</p>
+    <p><strong>Эмболические и иммунные:</strong> геморрагические высыпания на коже, узелки Ослера, пятна Рота на слизистой, спленомегалия, нефрит, менингит, септические метастазы в лёгкие, головной мозг, почки.</p>
+    <div class="highlight"><strong>Запомнить:</strong> у детей раннего возраста — острое течение с сепсисом; у старших — подострое с волнообразной лихорадкой и вегетациями.</div>
+</div>
+
+<div class="card">
+    <h2>Диагностика и лечение</h2>
+    <p><strong>Диагностика:</strong> гемокультура (до АБТ, 2-3 пробы), ОАК (лейкоцитоз, анемия, ↑СОЭ), СРБ, ЭхоКГ — <strong>вегетации на клапанах</strong> (трансторакальное/чреспищеводное).</p>
+    <p><strong>Лечение:</strong> длительная антибактериальная терапия (4-6 нед) по гемокультуре и чувствительности; при клапанной недостаточности, крупных вегетациях, неэффективности — хирургическое лечение (протезирование клапана).</p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var backLink = document.createElement('p');
+    backLink.style.textAlign = 'center';
+    backLink.style.marginTop = '40px';
+    backLink.innerHTML = '<a href="pediatriya.srs.html" style="color:#00c9ff;">← Назад к оглавлению</a>';
+    document.body.appendChild(backLink);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СРС 3 — Кардиомиопатии</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #1a1d27;
+            --text: #e1e4ed;
+            --accent: #00c9ff;
+            --accent2: #a855f7;
+            --accent3: #f97316;
+            --accent4: #22c55e;
+            --border: #2a2d3a;
+            --highlight: #1c3a5e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 30px; font-size: 1.6em; }
+        h2 { color: var(--accent2); margin: 25px 0 10px; font-size: 1.15em; }
+        p, li { margin-bottom: 8px; }
+        ul, ol { padding-left: 24px; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .highlight {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent);
+            padding: 10px 14px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<h1>Кардиомиопатии у детей</h1>
+
+<div class="card">
+    <h2>Определение</h2>
+    <p><strong>Кардиомиопатии</strong> — первичные поражения миокарда неизвестной этиологии с нарушением его сократительной функции без пороков сердца и коронарной патологии. Делятся на три типа.</p>
+    <div class="highlight"><strong>ЭхоКГ — метод выбора</strong> при всех кардиомиопатиях.</div>
+</div>
+
+<div class="card">
+    <h2>Три типа</h2>
+    <p><strong>1. Дилатационная (ДКМП)</strong> — самая частая. Расширение камер сердца, резкое снижение сократимости ЛЖ. Клиника: ХСН (одышка, тахикардия, гепатомегалия, отёки), аритмии, тромбоэмболии. ЭхоКГ: дилатация и ↓ФВ. Лечение: терапия ХСН (диуретики, ИАПФ, бета-блокаторы, сердечные гликозиды), антикоагулянты; при тяжёлом течении — трансплантация сердца.</p>
+    <p><strong>2. Гипертрофическая (ГКМП)</strong> — асимметричная или концентрическая гипертрофия миокарда ЛЖ с обструкцией выносливого тракта (межжелудочковая перегородка &gt; 15 мм). Клиника: синкопе (особенно при нагрузке), загрудинные боли, одышка, риск внезапной сердечной смерти — часто у спортсменов. Наследуется аутосомно-доминантно. ЭхоКГ: гипертрофия перегородки, обструкция, систолическое движение створки МК (SAM). Лечение: бета-блокаторы, верапамил; при обструкции — хирургическая миэктомия/аблация.</p>
+    <p><strong>3. Рестриктивная (РКМП)</strong> — редко у детей. Нарушение диастолического расслабления при сохранённой сократимости: кардиосклероз, фиброэластоз, инфильтрации (амилоидоз). Клиника: похожа на констриктивный перикардит (правожелудочковая Н). Лечение: симптоматическое.</p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var backLink = document.createElement('p');
+    backLink.style.textAlign = 'center';
+    backLink.style.marginTop = '40px';
+    backLink.innerHTML = '<a href="pediatriya.srs.html" style="color:#00c9ff;">← Назад к оглавлению</a>';
+    document.body.appendChild(backLink);
+});
+</script>
+
+</body>
+</html>
