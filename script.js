@@ -435,7 +435,7 @@ function removeEmptyDays() {
 		// 	week: 'bw'
 		// });
 		shiftLessonTime({
-			subject: 'Внутренние болезни (фак.терапия)',
+			subject: 'Внутренние болезни',
 			type: 'Практика',
 			day: 'Вторник',
 			oldTime: '07:00-09:15',
