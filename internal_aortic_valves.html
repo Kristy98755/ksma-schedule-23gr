@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аортальные пороки — внутренние болезни</title>
+<style>
+:root{
+  --bg:#0b0f14;
+  --card:#121923;
+  --accent:#4fc3f7;
+  --accent2:#9c7cff;
+  --accent3:#ff8a65;
+  --accent4:#81c784;
+  --accent5:#f5d76e;
+  --text:#e6ecf1;
+  --muted:#9aa4ad;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Roboto,sans-serif;
+  background:linear-gradient(180deg,#090c11,#0b0f14);
+  color:var(--text);
+}
+header{
+  position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(10px);
+  background:rgba(11,15,20,.85);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+header h1{margin:0;padding:20px;font-size:22px;line-height:1.3}
+nav{
+  display:flex;gap:14px;overflow-x:auto;padding:0 20px 16px;
+  scrollbar-width:none;
+}
+nav::-webkit-scrollbar{display:none}
+nav a{
+  color:var(--muted);text-decoration:none;font-size:13px;white-space:nowrap;
+  transition:color .2s;
+}
+nav a:hover{color:var(--accent)}
+section{padding:0 20px;max-width:1000px;margin:auto}
+.card{
+  background:linear-gradient(180deg,#121923,#0e141d);
+  border-radius:18px;padding:28px;margin-bottom:28px;
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.04)
+}
+h2{margin-top:0;font-size:24px;color:var(--accent)}
+h3{color:var(--accent2);margin-top:22px}
+h4{color:var(--accent3);margin-top:16px}
+p,li{line-height:1.7;color:var(--text);font-size:15px}
+ul,ol{padding-left:22px}
+.table{
+  width:100%;border-collapse:collapse;font-size:14px;margin-top:12px
+}
+.table th,.table td{border-bottom:1px solid rgba(255,255,255,.06);padding:10px;text-align:left;vertical-align:top}
+.table th{color:var(--accent);font-weight:600}
+.ok{color:var(--accent4);font-weight:600}
+.highlight{
+  background:rgba(79,195,247,.08);
+  border-left:3px solid var(--accent);
+  padding:14px 18px;
+  border-radius:0 10px 10px 0;
+  margin:16px 0;
+}
+.highlight p{margin:0}
+.warning{
+  background:rgba(255,138,101,.08);
+  border:1px solid rgba(255,138,101,.2);
+  border-radius:12px;
+  padding:16px 20px;
+  margin:12px 0;
+}
+.warning strong{color:var(--accent3)}
+.step{
+  background:rgba(156,124,255,.06);
+  border:1px solid rgba(156,124,255,.15);
+  border-radius:12px;
+  padding:16px 20px;
+  margin:12px 0;
+}
+.step strong{color:var(--accent2)}
+.back{margin:0 20px 28px}
+.footer{color:var(--muted);text-align:center;padding:40px 20px;font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Аортальные пороки</h1>
+  <nav>
+    <a href="#stenoz">Аортальный стеноз</a>
+    <a href="#stenoz-clinic">Клиника стеноза</a>
+    <a href="#stenoz-diag">Диагностика и лечение</a>
+    <a href="#insuff">Недостаточность АК</a>
+    <a href="#insuff-signs">Периферические признаки</a>
+    <a href="#insuff-diag">Диагностика и лечение</a>
+    <a href="#compare">Сравнение</a>
+    <a href="#summary">Кратко</a>
+  </nav>
+</header>
+
+<section id="stenoz">
+  <div class="card">
+    <h2>Аортальный стеноз — сужение устья аорты</h2>
+    <div class="highlight">
+      <p><strong>Аортальный стеноз</strong> — сужение устья аорты, препятствующее нормальному току крови из левого желудочка (ЛЖ) в аорту.</p>
+    </div>
+    <h3>Этиология</h3>
+    <ul>
+      <li><strong>Хроническая ревматическая болезнь сердца.</strong></li>
+      <li><strong>Атеросклероз.</strong></li>
+      <li><strong>Дегенеративный кальциноз</strong> врождённого двустворчатого или нормального трёхстворчатого клапана.</li>
+      <li>Системная красная волчанка.</li>
+    </ul>
+    <h3>Патогенез</h3>
+    <ol>
+      <li>Склероз створок клапана и сращение их по комиссурам.</li>
+      <li>Компенсаторная <strong>концентрическая гипертрофия</strong> — увеличение толщины стенки ЛЖ при сохранении нормального объёма его полости.</li>
+      <li>Снижение сократительной способности миокарда и уменьшение фракции выброса.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="stenoz-clinic">
+  <div class="card">
+    <h2>Клиническая картина аортального стеноза</h2>
+    <p>Основные проявления (классическая триада плюс ХСН):</p>
+    <ul>
+      <li><strong>Стенокардия</strong> — относительная коронарная недостаточность.</li>
+      <li><strong>Обморочные состояния</strong>, особенно при физической нагрузке — недостаточный мозговой кровоток.</li>
+      <li><strong>Нарушения ритма сердца</strong> — преходящие фибрилляции желудочков, фибрилляция предсердий.</li>
+      <li><strong>Сердечная недостаточность</strong> — хроническая левожелудочковая недостаточность.</li>
+    </ul>
+    <h3>Клиническое обследование — аускультация</h3>
+    <table class="table">
+      <thead><tr><th>Признак</th><th>Описание</th></tr></thead>
+      <tbody>
+        <tr><td>Шум</td><td><strong>Грубый систолический шум изгнания</strong>, лучше определяется на <strong>основании сердца</strong></td></tr>
+        <tr><td>Проведение</td><td>Хорошо проводится вдоль <strong>сонных артерий</strong> и на <strong>верхушку сердца</strong></td></tr>
+        <tr><td>Динамика</td><td>Когда развивается ЛЖН и уменьшается сердечный выброс — шум становится мягче или исчезает совсем</td></tr>
+      </tbody>
+    </table>
+    <div class="warning">
+      <p><strong>Важно:</strong> исчезновение шума при тяжёлом стенозе — прогностически неблагоприятный признак (критический стеноз), а не улучшение!</p>
+    </div>
+  </div>
+</section>
+
+<section id="stenoz-diag">
+  <div class="card">
+    <h2>Диагностика и лечение аортального стеноза</h2>
+    <h3>Электрокардиография</h3>
+    <ul>
+      <li>Признаки <strong>концентрической ГЛЖ</strong>.</li>
+      <li>Блокада <strong>левой ножки пучка Гиса (ЛНПГ)</strong>.</li>
+    </ul>
+    <h3>Эхокардиография</h3>
+    <p>Выполняют для <strong>подтверждения диагноза</strong>, оценки тяжести аортального стеноза, толщины стенок сердца, размеров и функции ЛЖ.</p>
+    <h3>Немедикаментозное лечение</h3>
+    <ul>
+      <li>Ограничение интенсивных физических нагрузок.</li>
+      <li>При наличии симптомов ХСН — ограничение приёма соли и жидкости.</li>
+    </ul>
+    <h3>Медикаментозное лечение</h3>
+    <p>Назначают <strong>неоперабельным</strong> больным: лечение ХСН, стенокардии, нарушений ритма сердца.</p>
+    <h3>Хирургическое лечение</h3>
+    <div class="highlight">
+      <p><strong>Единственный действенный метод лечения аортального стеноза — протезирование клапана аорты.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="insuff">
+  <div class="card">
+    <h2>Недостаточность аортального клапана</h2>
+    <div class="highlight">
+      <p><strong>Аортальная недостаточность</strong> — заболевание, характеризующееся <strong>обратным током крови из аорты в ЛЖ</strong> через патологически изменённый аортальный клапан.</p>
+    </div>
+    <h3>Этиология</h3>
+    <ul>
+      <li><strong>Поражения створок клапана:</strong> инфекционный эндокардит, острая ревматическая лихорадка, атеросклероз, миксоматозная дегенерация.</li>
+      <li><strong>Поражение корня аорты:</strong> расширение корня аорты при АГ, синдроме Марфана, системных заболеваниях соединительной ткани, сифилисе, анкилозирующем спондилоартрите.</li>
+    </ul>
+    <h3>Патогенез</h3>
+    <ol>
+      <li>Регургитация крови из аорты в ЛЖ <strong>в фазу диастолы</strong>.</li>
+      <li>Увеличение конечного диастолического объёма ЛЖ, увеличение его податливости.</li>
+      <li><strong>Эксцентрическая и концентрическая гипертрофия</strong> миокарда.</li>
+      <li>Снижение фракции выброса.</li>
+    </ol>
+    <h3>Клиническая картина</h3>
+    <ul>
+      <li>Хроническая сердечная недостаточность (ХСН).</li>
+      <li>Стенокардия.</li>
+      <li>Обморочные состояния.</li>
+    </ul>
+    <h3>Аускультация</h3>
+    <table class="table">
+      <thead><tr><th>Признак</th><th>Описание</th></tr></thead>
+      <tbody>
+        <tr><td>Основной шум</td><td><strong>Дующий протодиастолический шум</strong> — лучше всего выслушивать по <strong>левому краю грудины</strong></td></tr>
+        <tr><td>Шум Флинта</td><td>Дополнительный <strong>диастолический шум на верхушке</strong> — возникает из-за того, что струя регургитации из аорты вызывает вибрацию створок митрального клапана</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="insuff-signs">
+  <div class="card">
+    <h2>Периферические признаки аортальной регургитации</h2>
+    <p>Обусловлены <strong>увеличенным пульсовым давлением</strong>:</p>
+    <table class="table">
+      <thead><tr><th>Симптом</th><th>Суть</th></tr></thead>
+      <tbody>
+        <tr><td><strong>«Капиллярный» пульс Квинке</strong></td><td>Появляется при небольшом нажатии на ногтевое ложе</td></tr>
+        <tr><td><strong>«Пляска каротид»</strong></td><td>Видимая пульсация в области прохождения сонных артерий на шее</td></tr>
+        <tr><td><strong>Симптом Корригена</strong></td><td>Быстрое нарастание пульсовой волны и резкий её спад на лучевой артерии</td></tr>
+        <tr><td><strong>Симптом Мюссе</strong></td><td>Покачивание головы назад и вперёд в такт пульса</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="insuff-diag">
+  <div class="card">
+    <h2>Диагностика и лечение аортальной недостаточности</h2>
+    <h3>Электрокардиография</h3>
+    <ul>
+      <li>Признаки увеличения ЛП, ГЛЖ и <strong>«систолической перегрузки»</strong> — депрессия сегмента ST и отрицательный зубец Т в левых грудных отведениях.</li>
+    </ul>
+    <h3>Эхокардиография</h3>
+    <p>Подтверждает диагноз и позволяет оценить <strong>функцию ЛЖ, степень регургитации, состояние аорты</strong>.</p>
+    <h3>Лечение</h3>
+    <ul>
+      <li><strong>Немедикаментозное:</strong> см. «Аортальный стеноз» (ограничение нагрузок, соли и жидкости).</li>
+      <li><strong>Медикаментозное</strong> (коррекция АГ и ХСН): <span class="ok">Ингибиторы АПФ — препараты выбора</span> у больных с аортальной регургитацией и АГ, сниженной функцией ЛЖ или клинически выраженной ХСН.</li>
+      <li><strong>Хирургическое:</strong> протезирование клапана аорты.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="card">
+    <h2>Аортальный стеноз vs недостаточность — ключевые отличия</h2>
+    <table class="table">
+      <thead><tr><th>Признак</th><th>Аортальный стеноз</th><th>Недостаточность АК</th></tr></thead>
+      <tbody>
+        <tr><td>Гемодинамика</td><td>Затруднён ток крови из ЛЖ в аорту</td><td>Обратный ток крови из аорты в ЛЖ в диастолу</td></tr>
+        <tr><td>Ключевой шум</td><td>Грубый систолический шум изгнания на основании сердца (проводится по сонным артериям)</td><td>Дующий протодиастолический шум по левому краю грудины (+ шум Флинта на верхушке)</td></tr>
+        <tr><td>Гипертрофия</td><td>Концентрическая ГЛЖ</td><td>Эксцентрическая и концентрическая ГЛЖ</td></tr>
+        <tr><td>ЭКГ</td><td>Концентрическая ГЛЖ, блокада ЛНПГ</td><td>Увеличение ЛП, ГЛЖ, «систолическая перегрузка» (депрессия ST, отрицательный Т)</td></tr>
+        <tr><td>Периферические признаки</td><td>Нет</td><td>Квинке, пляска каротид, Корриген, Мюссе (увеличенное пульсовое давление)</td></tr>
+        <tr><td>Классические симптомы</td><td>Стенокардия + обмороки + ХСН (триада)</td><td>ХСН, стенокардия, обморочные состояния</td></tr>
+        <tr><td>Операция</td><td>Протезирование клапана аорты (единственный действенный метод)</td><td>Протезирование клапана аорты</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="summary">
+  <div class="card">
+    <h2>Кратко для запоминания</h2>
+    <div class="step">
+      <p><strong>Аортальный стеноз:</strong> сужение устья аорты → концентрическая ГЛЖ → триада <em>стенокардия, обмороки, ХСН</em> → грубый систолический шум на основании сердца → протезирование клапана аорты.</p>
+    </div>
+    <div class="step">
+      <p><strong>Аортальная недостаточность:</strong> обратный ток в диастолу → эксцентрическая ГЛЖ и увеличенное пульсовое давление → дующий протодиастолический шум по левому краю грудины → признаки Квинке/Корригена/Мюссе/пляска каротид → ИАПФ + протезирование клапана аорты.</p>
+    </div>
+    <div class="warning">
+      <p><strong>Шум Флинта</strong> при аортальной недостаточности — «функциональный» митральный стеноз: струя регургитации вибрирует створки МК, поэтому на верхушке слышен диастолический шум, имитирующий митральный стеноз.</p>
+    </div>
+  </div>
+</section>
+
+
+<div class="back" id="backLink"></div>
+
+<div class="footer">
+  Аортальные пороки — внутренние болезни, практика (модуль «Болезни сердца и сосудов»)
+</div>
+
+<script>
+    const backLink = document.getElementById('backLink');
+    if (backLink) {
+        backLink.innerHTML = '<a href="index.html" style="color:#00c9ff;">← Назад к расписанию</a>';
+    }
+</script>
+
+</body>
+</html>
