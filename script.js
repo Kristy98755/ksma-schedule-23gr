@@ -298,22 +298,12 @@ function removeEmptyDays() {
 		"НГ МЗ КР, подвал, Учебная ауд.-01 (лор)":"<img src='pin.png' class='loc-icon'><a href='https://go.2gis.com/32nZA'>Клиника «MEDCENTER.KG»</a>",
 		"Кафедра: Курс гематологии":"<a href='https://2gis.kg/bishkek/geo/70000001035488559/74.613224,42.841934'>Онкология</a>",
         // TARGETED
-        "Хирургия (фак.хир.)|Практика|23.09":"<a href='fakhir.html'>Хирургия (фак.хир.)</a>",
-        "Оториноларингология|Практика|24.09":"<a href='lor_inner.html'>Оториноларингология</a>",
-        "Патологическое акушерство №1|Практика|25.09":"<a href='path_obst.html'>Патологическое акушерство №1</a>",
-        "Офтальмология|Практика|25.09":"<a href='ophthalmology_func.html'>Офтальмология</a>",
-        "Неонатология|Практика|28.09":"<a href='neon_birth_trauma.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a><br><span style='color:#8B0000; font-size:14px; font-weight:300; font-style:italic'>КРОКСЫ И ХИРФОРМА!</span>",
-        "Общая гигиена|Практика|28.09":"<a href='gigiena_medotkazy.html'>Общая гигиена</a>",
         "Общая гигиена|Практика|05.10":"<a href='hygiene_energy_efficiency.html'>Общая гигиена</a>",
         "Общая гигиена|Практика|12.10":"<a href='hygiene_water.html'>Общая гигиена</a>",
         "Неонатология|Практика|05.10":"<a href='neon.srs_hemolytic.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
         "Неонатология|Практика|12.10":"<a href='neon_respiratory.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
-        "Внутренние болезни (фак.терапия)|Практика|29.09":"<a href='https://jumpshare.com/share/p3KzIVX5L5BUA37dl7x1'>Внутренние болезни</a>",
-        "Педиатрия|Практика|29.09":"<a href='pediatriya_bronhity.html'>Педиатрия</a>",
         "Педиатрия|Практика|13.10":"<a href='pediatriya_hnzl.html'>Педиатрия</a><br><a href='pediatriya.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
-        "Кафедра: Госпитальной педиатрии с курсом неонатологии|29.09":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
         "Кафедра: Госпитальной педиатрии с курсом неонатологии|13.10":"<span style='color:#cc3300;font-weight:bold'>Муляжный центр</span> (центр тестирования, 2 этаж)",
-        "Хирургия (фак.хир.)|Практика|30.09":"<a href='fakhir.html'>Хирургия (фак.хир.)</a>",
         "Оториноларингология|Практика|01.10":"<a href='lor_inner.html'>Оториноларингология</a>",
         "Патологическое акушерство №1|Практика|02.10":"<a href='path_obst_breech.html'>Патологическое акушерство №1</a>",
         "Офтальмология|Практика|02.10":"<a href='ophthalmology_refr.html'>Офтальмология</a>",
@@ -327,6 +317,8 @@ function removeEmptyDays() {
         "Патологическое акушерство №1|Практика|09.10":"<a href='path_obst_ksr.html'>Патологическое акушерство №1</a>",
         "Офтальмология|Практика|09.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|12.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
+        "Офтальмология|Практика|16.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
+        "Патологическое акушерство №1|Практика|16.10":"<a href='path_obst_obstrukcia.html'>Патологическое акушерство №1</a>",
 
 
         // CURRENT WEEK
