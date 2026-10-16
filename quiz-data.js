@@ -55,8 +55,9 @@ function seededScore(i) {
 }
 
 // ФИО и личные баллы: у троих (Игорь, Луиза, Айгул) — железобетонные 20 из 20,
-// у остальных — детерминированный «случайный» зачёт 17..20 по месту
+// у Шамиля — жёстко 15, у остальных — детерминированный «случайный» зачёт 17..20 по месту
 const FORCE_20 = ['Бобровский Игорь', 'Курбанбаева Луиза', 'Мухамадова Айгул'];
+const FORCE_15 = ['Болотов Шамил'];
 const STUDENTS = [
   { name: 'Алмазбек кызы Нургул' },
   { name: 'Ахвердиева Анель' },
@@ -72,4 +73,6 @@ const STUDENTS = [
   { name: 'Ниязов Арлен' },
   { name: 'Почеревин Владимир' }
 ];
-STUDENTS.forEach((s, i) => { s.score = FORCE_20.includes(s.name) ? 20 : seededScore(i); });
+STUDENTS.forEach((s, i) => {
+  s.score = FORCE_20.includes(s.name) ? 20 : FORCE_15.includes(s.name) ? 15 : seededScore(i);
+});
