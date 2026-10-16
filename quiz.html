@@ -139,8 +139,10 @@ function shuffle(arr) {
   return a;
 }
 function pickSeq() {
+  // 20 вопросов = по 2 из 10 случайных разделов (из 11)
   const picked = [];
-  TOPICS.forEach((t, ti) => {
+  shuffle(TOPICS).slice(0, SEQ_LEN / PER_TOPIC_TEST).forEach(t => {
+    const ti = TOPICS.indexOf(t);
     shuffle(t.qs).slice(0, PER_TOPIC_TEST).forEach(q => picked.push({ q, t: ti }));
   });
   return shuffle(picked);
@@ -499,7 +501,7 @@ function drawMenu(t) {
   txt('MEMENTO MORI', cx, titleY, { font: tf, color: C.cyan, align: 'center', spacing: sp, glow: 16 });
 
   txt('ТЕСТ: РЕФРАКЦИЯ ГЛАЗА', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
-  txt(SEQ_LEN + ' ВОПРОСА · ' + PER_TOPIC_TEST + ' ИЗ КАЖДОЙ ТЕМЫ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
+  txt(SEQ_LEN + ' ВОПРОСА · ' + PER_TOPIC_TEST + ' ИЗ ' + (SEQ_LEN / PER_TOPIC_TEST) + ' ТЕМ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
 
   if (S.seat >= 0) {
     const nm = STUDENTS[S.seat].name;
@@ -567,9 +569,10 @@ function drawSelect(t) {
   // панель со списком
   let by = dy + dh + 18;
   if (open) {
-    const rowH = Math.max(26, Math.min(44, (H - dy - dh - 130) / 10));
+    const rowCount = Math.max(1, S.sel.list.length);
+    const rowH = Math.max(26, Math.min(44, (H - dy - dh - 130) / rowCount));
     const py = dy + dh + 6;
-    const ph = rowH * 10 + 8;
+    const ph = rowH * rowCount + 8;
     roundRect(dx, py, dw, ph, 6);
     ctx.fillStyle = 'rgba(5,5,8,0.97)';
     ctx.fill();

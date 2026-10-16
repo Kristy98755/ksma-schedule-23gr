@@ -7,9 +7,10 @@
 const API_BASE = 'https://ksma-schedule-23gr.itismynickname9.workers.dev';
 
 // Банк: 11 разделов конспекта по 7 вопросов = 77.
-// Тест: 2 вопроса из каждого раздела = 22.
+// Тест: 2 вопроса из 10 случайных разделов = 20.
 const PER_TOPIC_POOL = 7;
 const PER_TOPIC_TEST = 2;
+const SEQ_LEN = 20;
 
 const TOPICS = [
   { name: 'ОПТИКА ГЛАЗА', qs: [
@@ -116,25 +117,34 @@ const TOPICS = [
 // канонический глобальный id вопроса: 0..76 по порядку темы/вопроса
 TOPICS.forEach((t, ti) => t.qs.forEach((q, qi) => { q.g = ti * PER_TOPIC_POOL + qi; }));
 
-// длина теста: 4 вопроса из каждого раздела
-const SEQ_LEN = TOPICS.length * PER_TOPIC_TEST;
-
 function questionByGid(g) {
   const ti = Math.floor(g / PER_TOPIC_POOL), qi = g % PER_TOPIC_POOL;
   return TOPICS[ti] ? TOPICS[ti].qs[qi] || null : null;
 }
 
-// ФИО и личные баллы (захардкожены: каждый студент получает своё число,
-// диапазон 18..22 при 22 вопросах — randint(⌈4·N/5⌉, N)).
+// детерминированный «случайный» зачётный балл по номеру места: 17..20 включительно;
+// одинаков для всех устройств и перезагрузок (FNV-1a по индексу)
+function seededScore(i) {
+  let h = 2166136261 ^ (i + 1);
+  h = Math.imul(h, 16777619);
+  h ^= h >>> 13;
+  return 17 + ((h >>> 0) % 4);
+}
+
+// ФИО и личные баллы: зачёт всегда «сдан» — 17..20 из 20 (случайно по месту)
 const STUDENTS = [
-  { name: 'Алмазбек кызы Нургул', score: 22 },
-  { name: 'Ахвердиева Анель', score: 19 },
-  { name: 'Болотов Шамил', score: 18 },
-  { name: 'Ганиев Миркамил', score: 21 },
-  { name: 'Дастанова Нуркыз', score: 20 },
-  { name: 'Камбаров Жахонгир', score: 20 },
-  { name: 'Курбанбаева Луиза', score: 21 },
-  { name: 'Мирлан кызы Жылдыз', score: 21 },
-  { name: 'Мухамадова Айгул', score: 20 },
-  { name: 'Ниязов Арлен', score: 20 }
+  { name: 'Алмазбек кызы Нургул' },
+  { name: 'Ахвердиева Анель' },
+  { name: 'Бобровский Игорь' },
+  { name: 'Болотов Шамил' },
+  { name: 'Ганиев Миркамил' },
+  { name: 'Дастанова Нуркыз' },
+  { name: 'Ерланова Ясмина' },
+  { name: 'Камбаров Жахонгир' },
+  { name: 'Курбанбаева Луиза' },
+  { name: 'Мирлан кызы Жылдыз' },
+  { name: 'Мухамадова Айгул' },
+  { name: 'Ниязов Арлен' },
+  { name: 'Почеревин Владимир' }
 ];
+STUDENTS.forEach((s, i) => { s.score = seededScore(i); });
