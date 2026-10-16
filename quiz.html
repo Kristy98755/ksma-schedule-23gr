@@ -30,7 +30,7 @@ const FD = s => `700 ${s}px 'Orbitron','Courier New',monospace`;
 const FM = s => `400 ${s}px 'Share Tech Mono','Courier New',monospace`;
 const LETTERS = ['а', 'б', 'в', 'г'];
 const TIME_MS = 30000;
-const HB_MS = 3000;
+const HB_MS = 2000;
 const LS_KEY = 'quiz_seat';
 
 // ---------- API ----------
@@ -236,7 +236,7 @@ function heartbeat(done) {
   api('heartbeat', { i: S.seat, done: done, answers: S.answers }).catch(() => {});
 }
 
-// хартбит каждые 3 секунды на всё время теста (протухание сессии — 45с)
+// хартбит каждые 2 секунды на всё время теста (протухание сессии — 45с)
 let hbTimer = null;
 function hbTick() {
   hbTimer = setTimeout(() => {
