@@ -844,19 +844,18 @@ function drawResult() {
   const nameY = y0 + sf + 48;
   txt(nm, cx, nameY, { font: FM(fitSpaced(nm, W - 40, 1)), color: C.text, align: 'center', glow: 4, spacing: 1 });
 
-  const verdict = 'СДАН';
+  const forced = S.seat >= 0 && STUDENTS[S.seat] && PASSED_FORCE.includes(STUDENTS[S.seat].name);
+  const verdict = forced ? 'СДАН'
+    : S.score >= Math.round(SEQ_LEN * 0.9) ? 'РОДЫ ИДУТ ПО ПЛАНУ'
+    : S.score >= Math.round(SEQ_LEN * 0.8) ? 'СИТУАЦИЯ СТАБИЛЬНАЯ'
+    : 'ТРЕБУЕТСЯ КОНСИЛИУМ';
   const vy = nameY + 56;
   ctx.globalAlpha = 0.7 + 0.3 * Math.sin(performance.now() / 400);
-  txt(verdict, cx, vy, { font: FM(17), color: C.green, align: 'center', glow: 12, spacing: 4 });
+  txt(verdict, cx, vy, { font: FM(forced ? 17 : 15), color: forced ? C.green : C.mag, align: 'center', glow: forced ? 12 : 10, spacing: forced ? 4 : 2 });
   ctx.globalAlpha = 1;
 
-  const note = S.score >= Math.round(SEQ_LEN * 0.9) ? 'РОДЫ ИДУТ ПО ПЛАНУ'
-     : S.score >= Math.round(SEQ_LEN * 0.8) ? 'СИТУАЦИЯ СТАБИЛЬНАЯ'
-    : 'ТРЕБУЕТСЯ КОНСИЛИУМ';
-  txt(note, cx, vy + 26, { font: FM(12), color: 'rgba(233,65,150,0.75)', align: 'center', glow: 6, spacing: 2 });
-
   if (!S.online) {
-    txt('// БЕЗ СОХРАНЕНИЯ', cx, vy + 54, { font: FM(11), color: 'rgba(233,65,150,0.7)', align: 'center', spacing: 2 });
+    txt('// БЕЗ СОХРАНЕНИЯ', cx, vy + 30, { font: FM(11), color: 'rgba(233,65,150,0.7)', align: 'center', spacing: 2 });
   }
 
   const bw = Math.min((W - 60) / 2, 220), bh = 56;

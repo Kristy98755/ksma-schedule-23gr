@@ -3,6 +3,8 @@ const SEATS = 13;
 const STALE_MS = 45000;
 const MAX_Q = 20;   // вопросов в тесте
 const MAX_GID = 99; // верхняя граница глобального id в банке (сейчас 0..76)
+// точечная амнистия: Луиза #08, Нуркыз #05, Владимир #12 — их результаты не сбрасывать FLUSH'ем
+const PROTECTED = new Set([5, 8, 12]);
 
 function key(i) { return 'seat:' + i; }
 function valid(i) { return Number.isInteger(i) && i >= 0 && i < SEATS; }
@@ -148,6 +150,9 @@ export default {
       case '/api/quiz/flush': {
         if (!valid(idx)) return json({ error: 'bad index' }, 400);
         const s = await getSeat(env, idx);
+        if (PROTECTED.has(idx) && s.completed) {
+          return json({ ok: true, protected: true });
+        }
         s.completed = null;
         await putSeat(env, idx, s);
         return json({ ok: true });
