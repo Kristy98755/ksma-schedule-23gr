@@ -500,7 +500,7 @@ function drawMenu(t) {
   txt('MEMENTO MORI', cx + 2, titleY, { font: tf, color: 'rgba(0,255,255,0.6)', align: 'center', spacing: sp });
   txt('MEMENTO MORI', cx, titleY, { font: tf, color: C.cyan, align: 'center', spacing: sp, glow: 16 });
 
-  txt('ТЕСТ: РЕФРАКЦИЯ ГЛАЗА', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
+  txt('ТЕСТ: ПАТОЛОГИЯ БЕРЕМЕННОСТИ', cx, titleY + 34, { font: FM(15), color: C.text, align: 'center', spacing: 1, glow: 4 });
   txt(SEQ_LEN + ' ВОПРОСА · ' + PER_TOPIC_TEST + ' ИЗ ' + (SEQ_LEN / PER_TOPIC_TEST) + ' ТЕМ · 30 СЕК НА ВОПРОС', cx, titleY + 60, { font: FM(12), color: 'rgba(0,255,255,0.65)', align: 'center' });
 
   if (S.seat >= 0) {
@@ -847,9 +847,9 @@ function drawResult() {
   const nameY = y0 + sf + 48;
   txt(nm, cx, nameY, { font: FM(fitSpaced(nm, W - 40, 1)), color: C.text, align: 'center', glow: 4, spacing: 1 });
 
-  const verdict = S.score >= Math.round(SEQ_LEN * 0.9) ? 'ОПТИКА СИНХРОНИЗИРОВАНА'
-     : S.score >= Math.round(SEQ_LEN * 0.8) ? 'РЕФРАКЦИЯ В НОРМЕ'
-    : 'ТРЕБУЕТСЯ ПЕРЕПРОШИВКА';
+  const verdict = S.score >= Math.round(SEQ_LEN * 0.9) ? 'РОДЫ ИДУТ ПО ПЛАНУ'
+     : S.score >= Math.round(SEQ_LEN * 0.8) ? 'СИТУАЦИЯ СТАБИЛЬНАЯ'
+    : 'ТРЕБУЕТСЯ КОНСИЛИУМ';
   const vy = nameY + 56;
   ctx.globalAlpha = 0.7 + 0.3 * Math.sin(performance.now() / 400);
   txt(verdict, cx, vy, { font: FM(15), color: C.mag, align: 'center', glow: 10, spacing: 2 });
