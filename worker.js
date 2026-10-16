@@ -8,7 +8,12 @@ const PROTECTED = new Set([5, 8, 12]);
 
 function key(i) { return 'seat:' + i; }
 function valid(i) { return Number.isInteger(i) && i >= 0 && i < SEATS; }
-function emptySeat() { return { occupied: 0, progress: 0, heartbeat: 0, answers: [], completed: null }; }
+function emptySeat() { return { occupied: 0, progress: 0, heartbeat: 0, answers: [], completed: null, lastKvPut: 0 }; }
+
+// состояние живёт в памяти изолята (занятие — минуты; при cold start подтягивается из KV).
+// KV — редкий best-effort дубль: дневной лимит записи (1000 put) не позволяет писать на каждый хартбит.
+const mem = new Map();
+const KV_PUT_EVERY_MS = 15000;
 
 function sanitizeAnswers(a) {
   if (!Array.isArray(a)) return [];
@@ -17,19 +22,34 @@ function sanitizeAnswers(a) {
 }
 
 async function getSeat(env, i) {
-  const raw = await env.QUIZ.get(key(i));
-  const s = raw ? JSON.parse(raw) : emptySeat();
+  let s = mem.get(key(i));
+  if (!s) {
+    const raw = await env.QUIZ.get(key(i));
+    s = raw ? JSON.parse(raw) : emptySeat();
+    if (s.lastKvPut === undefined) s.lastKvPut = 0;
+    mem.set(key(i), s);
+  }
   // ленивая чистка: занято и хартбит старше 45с -> полный сброс сессии (completed не трогаем)
   if (s.occupied && s.heartbeat && Date.now() - s.heartbeat > STALE_MS) {
     s.occupied = 0;
     s.progress = 0;
     s.heartbeat = 0;
     s.answers = [];
-    await env.QUIZ.put(key(i), JSON.stringify(s));
+    await putSeat(env, i, s);
   }
   return s;
 }
-async function putSeat(env, i, s) { await env.QUIZ.put(key(i), JSON.stringify(s)); }
+async function putSeat(env, i, s) {
+  mem.set(key(i), s);
+  if (Date.now() - (s.lastKvPut || 0) >= KV_PUT_EVERY_MS) {
+    try {
+      s.lastKvPut = Date.now();
+      await env.QUIZ.put(key(i), JSON.stringify(s));
+    } catch (e) {
+      // дневной лимит KV-записей исчерпан — состояние держим в памяти, квиз не падает
+    }
+  }
+}
 
 function json(data, status) {
   return new Response(JSON.stringify(data), {
@@ -44,6 +64,15 @@ function json(data, status) {
 
 export default {
   async fetch(request, env) {
+    try {
+      return await route(request, env);
+    } catch (e) {
+      return json({ error: String(e), stack: String(e && e.stack) }, 500);
+    }
+  }
+};
+
+async function route(request, env) {
     const url = new URL(request.url);
     const p = url.pathname;
 
@@ -176,5 +205,4 @@ export default {
       default:
         return json({ error: 'not found' }, 404);
     }
-  }
-};
+}
