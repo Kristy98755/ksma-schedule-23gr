@@ -111,6 +111,31 @@
             padding: 5px 14px;
         }
         .back-link a:hover { background: rgba(34,197,94,0.20); }
+        .topic-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 22px 0 18px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: rgba(0,201,255,0.10);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 9px 18px;
+            font-size: 0.95em;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+        }
+        .tab-btn.active {
+            background: var(--accent);
+            color: #0f1117;
+            font-weight: 600;
+        }
+        .topic-part { display: none; }
+        .topic-part.active { display: block; }
     </style>
 </head>
 <body>
@@ -120,6 +145,13 @@
 <div class="back-link"><a href="index.html">&larr; Расписание 23 группы</a></div>
 
 <div class="topic-title">Методы исследования в офтальмологии. Бинокулярное зрение. Косоглазие. Диагностика содружественного и паралитического косоглазия. Заболевания век, конъюнктивы, склеры, слезного аппарата</div>
+
+<div class="topic-tabs">
+    <button class="tab-btn active" data-topic="1">Тема 1: Косоглазие</button>
+    <button class="tab-btn" data-topic="2">Тема 2: Веки, конъюнктива, склера, слезный аппарат</button>
+</div>
+
+<div class="topic-part active" id="topic1">
 
 <h2>1. Методы исследования в офтальмологии</h2>
 
@@ -348,6 +380,10 @@
     </div>
 </div>
 
+</div><!-- /topic1 -->
+
+<div class="topic-part" id="topic2">
+
 <h2>7. Заболевания век</h2>
 
 <div class="card">
@@ -492,6 +528,25 @@
 <div class="highlight">
     <p><strong>Ячмень</strong> — гнойник стафилококковый (наружный/внутренний), не выдавливать!; <strong>халазион</strong> — безболезненная гранулема мейбомиевой железы (массаж/инъекция кортикоидов/кюретаж); <strong>блейфариты</strong> — чешуйчатый/язвенный/аллергический/демодекозный, лечить гигиеной + мазями; <strong>энтропион/эктропион</strong> — оперативно, птоз — по паре/леватору. <strong>Конъюнктивит:</strong> гной = бактерия (антибиотик), водянистое = вирус (аденовирус, гигиена!), слизистое+зуд = аллергия, пленки = дифтерия/аденовирус. <strong>Склера:</strong> эписклерит — поверхностный, сам проходит; склерит — глубокий, болезненный, связан с ревмопатиями → системные НПВС/стероиды, опасен топлением. <strong>Слезный аппарат:</strong> эпифора = закупорка (дакриоцистит → промывание/дакриоцисториностомия), у новорожденных непроходимость проходит к году (массаж); сухой глаз = мало слезы → тест Ширмера → слезозаместители.</p>
 </div>
+
+</div><!-- /topic2 -->
+
+<script>
+    const tabs = document.querySelectorAll('.tab-btn');
+    const parts = document.querySelectorAll('.topic-part');
+    function activateTopic(n) {
+        tabs.forEach(b => b.classList.toggle('active', b.dataset.topic === String(n)));
+        parts.forEach(p => p.classList.toggle('active', p.id === 'topic' + n));
+    }
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            activateTopic(btn.dataset.topic);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+    const hash = location.hash.match(/^#topic([12])$/);
+    if (hash) activateTopic(hash[1]);
+</script>
 
 </body>
 </html>

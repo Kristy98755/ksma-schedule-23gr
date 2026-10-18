@@ -300,6 +300,7 @@ function removeEmptyDays() {
         // TARGETED
         "Общая гигиена|Практика|05.10":"<a href='hygiene_energy_efficiency.html'>Общая гигиена</a>",
         "Общая гигиена|Практика|12.10":"<a href='hygiene_water.html'>Общая гигиена</a>",
+        "Общая гигиена|Практика|19.10":"<a href='hygiene_water.html'>Общая гигиена</a>",
         "Неонатология|Практика|05.10":"<a href='neon.srs_hemolytic.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
         "Неонатология|Практика|12.10":"<a href='neon_respiratory.html'>Неонатология</a><br><a href='neon.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
         "Педиатрия|Практика|13.10":"<a href='pediatriya_hnzl.html'>Педиатрия</a><br><a href='pediatriya.srs.html' style='color:#0f0; font-size:14px; font-weight:300; text-decoration:underline; -webkit-text-stroke:0.3px #0f0'>СРС</a>",
@@ -318,6 +319,7 @@ function removeEmptyDays() {
         "Офтальмология|Практика|09.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|12.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|16.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
+        "Офтальмология|Практика|19.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Патологическое акушерство №1|Практика|16.10":"<a href='path_obst_obstrukcia.html'>Патологическое акушерство №1</a>",
         "Внутренние болезни (гастроэнтерология)|Практика|CurrWeek" : "<a href='https://jumpshare.com/share/cM4U5VHPvJWVgoCEV1mX'>Внутренние болезни (гастроэнтерология)</a>",
 
