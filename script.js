@@ -319,7 +319,7 @@ function removeEmptyDays() {
         "Офтальмология|Практика|09.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|12.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|16.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
-        "Офтальмология|Практика|23.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
+        "Офтальмология|Практика|19.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Патологическое акушерство №1|Практика|16.10":"<a href='path_obst_obstrukcia.html'>Патологическое акушерство №1</a>",
         "Внутренние болезни (гастроэнтерология)|Практика|CurrWeek" : "<a href='https://jumpshare.com/share/cM4U5VHPvJWVgoCEV1mX'>Внутренние болезни (гастроэнтерология)</a>",
 
@@ -485,6 +485,13 @@ function removeEmptyDays() {
 		insertLesson({
 			day: 'Понедельник',
 			week: '12.10',
+			time: '12:30-14:45',
+			lessonHTML: `<li class="lesson"><div class="lesson__time">12:30-14:45</div><div class="lesson__params"><span class="lesson__name"><a href='ophthalmology_strabismus.html'>Офтальмология</a></span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>НГ МЗ КР, 3 этаж, Каб.зав.каф.-301 (офт.)</span></div></li>`
+		});
+
+		insertLesson({
+			day: 'Понедельник',
+			week: '19.10',
 			time: '12:30-14:45',
 			lessonHTML: `<li class="lesson"><div class="lesson__time">12:30-14:45</div><div class="lesson__params"><span class="lesson__name"><a href='ophthalmology_strabismus.html'>Офтальмология</a></span><span class="lesson__type">Практика</span><span class="lesson__place"><img src='pin.png' class='loc-icon'>НГ МЗ КР, 3 этаж, Каб.зав.каф.-301 (офт.)</span></div></li>`
 		});
