@@ -316,6 +316,7 @@ function removeEmptyDays() {
         "Хирургия (фак.хир.)|Практика|21.10":"<a href='fakhir_pankreatit_abscess.html'>Хирургия (фак.хир.)</a>",
         "Оториноларингология|Практика|08.10":"<a href='lor_nos_glotka.html'>Оториноларингология</a>",
         "Оториноларингология|Практика|15.10":"<a href='lor_ear.html'>Оториноларингология</a>",
+        "Оториноларингология|Практика|22.10":"<a href='lor_gortan_novoobrazovania.html'>Оториноларингология</a>",
         "Патологическое акушерство №1|Практика|09.10":"<a href='path_obst_ksr.html'>Патологическое акушерство №1</a>",
         "Офтальмология|Практика|09.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|12.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
