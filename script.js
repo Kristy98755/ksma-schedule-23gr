@@ -322,7 +322,9 @@ function removeEmptyDays() {
         "Офтальмология|Практика|12.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|16.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Офтальмология|Практика|19.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
+        "Офтальмология|Практика|23.10":"<a href='ophthalmology_strabismus.html'>Офтальмология</a>",
         "Патологическое акушерство №1|Практика|16.10":"<a href='path_obst_obstrukcia.html'>Патологическое акушерство №1</a>",
+        "Патологическое акушерство №1|Практика|23.10":"<a href='path_obst_peclampsia.html'>Патологическое акушерство №1</a>",
         "Внутренние болезни (гастроэнтерология)|Практика|CurrWeek" : "<a href='https://jumpshare.com/share/cM4U5VHPvJWVgoCEV1mX'>Внутренние болезни (гастроэнтерология)</a>",
 
         // CURRENT WEEK
